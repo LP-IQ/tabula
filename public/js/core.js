@@ -35,6 +35,11 @@ export function setAdv(mode) {
   bus.dispatchEvent(new CustomEvent('adv', { detail: mode }));
 }
 
+export function setPrivate(on) {
+  app.privateRolls = !!on;
+  bus.dispatchEvent(new CustomEvent('private', { detail: app.privateRolls }));
+}
+
 export function doRoll(formula, label = '') {
   return emit('roll', { formula, label, private: app.privateRolls });
 }

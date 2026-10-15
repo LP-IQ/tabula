@@ -23,8 +23,12 @@ public/js/
   journal.js         diário do grupo
   compendium.js      compêndio
   gm.js              painel do mestre (cenas, tokens, usuários, backups)
+  bestiary.js        bestiário: bloco de estatísticas, editor, biblioteca SRD, ajuste de ND, colocar no mapa
+  rules.js           regras do Livro do Mestre: tabela por ND, XP, dificuldade de encontro, ajuste de ND
+public/data/srd-monstros.json   334 monstros do SRD 5.1 já convertidos (gerado por tools/srd/converter.py)
 test/api.test.js     teste automático do servidor (npm test)
 tools/redefinir-senha.js   redefine a senha de um usuário (mesa fechada)
+tools/srd/converter.py     converte os monstros do 5e-database para o formato da Tábula (com traduções)
 *.bat                atalhos para Windows (instalar, iniciar, online, redefinir-senha)
 ```
 
@@ -37,6 +41,16 @@ tools/redefinir-senha.js   redefine a senha de um usuário (mesa fechada)
 - Ações chegam como eventos (`token:move`, `character:update`, `roll`, …). Cada uma é validada
   no servidor (`handlers` em `server.js`) antes de mudar o estado.
 - O movimento de token durante o arrasto usa um evento leve (`token:moved`), sem reenviar o estado inteiro.
+
+## Bestiário e ajuste de ND
+
+- As fichas ficam em `monsters[]` na campanha; só o mestre as recebe (`viewFor`). O token guarda
+  `monsterId` e os próprios PV; o jogador nunca recebe o `monsterId`.
+- `rescale()` em `rules.js`: CA, ataque e CD por diferença na tabela do Livro do Mestre; PV e dano
+  pela razão entre os valores típicos de cada ND (medianas dos 334 monstros do SRD, suavizadas:
+  PV ≈ 15·ND + 15 até o ND 20; dano/rodada ≈ 4,5·ND + 5,5).
+- Para atualizar a biblioteca: `python3 tools/srd/converter.py 5e-SRD-Monsters.json public/data/srd-monstros.json`
+  (o arquivo de entrada vem de `src/2014/en/` do repositório 5e-bits/5e-database).
 
 ## Variáveis de ambiente
 

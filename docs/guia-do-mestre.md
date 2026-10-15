@@ -54,10 +54,60 @@ ocultar/revelar e remover. Com o token selecionado, as **setas do teclado** anda
 Os jogadores veem a barra de vida dos personagens, mas não a dos monstros: só um **aro vermelho**
 quando o monstro está com metade da vida ou menos, e o token **cinza com ✖** quando ele cai.
 
+## Bestiário (fichas de NPCs e monstros)
+
+Aba **🐉 Bestiário**, só sua. As fichas ficam salvas na campanha.
+
+![Token de monstro com ficha, ataques roláveis e o pop-up da rolagem](img/bestiario-token.png)
+
+### Pegar um monstro pronto
+1. **Biblioteca SRD** → busque (em português ou inglês) ou filtre por ND.
+2. Abra o monstro e escolha **Colocar no mapa** (ele é copiado para *Minhas fichas* automaticamente)
+   ou **Copiar para minhas fichas** para editar antes.
+
+Os 334 monstros do SRD 5.1 têm os nomes dos mais comuns e o texto dos ataques em português;
+habilidades especiais estão em inglês. Você pode editar qualquer cópia.
+
+### Criar uma ficha do zero
+**+ Nova ficha** → nome, ND, tamanho, CA, PV, atributos e ações. Preencha **Atq** (bônus de ataque) e
+**Dano** (ex.: `1d8+3`) para o ataque ganhar botões de rolar. A imagem da ficha vira o token.
+
+### Colocar no mapa
+Na ficha: **⬤ Colocar no mapa** → quantos, PV (média ou rolar para cada um) e se ficam ocultos.
+A janela já mostra como fica a **dificuldade do encontro** com eles. Os tokens recebem números
+(`Goblin 1`, `Goblin 2`…) e o tamanho certo (Grande = 2×2, Enorme = 3×3…).
+
+### Ajustar o ND (deixar mais forte ou mais fraco)
+Na ficha: **⇅ Ajustar ND** → escolha o novo ND e veja a comparação lado a lado. **Salvar como nova
+ficha** cria uma variante (`Goblin (ND 3)`) sem mexer no original.
+
+<img src="img/ajuste-nd.png" alt="Ajuste de ND de um goblin para ND 3" width="520">
+
+- **CA, bônus de ataque e CD** mudam conforme a tabela *Estatísticas de Monstro por Nível de Desafio* do Livro do Mestre.
+- **PV e dano** crescem na proporção do que os monstros oficiais daquele ND costumam ter. A tabela
+  do livro é bem mais alta que os monstros reais nos ND baixos (um goblin ND 1/4 "deveria" ter ~42 PV),
+  então usar ela direto deixaria tudo uma esponja de dano.
+- Se um monstro de um ataque só fica muito mais forte, ele ganha **Ataques Múltiplos** em vez de um golpe gigante.
+- Habilidades especiais não mudam. Confira a ficha e ajuste à mão o que quiser.
+
+> Dica de equilíbrio: em vez de subir muito o ND de um monstro, costuma ser mais divertido subir um
+> pouco e colocar mais criaturas. Fique de olho no medidor de dificuldade.
+
+### Dificuldade do encontro
+Em **Mestre → Tokens** (e ao colocar monstros) aparece **Fácil / Médio / Difícil / Mortal**, calculado
+como no capítulo 3 do Livro do Mestre: limites de XP pelo nível de cada personagem dos jogadores,
+XP dos monstros vivos na cena e o multiplicador pela quantidade de monstros. Tokens sem ficha não entram na conta.
+
+### Token de NPC no mapa
+Clique no token: o painel mostra a ficha (**📜 Ficha**), os ataques com botões de rolar, PV com
+**Dano/Cura**, tamanho, a ficha vinculada (dá para vincular um token antigo a uma ficha), ocultar e remover.
+Para rolar sem os jogadores verem, marque **Rolar oculto** na ficha (ou *Rolagem oculta* na aba Dados).
+
 ## Durante o jogo
 
 - **Sinalizar**: dois cliques no mapa mostram um círculo para todos.
 - **Rolagem oculta**: na aba Dados, marque "Rolagem oculta". Só você vê o resultado.
+- **Pop-up das rolagens**: toda rolagem aparece num cartão ao lado do painel, para todos. Desligue em *Dados → Rolagens na tela* se incomodar.
 - **Fichas**: na aba Ficha, a fileira de retratos no topo troca de personagem. Tudo salva sozinho ("✓ Salvo").
 
 ### Iniciativa

@@ -1,5 +1,5 @@
 // Dados e conversa: rolagens compartilhadas, mensagens, rolagem secreta.
-import { app, emit, doRoll, rollD20, bus, setAdv } from './core.js';
+import { app, emit, doRoll, rollD20, bus, setAdv, setPrivate } from './core.js';
 import { $, h, timeLabel, setKids } from './util.js';
 
 const pane = $('#pane-chat');
@@ -15,7 +15,8 @@ export function initChat(unreadCb) {
     placeholder: 'Mensagem ou dados (ex.: 1d20+5, 2d6+3, /r 1d8 espada)',
     'aria-label': 'Mensagem ou rolagem', autocomplete: 'off', enterkeyhint: 'send',
   });
-  privToggle = h('input', { type: 'checkbox', onchange: (e) => { app.privateRolls = e.target.checked; } });
+  privToggle = h('input', { type: 'checkbox', onchange: (e) => setPrivate(e.target.checked) });
+  bus.addEventListener('private', (e) => { privToggle.checked = e.detail; });
 
   const dice = [4, 6, 8, 10, 12, 20, 100].map((n) => h('button', {
     class: 'die', title: `Rolar 1d${n}`,
@@ -31,7 +32,12 @@ export function initChat(unreadCb) {
     h('div', { class: 'chat-tools' },
       h('div', { class: 'dice-row' }, dice),
       h('div', { class: 'row gap wrap' }, adv,
-        h('label', { class: 'mini toggle', id: 'priv-label' }, privToggle, h('span', {}, 'Rolagem secreta')))),
+        h('label', { class: 'mini toggle', id: 'priv-label' }, privToggle, h('span', {}, 'Rolagem secreta')),
+        h('label', { class: 'mini toggle', title: 'Mostra um cartão ao lado do painel a cada rolagem' },
+          h('input', {
+            type: 'checkbox', checked: popupsOn(),
+            onchange: (e) => { try { localStorage.setItem('tabula.popups', e.target.checked ? '1' : '0'); } catch { /* ok */ } },
+          }), 'Rolagens na tela'))),
     h('form', {
       class: 'chat-form',
       onsubmit: (e) => { e.preventDefault(); send(); },
@@ -104,7 +110,47 @@ export function setHistory(msgs) {
   log.scrollTop = log.scrollHeight;
 }
 
+// ------------------------------------------------- pop-up das rolagens
+function popupsOn() {
+  try { return localStorage.getItem('tabula.popups') !== '0'; } catch { return true; }
+}
+let popBox = null;
+function showRollPopup(m) {
+  if (m.type !== 'roll' || !popupsOn()) return;
+  if (!popBox) {
+    popBox = h('div', { class: 'roll-pops', 'aria-live': 'polite' });
+    document.body.append(popBox);
+  }
+  const r = m.roll;
+  const card = h('div', {
+    class: 'roll-pop' + (m.private ? ' private' : '') + (r.crit ? ` crit-${r.crit}` : ''),
+    style: { '--c': m.color || 'var(--gold)' },
+    title: 'Clique para fechar',
+    onclick: () => close(),
+  },
+  h('div', { class: 'rp-head' },
+    h('b', {}, m.userName),
+    m.private ? h('span', { class: 'tag' }, 'secreta') : null),
+  m.label ? h('div', { class: 'rp-label' }, m.label) : null,
+  h('div', { class: 'rp-body' },
+    h('span', { class: 'rp-total' }, String(r.total)),
+    h('div', { class: 'rp-detail' }, h('code', {}, r.formula), renderRoll(r))),
+  r.crit === 'success' ? h('div', { class: 'crit-note ok' }, '20 natural!') : null,
+  r.crit === 'fail' ? h('div', { class: 'crit-note bad' }, '1 natural…') : null);
+  let gone = false;
+  const close = () => {
+    if (gone) return;
+    gone = true;
+    card.classList.add('out');
+    setTimeout(() => card.remove(), 300);
+  };
+  popBox.prepend(card);
+  while (popBox.childElementCount > 3) popBox.lastElementChild.remove();
+  setTimeout(close, r.crit ? 8000 : 6000);
+}
+
 export function addMessage(m) {
+  showRollPopup(m);
   const stick = nearBottom() || m.userId === app.me?.id;
   log.append(renderMsg(m));
   while (log.childElementCount > 300) log.firstElementChild.remove();

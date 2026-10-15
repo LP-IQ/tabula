@@ -9,6 +9,7 @@ import { renderHandouts, markAllSeen, unseenCount } from './handouts.js';
 import { renderGM } from './gm.js';
 import { renderJournal, resetJournal } from './journal.js';
 import { renderCompendium } from './compendium.js';
+import { renderBestiary, openStatBlock } from './bestiary.js';
 
 const TOKEN_KEY = 'tabula.token';
 const mobile = window.matchMedia('(max-width: 820px)');
@@ -22,6 +23,7 @@ const TABS = [
   { id: 'handouts', label: 'Segredos', icon: '✉' },
   { id: 'journal', label: 'Diário', icon: '📖' },
   { id: 'compendium', label: 'Compêndio', icon: '📚' },
+  { id: 'bestiary', label: 'Bestiário', icon: '🐉', gmOnly: true },
   { id: 'gm', label: 'Mestre', icon: '👑', gmOnly: true },
 ];
 let sideTab = localStorage.getItem('tabula.tab') || 'sheet';
@@ -84,6 +86,7 @@ function layoutTabs() {
 mobile.addEventListener('change', () => { layoutTabs(); setTimeout(fit, 50); });
 document.body.addEventListener('show-map', () => { if (mobile.matches) selectTab('map'); });
 document.body.addEventListener('open-tab', (e) => selectTab(e.detail));
+document.body.addEventListener('open-statblock', (e) => openStatBlock(e.detail.monsterId, e.detail.who));
 
 // --------------------------------------------------------------- presença
 function renderPresence(state) {
@@ -113,6 +116,7 @@ function renderAll() {
     renderGM(s);
     renderJournal(s);
     renderCompendium(s);
+    renderBestiary(s);
     updateChatLabels();
     if (activeTab() === 'journal') markJournalSeen();
   }

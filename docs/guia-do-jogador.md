@@ -32,6 +32,8 @@ No celular, as abas ficam embaixo: **Mapa · Ficha · Dados · Iniciativa · Seg
 - Com nome: `/r 1d8+3 machado`.
 - **Rolagem secreta**: só você e o mestre veem.
 - 20 natural fica verde; 1 natural, vermelho.
+- Toda rolagem (sua, dos outros e do mestre) aparece num **cartão ao lado do mapa** por alguns segundos.
+  Para desligar: *Dados → Rolagens na tela*.
 
 ## Iniciativa
 

@@ -121,3 +121,42 @@ export function openImage(src) {
   document.addEventListener('keydown', onKey);
   document.body.append(box);
 }
+
+// Janela modal simples. Devolve { el, body, close }.
+export function openModal(title, content, opts = {}) {
+  const prevFocus = document.activeElement;
+  const body = h('div', { class: 'modal-body' });
+  const close = () => {
+    box.remove();
+    document.removeEventListener('keydown', onKey);
+    opts.onClose?.();
+    prevFocus?.focus?.();
+  };
+  const box = h('div', {
+    class: 'modal-backdrop',
+    onmousedown: (e) => { if (e.target === box) close(); },
+  }, h('div', { class: 'modal' + (opts.wide ? ' wide' : ''), role: 'dialog', 'aria-modal': 'true', 'aria-label': title },
+    h('div', { class: 'modal-head' }, h('h2', {}, title), h('button', { class: 'btn ghost sm', title: 'Fechar', onclick: () => close() }, '✕')),
+    body));
+  const onKey = (e) => { if (e.key === 'Escape') close(); };
+  document.addEventListener('keydown', onKey);
+  setKids(body, content);
+  document.body.append(box);
+  const first = box.querySelector('input, select, textarea, button:not(.ghost)');
+  first?.focus();
+  return { el: box, body, close };
+}
+
+// Rola dados no próprio navegador (usado só para sortear PV de monstros ao colocá-los no mapa)
+export function localRoll(formula) {
+  let total = 0;
+  const re = /([+-]?)(\d*)d(\d+)|([+-]?)(\d+)/g;
+  const s = String(formula || '').replace(/\s+/g, '');
+  let m;
+  const rnd = (n) => { const a = new Uint32Array(1); crypto.getRandomValues(a); return (a[0] % n) + 1; };
+  while ((m = re.exec(s))) {
+    if (m[3]) { let sub = 0; for (let i = 0; i < (Number(m[2]) || 1); i++) sub += rnd(Number(m[3])); total += (m[1] === '-' ? -1 : 1) * sub; }
+    else if (m[5]) total += (m[4] === '-' ? -1 : 1) * Number(m[5]);
+  }
+  return total;
+}

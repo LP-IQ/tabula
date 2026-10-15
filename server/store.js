@@ -25,6 +25,7 @@ function defaults() {
     chat: [],
     journal: [],        // diário do grupo: { id, userId, title, body, img, createdAt, updatedAt }
     compendium: [],     // { id, title, category, body, images: [], visibility: 'gm'|'all', createdAt, updatedAt }
+    monsters: [],       // bestiário do mestre (fichas de NPC/monstro) — ver monsterFields em server.js
   };
 }
 

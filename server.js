@@ -162,7 +162,7 @@ function viewFor(u) {
         .filter((t) => gm || !t.hidden)
         .map((t) => {
           if (gm || t.characterId) return t;
-          const { hp, hpMax, ...rest } = t; // jogador não vê PV exato de NPC
+          const { hp, hpMax, monsterId, ...rest } = t; // jogador não vê PV exato nem a ficha do NPC
           return { ...rest, hpState: hpState(hp, hpMax) };
         }),
     };
@@ -190,6 +190,7 @@ function viewFor(u) {
     handouts,
     journal: d.journal,
     compendium,
+    monsters: gm ? d.monsters : [],
   };
 }
 
@@ -476,15 +477,37 @@ const handlers = {
       characterId = findChar(p.characterId).id;
       if (s.tokens.some((t) => t.characterId === characterId)) throw new Error('Esse personagem já está nesta cena');
     }
+    const monster = p.monsterId ? findMonster(p.monsterId) : null;
     const t = {
-      id: uid(), characterId,
-      name: str(p.name, 80).trim() || 'Token', img: imgUrl(p.img || ''),
+      id: uid(), characterId, monsterId: monster ? monster.id : null,
+      name: str(p.name, 80).trim() || monster?.name || 'Token', img: imgUrl(p.img ?? monster?.img ?? ''),
       x: num(p.x, -1e5, 1e5), y: num(p.y, -1e5, 1e5), size: num(p.size, 0.5, 10, 1),
       hidden: !!p.hidden,
-      hp: int(p.hp, -999, 9999), hpMax: int(p.hpMax ?? p.hp, 0, 9999),
+      hp: int(p.hp ?? monster?.hp, -999, 9999), hpMax: int(p.hpMax ?? p.hp ?? monster?.hp, 0, 9999),
     };
     s.tokens.push(t);
     return { id: t.id };
+  },
+  // Coloca vários tokens de uma ficha do bestiário de uma vez (Goblin 1, Goblin 2…)
+  'token:createMany'(user, p) {
+    requireGM(user);
+    const s = findScene(p.sceneId);
+    const monster = findMonster(p.monsterId);
+    const list = (Array.isArray(p.tokens) ? p.tokens : []).slice(0, 30);
+    if (!list.length) throw new Error('Nada para colocar');
+    const ids = [];
+    for (const q of list) {
+      const t = {
+        id: uid(), characterId: null, monsterId: monster.id,
+        name: str(q.name, 80).trim() || monster.name, img: monster.img || '',
+        x: num(q.x, -1e5, 1e5), y: num(q.y, -1e5, 1e5), size: num(q.size, 0.5, 10, 1),
+        hidden: !!p.hidden,
+        hp: int(q.hp ?? monster.hp, -999, 9999), hpMax: int(q.hp ?? monster.hp, 0, 9999),
+      };
+      s.tokens.push(t);
+      ids.push(t.id);
+    }
+    return { ids };
   },
   'token:update'(user, p) {
     requireGM(user);
@@ -498,6 +521,7 @@ const handlers = {
     if (f.hpMax !== undefined) t.hpMax = int(f.hpMax, 0, 9999);
     if (f.x !== undefined) t.x = num(f.x, -1e5, 1e5);
     if (f.y !== undefined) t.y = num(f.y, -1e5, 1e5);
+    if (f.monsterId !== undefined) t.monsterId = f.monsterId ? findMonster(f.monsterId).id : null;
   },
   'token:delete'(user, p) {
     requireGM(user);
@@ -715,6 +739,26 @@ const handlers = {
     D().compendium = D().compendium.filter((x) => x.id !== p.id);
   },
 
+  // ---------- bestiário (só o mestre)
+  'monster:create'(user, p) {
+    requireGM(user);
+    if (D().monsters.length >= 2000) throw new Error('Bestiário cheio');
+    const m = { id: uid(), createdAt: Date.now(), updatedAt: Date.now(), ...monsterFields(p, null) };
+    D().monsters.push(m);
+    return { id: m.id };
+  },
+  'monster:update'(user, p) {
+    requireGM(user);
+    const m = findMonster(p.id);
+    Object.assign(m, monsterFields(p.patch || {}, m), { updatedAt: Date.now() });
+  },
+  'monster:delete'(user, p) {
+    requireGM(user);
+    const d = D();
+    d.monsters = d.monsters.filter((x) => x.id !== p.id);
+    for (const s of d.scenes) for (const t of s.tokens) if (t.monsterId === p.id) t.monsterId = null;
+  },
+
   // ---------- backups e encerramento (mestre)
   'backup:list'(user) {
     requireGM(user);
@@ -738,6 +782,61 @@ const handlers = {
     return { silent: true };
   },
 };
+
+function findMonster(id) {
+  const m = D().monsters.find((x) => x.id === id);
+  if (!m) throw new Error('Ficha do bestiário não encontrada');
+  return m;
+}
+
+const CR_OK = /^(0|1\/8|1\/4|1\/2|[1-9]|[12]\d|30)$/;
+const SIZES = ['Miúdo', 'Pequeno', 'Médio', 'Grande', 'Enorme', 'Imenso'];
+function abilityBlock(list) {
+  return (Array.isArray(list) ? list : []).slice(0, 40).map((a) => {
+    const out = { name: str(a?.name, 120).trim() || '—', text: str(a?.text, 4000) };
+    if (a?.toHit !== undefined && a.toHit !== null && a.toHit !== '') out.toHit = int(a.toHit, -10, 40);
+    if (a?.damage) out.damage = str(a.damage, 60).replace(/\s+/g, '');
+    if (a?.damageType) out.damageType = str(a.damageType, 60);
+    if (a?.dc !== undefined && a.dc !== null && a.dc !== '') out.dc = int(a.dc, 1, 40);
+    if (a?.dcAbility) out.dcAbility = str(a.dcAbility, 10);
+    return out;
+  });
+}
+// Valida os campos de uma ficha de monstro/NPC. base = ficha atual (para atualizações parciais) ou null.
+function monsterFields(f, base) {
+  const pick = (k, fn, def) => (f[k] !== undefined ? fn(f[k]) : base ? base[k] : def);
+  const text = (n) => (v) => str(v, n);
+  return {
+    name: pick('name', (v) => str(v, 80).trim() || 'Sem nome', 'Sem nome'),
+    img: pick('img', imgUrl, ''),
+    size: pick('size', (v) => (SIZES.includes(v) ? v : 'Médio'), 'Médio'),
+    type: pick('type', text(80), ''),
+    alignment: pick('alignment', text(80), ''),
+    ac: pick('ac', (v) => int(v, 0, 40, 10), 10),
+    acNote: pick('acNote', text(80), ''),
+    hp: pick('hp', (v) => int(v, 1, 9999, 1), 1),
+    hpFormula: pick('hpFormula', (v) => str(v, 40).replace(/\s+/g, ''), ''),
+    speed: pick('speed', text(120), '9 m'),
+    attrs: pick('attrs', (v) => Object.fromEntries(ATTRS.map((a) => [a, int(v?.[a], 1, 30, 10)])),
+      Object.fromEntries(ATTRS.map((a) => [a, 10]))),
+    saves: pick('saves', (v) => Object.fromEntries(ATTRS.filter((a) => v?.[a] !== undefined && v[a] !== '').map((a) => [a, int(v[a], -10, 30)])), {}),
+    skills: pick('skills', (v) => (Array.isArray(v) ? v : []).slice(0, 18).map((x) => ({ name: str(x?.name, 40), bonus: int(x?.bonus, -10, 30) })), []),
+    vulnerabilities: pick('vulnerabilities', text(300), ''),
+    resistances: pick('resistances', text(300), ''),
+    immunities: pick('immunities', text(300), ''),
+    conditionImmunities: pick('conditionImmunities', text(300), ''),
+    senses: pick('senses', text(200), ''),
+    languages: pick('languages', text(200), ''),
+    cr: pick('cr', (v) => (CR_OK.test(String(v)) ? String(v) : '0'), '0'),
+    traits: pick('traits', abilityBlock, []),
+    actions: pick('actions', abilityBlock, []),
+    reactions: pick('reactions', abilityBlock, []),
+    legendary: pick('legendary', abilityBlock, []),
+    notes: pick('notes', text(10000), ''),
+    srd: pick('srd', (v) => str(v, 60), ''),
+    variantOf: pick('variantOf', (v) => (v ? str(v, 40) : null), null),
+  };
+}
 
 function compendiumFields(f, base) {
   return {

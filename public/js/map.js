@@ -1,5 +1,5 @@
 // Mapa: imagem de fundo, grade, tokens redondos, zoom/arrasto, sinalização (ping).
-import { app, emit } from './core.js';
+import { app, emit, doRoll, rollD20 } from './core.js';
 import { $, h, initials, isEditingIn, chooseAndUpload, setKids } from './util.js';
 
 const vp = $('#map-viewport');
@@ -30,6 +30,7 @@ const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 function applyView() {
   layer.style.transform = `translate(${view.x}px, ${view.y}px) scale(${view.s})`;
   layer.style.setProperty('--inv', String(1 / view.s));
+  layer.classList.toggle('tiny-tokens', !!scene && scene.gridSize * view.s < 20);
 }
 function toMap(cx, cy) {
   const r = vp.getBoundingClientRect();
@@ -63,6 +64,34 @@ export function viewCenter() {
   const p = toMap(r.left + r.width / 2, r.top + r.height / 2);
   return { x: clamp(p.x, 0, w), y: clamp(p.y, 0, hh) };
 }
+// Quadrados livres mais próximos do centro da tela, para colocar n tokens de um tamanho (em quadrados)
+export function freeSpots(n, size) {
+  if (!scene) return [];
+  const g = scene.gridSize;
+  const s = size * g;
+  const c = viewCenter();
+  const ms = mapSize();
+  const fitIn = (v, max) => Math.max(0, Math.min(v, max - s));
+  const bx = fitIn(Math.round((c.x - s / 2 - scene.gridOffsetX) / g) * g + scene.gridOffsetX, ms.w);
+  const by = fitIn(Math.round((c.y - s / 2 - scene.gridOffsetY) / g) * g + scene.gridOffsetY, ms.h);
+  const boxes = scene.tokens.map((t) => ({ x: t.x, y: t.y, s: t.size * g }));
+  const taken = (x, y) => boxes.some((b) => x < b.x + b.s - 1 && x + s > b.x + 1 && y < b.y + b.s - 1 && y + s > b.y + 1);
+  const out = [];
+  const step = Math.max(g, s);
+  for (let r = 0; r < 25 && out.length < n; r++) {
+    for (let dy = -r; dy <= r && out.length < n; dy++) {
+      for (let dx = -r; dx <= r && out.length < n; dx++) {
+        if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue;
+        const x = bx + dx * step, y = by + dy * step;
+        if (x < 0 || y < 0 || x + s > ms.w + 1 || y + s > ms.h + 1) continue;
+        if (!taken(x, y)) { out.push({ x, y }); boxes.push({ x, y, s }); }
+      }
+    }
+  }
+  while (out.length < n) out.push({ x: bx, y: by });
+  return out;
+}
+
 export function mapSize() {
   return { w: imgSize.w || BLANK.w, h: imgSize.h || BLANK.h };
 }
@@ -273,7 +302,8 @@ function renderPanel(state) {
     panelKey = '';
     return;
   }
-  const key = JSON.stringify([t, state.characters.find((c) => c.id === t.characterId)?.name]);
+  const monster = t.monsterId ? (state.monsters || []).find((m) => m.id === t.monsterId) : null;
+  const key = JSON.stringify([t, state.characters.find((c) => c.id === t.characterId)?.name, monster?.updatedAt, (state.monsters || []).length]);
   if (key === panelKey && !panel.hidden) return;
   if (isEditingIn(panel) && panel.dataset.id === t.id) return;
   panelKey = key;
@@ -282,31 +312,62 @@ function renderPanel(state) {
 
   const info = tokenInfo(t, state);
   const upd = (patch) => emit('token:update', { sceneId: scene.id, id: t.id, patch });
-  const sizes = [[0.5, 'Minúsculo'], [1, 'Pequeno/Médio'], [2, 'Grande'], [3, 'Enorme'], [4, 'Imenso']];
+  const sizes = [[0.5, 'Miúdo'], [1, 'Pequeno/Médio'], [2, 'Grande'], [3, 'Enorme'], [4, 'Imenso']];
+  const npc = !t.characterId;
 
-  setKids(panel, 
+  // dano/cura rápido para NPC
+  const amount = h('input', { type: 'number', class: 'num', min: '0', placeholder: '0', 'aria-label': 'Quantidade' });
+  const hpChange = (sign) => {
+    const n = Math.abs(Number(amount.value) || 0);
+    if (!n) return amount.focus();
+    const hp = sign < 0 ? Math.max(0, t.hp - n) : Math.min(t.hpMax || Infinity, Math.max(0, t.hp) + n);
+    upd({ hp });
+    amount.value = '';
+  };
+
+  const attacks = monster ? (monster.actions || []).filter((a) => a.toHit != null || a.damage).slice(0, 6) : [];
+  const monsters = state.monsters || [];
+
+  setKids(panel,
     h('div', { class: 'tp-head' },
       t.characterId
         ? h('b', {}, info.name, h('span', { class: 'muted' }, ' · personagem'))
         : h('input', { value: t.name, 'aria-label': 'Nome do token', onchange: (e) => upd({ name: e.target.value }) }),
       h('button', { class: 'btn ghost sm', title: 'Fechar', onclick: () => select(null) }, '✕')),
+    monster ? h('div', { class: 'row gap tp-monster' },
+      h('span', { class: 'grow small muted' }, `${monster.name} · ND ${monster.cr} · CA ${monster.ac}`),
+      h('button', {
+        class: 'btn sm',
+        onclick: () => document.body.dispatchEvent(new CustomEvent('open-statblock', { detail: { monsterId: monster.id, who: t.name } })),
+      }, '📜 Ficha')) : null,
+    attacks.length ? h('div', { class: 'tp-attacks' }, attacks.map((a) => h('div', { class: 'tp-attack' },
+      h('span', { class: 'grow' }, a.name),
+      a.toHit != null ? h('button', { class: 'btn sm', title: 'Rolar ataque', onclick: () => rollD20(a.toHit, `${t.name} — ${a.name}`) }, `⚔ ${a.toHit >= 0 ? '+' : ''}${a.toHit}`) : null,
+      a.damage ? h('button', { class: 'btn sm', title: 'Rolar dano', onclick: () => doRoll(a.damage, `${t.name} — ${a.name} (dano)`) }, `🎲 ${a.damage}`) : null))) : null,
+    npc ? h('div', { class: 'row gap' }, 'PV',
+      h('input', { type: 'number', class: 'num', value: String(t.hp), 'aria-label': 'PV atuais', onchange: (e) => upd({ hp: Number(e.target.value) }) }),
+      h('span', { class: 'muted' }, '/'),
+      h('input', { type: 'number', class: 'num', value: String(t.hpMax), 'aria-label': 'PV máximos', onchange: (e) => upd({ hpMax: Number(e.target.value) }) })) : null,
+    npc ? h('div', { class: 'row gap' }, amount,
+      h('button', { class: 'btn sm danger', onclick: () => hpChange(-1) }, 'Dano'),
+      h('button', { class: 'btn sm ok', onclick: () => hpChange(1) }, 'Cura')) : null,
     h('label', { class: 'row' }, 'Tamanho',
       h('select', { onchange: (e) => upd({ size: Number(e.target.value) }) },
         sizes.map(([v, l]) => h('option', { value: String(v), selected: t.size === v }, l)),
         sizes.some(([v]) => v === t.size) ? null : h('option', { value: String(t.size), selected: true }, `${t.size}×`))),
-    t.characterId ? null : h('label', { class: 'row' }, 'PV',
-      h('input', { type: 'number', class: 'num', value: String(t.hp), onchange: (e) => upd({ hp: Number(e.target.value) }) }),
-      h('span', { class: 'muted' }, '/'),
-      h('input', { type: 'number', class: 'num', value: String(t.hpMax), onchange: (e) => upd({ hpMax: Number(e.target.value) }) })),
-    h('div', { class: 'row gap' },
+    npc && monsters.length ? h('label', { class: 'row' }, 'Ficha',
+      h('select', { onchange: (e) => upd({ monsterId: e.target.value || null }) },
+        h('option', { value: '' }, '— sem ficha —'),
+        monsters.slice().sort((a, b) => a.name.localeCompare(b.name, 'pt-BR')).map((m) => h('option', { value: m.id, selected: m.id === t.monsterId }, `${m.name} (ND ${m.cr})`)))) : null,
+    h('div', { class: 'row gap wrap' },
       h('button', { class: 'btn sm', onclick: () => upd({ hidden: !t.hidden }) }, t.hidden ? '👁 Revelar' : '🙈 Ocultar'),
-      t.characterId ? null : h('button', {
+      npc ? h('button', {
         class: 'btn sm',
         onclick: async () => {
           const url = await chooseAndUpload();
           if (url) upd({ img: url });
         },
-      }, 'Imagem'),
+      }, 'Imagem') : null,
       h('button', {
         class: 'btn sm danger',
         onclick: () => { if (confirm(`Remover "${info.name}" do mapa?`)) emit('token:delete', { sceneId: scene.id, id: t.id }); },

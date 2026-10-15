@@ -1,8 +1,9 @@
 // Painel do Mestre: cenas, tokens, jogadores e personagens, backup.
 import { app, emit } from './core.js';
 import { $, h, chooseAndUpload, pickFile, uploadImage, avatar, isEditingIn, toast, setKids } from './util.js';
-import { viewCenter, fit, mapSize, flashWhenReady } from './map.js';
+import { fit, mapSize, flashWhenReady, freeSpots } from './map.js';
 import { openSheet } from './sheet.js';
+import { encounterBox } from './bestiary.js';
 
 const pane = $('#pane-gm');
 let built = false;
@@ -126,31 +127,6 @@ function sceneSettings(state) {
 }
 
 // ----------------------------------------------------------------- tokens
-// Procura, a partir do centro da tela, o quadrado livre mais próximo (para não empilhar tokens)
-function freeSpot(sc, size) {
-  const g = sc.gridSize;
-  const s = size * g;
-  const c = viewCenter();
-  const m = mapSize();
-  const fitIn = (v, max) => Math.max(0, Math.min(v, max - s));
-  const bx = fitIn(Math.round((c.x - s / 2 - sc.gridOffsetX) / g) * g + sc.gridOffsetX, m.w);
-  const by = fitIn(Math.round((c.y - s / 2 - sc.gridOffsetY) / g) * g + sc.gridOffsetY, m.h);
-  const taken = (x, y) => sc.tokens.some((t) => {
-    const ts = t.size * g;
-    return x < t.x + ts - 1 && x + s > t.x + 1 && y < t.y + ts - 1 && y + s > t.y + 1;
-  });
-  for (let r = 0; r < 15; r++) {
-    for (let dy = -r; dy <= r; dy++) {
-      for (let dx = -r; dx <= r; dx++) {
-        if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue;
-        const x = bx + dx * g, y = by + dy * g;
-        if (!taken(x, y)) return { x, y };
-      }
-    }
-  }
-  return { x: bx, y: by };
-}
-
 function npcForm() {
   const name = h('input', { placeholder: 'Nome (ex.: Goblin 1)', 'aria-label': 'Nome do NPC', required: true });
   const hp = h('input', { type: 'number', class: 'num', placeholder: 'PV', 'aria-label': 'PV' });
@@ -168,7 +144,7 @@ function npcForm() {
       e.preventDefault();
       const sc = app.state.scene;
       if (!sc) return toast('Crie/ative uma cena primeiro', 'error');
-      const spot = freeSpot(app.state.scene, Number(size.value));
+      const spot = freeSpots(1, Number(size.value))[0];
       const res = await emit('token:create', {
         sceneId: sc.id, name: name.value, img, size: Number(size.value), hidden: hidden.checked,
         hp: Number(hp.value) || 0, hpMax: Number(hp.value) || 0, x: spot.x, y: spot.y,
@@ -200,7 +176,7 @@ function charPlacement(state) {
         : h('button', {
           class: 'btn sm',
           onclick: () => {
-            const p = freeSpot(app.state.scene, 1);
+            const p = freeSpots(1, 1)[0];
             emit('token:create', { sceneId: sc.id, characterId: c.id, name: c.name, size: 1, x: p.x, y: p.y })
               .then((r) => r && flashWhenReady(r.id));
           },
@@ -398,8 +374,13 @@ export function renderGM(state) {
       section('Cenas (mapas)', h('div', { class: 'stack' }, newSceneForm(), slot('scenes'))),
       section('Cena ativa (grade)', slot('settings'), true),
       section('Tokens', h('div', { class: 'stack' },
+        slot('encounter'),
         h('h4', {}, 'Personagens'), slot('chars-on-map'),
-        h('h4', {}, 'NPCs e monstros'), npcForm(), slot('npcs'))),
+        h('h4', {}, 'NPCs e monstros'),
+        h('p', { class: 'muted small' }, 'Monstros com ficha (ataques roláveis, ND): use a aba ',
+          h('button', { class: 'link', type: 'button', onclick: () => document.body.dispatchEvent(new CustomEvent('open-tab', { detail: 'bestiary' })) }, '🐉 Bestiário'),
+          '. Abaixo, um token rápido, sem ficha.'),
+        npcForm(), slot('npcs'))),
       section('Jogadores e personagens', h('div', { class: 'stack' },
         h('h4', {}, 'Usuários'), slot('users'), userForm(),
         h('h4', {}, 'Personagens'), slot('chars'))),
@@ -410,6 +391,8 @@ export function renderGM(state) {
   const sc = state.scene;
   put('settings', sc && [sc.id, sc.name, sc.gridSize, sc.gridOffsetX, sc.gridOffsetY, sc.showGrid, sc.snap, mapSize().w], () => sceneSettings(state));
   put('chars-on-map', [sc?.id, sc?.tokens.filter((t) => t.characterId).map((t) => t.characterId), state.characters.map((c) => [c.id, c.name, c.img, c.ownerId]), state.users.map((u) => u.color)], () => charPlacement(state));
+  put('encounter', [sc?.tokens.map((t) => [t.monsterId, t.hp > 0, t.characterId]), state.monsters.map((m) => [m.id, m.cr]),
+    state.characters.map((c) => [c.level, c.ownerId]), state.users.map((u) => u.role)], () => encounterBox() || h('span'));
   put('npcs', sc?.tokens.filter((t) => !t.characterId).map((t) => [t.id, t.name, t.img, t.hidden, t.hp, t.hpMax]), () => tokenList(state));
   put('users', state.users, () => userList(state));
   put('chars', [state.characters.map((c) => [c.id, c.name, c.img, c.ownerId]), state.users.map((u) => [u.id, u.name, u.role, u.color])], () => charList(state));

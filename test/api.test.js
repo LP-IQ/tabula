@@ -122,6 +122,35 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   check(a.last.compendium.length === 2, 'mestre libera página e ela aparece para os jogadores');
   check(!(await call(gm, 'compendium:create', { title: 'x', images: ['javascript:alert(1)'] })).ok, 'imagem com endereço inválido é recusada');
 
+  // bestiário
+  const mon = await call(gm, 'monster:create', {
+    name: 'Goblin', size: 'Pequeno', cr: '1/4', ac: 15, hp: 7, hpFormula: '2d6',
+    attrs: { str: 8, dex: 14, con: 10, int: 10, wis: 8, cha: 8 },
+    actions: [{ name: 'Cimitarra', text: 'Ataque…', toHit: 4, damage: '1d6 + 2' }],
+  });
+  await wait(50);
+  check(mon.ok && gm.last.monsters.length === 1 && gm.last.monsters[0].actions[0].damage === '1d6+2', 'mestre cria ficha no bestiário');
+  check(p.last.monsters.length === 0, 'jogador NÃO recebe as fichas do bestiário');
+  check(!(await call(p, 'monster:create', { name: 'x' })).ok, 'jogador NÃO cria fichas de monstro');
+  const odd = await call(gm, 'monster:create', { name: 'ND estranho', cr: '99' }); await wait(50);
+  check(gm.last.monsters.find((x) => x.id === odd.id)?.cr === '0', 'ND inválido vira 0'); await call(gm, 'monster:delete', { id: odd.id });
+  const many = await call(gm, 'token:createMany', {
+    sceneId: sc.id, monsterId: mon.id, hidden: false,
+    tokens: [{ name: 'Goblin 1', x: 0, y: 0, size: 1 }, { name: 'Goblin 2', x: 70, y: 0, size: 1, hp: 9 }],
+  });
+  await wait(50);
+  const gTok = gm.last.scene.tokens.filter((t) => t.monsterId === mon.id);
+  check(many.ok && gTok.length === 2 && gTok[1].hp === 9 && gTok[0].hp === 7, 'mestre coloca vários tokens de uma ficha (PV de cada um)');
+  const pTok = p.last.scene.tokens.find((t) => t.name === 'Goblin 1');
+  check(pTok && pTok.monsterId === undefined && pTok.hp === undefined, 'jogador vê o token, mas não a ficha nem os PV');
+  await call(gm, 'monster:update', { id: mon.id, patch: { ac: 16 } });
+  await wait(50);
+  check(gm.last.monsters[0].ac === 16 && gm.last.monsters[0].hp === 7, 'editar a ficha muda só o que foi alterado');
+  await call(gm, 'monster:delete', { id: mon.id });
+  await wait(50);
+  check(gm.last.monsters.length === 0 && gm.last.scene.tokens.filter((t) => t.name.startsWith('Goblin ')).every((t) => t.monsterId === null),
+    'apagar a ficha mantém os tokens no mapa');
+
   // backups
   const bk = await call(gm, 'backup:create', { label: 'Antes do chefão!' });
   check(bk.ok && /antes-do-chefao\.json$/.test(bk.file), 'mestre cria ponto de backup com nome');
