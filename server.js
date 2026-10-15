@@ -437,7 +437,7 @@ const handlers = {
     requireGM(user);
     const s = {
       id: uid(), name: str(p.name, 80).trim() || 'Nova cena', img: imgUrl(p.img),
-      gridSize: 70, gridOffsetX: 0, gridOffsetY: 0, showGrid: true, snap: true, tokens: [],
+      gridSize: num(p.gridSize, 10, 1000, 70), gridOffsetX: 0, gridOffsetY: 0, showGrid: true, snap: true, tokens: [],
     };
     D().scenes.push(s);
     if (!D().activeSceneId) D().activeSceneId = s.id;
@@ -449,7 +449,7 @@ const handlers = {
     const f = p.patch || {};
     if (f.name !== undefined) s.name = str(f.name, 80).trim() || s.name;
     if (f.img !== undefined) s.img = imgUrl(f.img);
-    if (f.gridSize !== undefined) s.gridSize = num(f.gridSize, 10, 500, 70);
+    if (f.gridSize !== undefined) s.gridSize = num(f.gridSize, 10, 1000, 70);
     if (f.gridOffsetX !== undefined) s.gridOffsetX = num(f.gridOffsetX, -500, 500);
     if (f.gridOffsetY !== undefined) s.gridOffsetY = num(f.gridOffsetY, -500, 500);
     if (f.showGrid !== undefined) s.showGrid = !!f.showGrid;

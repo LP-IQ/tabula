@@ -54,9 +54,45 @@ function zoomAt(factor, cx, cy) {
   view.s = ns;
   applyView();
 }
+// Centro do que está na tela, em coordenadas do mapa. Se o mapa estiver escondido
+// (ex.: mestre no celular, na aba Mestre), usa o centro do mapa. Sempre dentro do mapa.
 export function viewCenter() {
   const r = vp.getBoundingClientRect();
-  return toMap(r.left + r.width / 2, r.top + r.height / 2);
+  const w = imgSize.w || BLANK.w, hh = imgSize.h || BLANK.h;
+  if (!r.width || !r.height || needsFit) return { x: w / 2, y: hh / 2 };
+  const p = toMap(r.left + r.width / 2, r.top + r.height / 2);
+  return { x: clamp(p.x, 0, w), y: clamp(p.y, 0, hh) };
+}
+export function mapSize() {
+  return { w: imgSize.w || BLANK.w, h: imgSize.h || BLANK.h };
+}
+
+// Destaca um token recém-criado e traz para a tela se estiver fora dela
+let flashId = null;
+export function flashWhenReady(id) {
+  flashId = id;
+  const el = els.get(id);
+  if (el) doFlash(el, id);
+}
+function doFlash(el, id) {
+  flashId = null;
+  el.classList.remove('flash');
+  void el.offsetWidth; // reinicia a animação
+  el.classList.add('flash');
+  setTimeout(() => el.classList.remove('flash'), 1600);
+  const r = vp.getBoundingClientRect();
+  const b = el.getBoundingClientRect();
+  if (!r.width) return;
+  const outside = b.right < r.left || b.left > r.right || b.bottom < r.top || b.top > r.bottom;
+  if (outside && scene) {
+    const t = scene.tokens.find((x) => x.id === id);
+    if (t) {
+      const half = (t.size * scene.gridSize) / 2;
+      view.x = r.width / 2 - (t.x + half) * view.s;
+      view.y = r.height / 2 - (t.y + half) * view.s;
+      applyView();
+    }
+  }
 }
 export function currentSceneId() { return scene?.id || null; }
 
@@ -69,6 +105,7 @@ img.addEventListener('load', () => {
   imgSize = { w: img.naturalWidth, h: img.naturalHeight };
   sizeLayer();
   if (needsFit) fit();
+  document.body.dispatchEvent(new CustomEvent('map-loaded'));
 });
 img.addEventListener('error', () => {
   imgSize = { ...BLANK };
@@ -166,6 +203,7 @@ function renderTokens(state) {
         h('div', { class: 'token-name' }));
       els.set(t.id, el);
       tokensEl.append(el);
+      if (flashId === t.id) requestAnimationFrame(() => doFlash(el, t.id));
     }
     const info = tokenInfo(t, state);
     const px = t.size * scene.gridSize;

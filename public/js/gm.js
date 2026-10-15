@@ -1,7 +1,7 @@
 // Painel do Mestre: cenas, tokens, jogadores e personagens, backup.
 import { app, emit } from './core.js';
 import { $, h, chooseAndUpload, pickFile, uploadImage, avatar, isEditingIn, toast, setKids } from './util.js';
-import { viewCenter, fit } from './map.js';
+import { viewCenter, fit, mapSize, flashWhenReady } from './map.js';
 import { openSheet } from './sheet.js';
 
 const pane = $('#pane-gm');
@@ -21,8 +21,27 @@ function changed(name, value) {
 }
 
 // ------------------------------------------------------------------ cenas
+// Tamanho em pixels de uma imagem escolhida (antes de enviar)
+function imageSize(file) {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const im = new Image();
+    im.onload = () => { resolve({ w: im.naturalWidth, h: im.naturalHeight }); URL.revokeObjectURL(url); };
+    im.onerror = () => { resolve(null); URL.revokeObjectURL(url); };
+    im.src = url;
+  });
+}
+// Quadrado da grade: se o mestre disse quantos quadrados há na largura, usa isso;
+// senão, chuta algo entre 10 e 40 quadrados (mapas grandes ficam com quadrados maiores).
+function guessGrid(width, squares) {
+  if (!width) return 70;
+  const n = squares > 0 ? squares : Math.min(40, Math.max(10, Math.round(width / 70)));
+  return Math.round((width / n) * 100) / 100;
+}
+
 function newSceneForm() {
   const name = h('input', { placeholder: 'Nome da cena (ex.: Torre — 1º andar)', 'aria-label': 'Nome da cena' });
+  const squares = h('input', { type: 'number', class: 'num', min: '1', max: '200', placeholder: '?', 'aria-label': 'Quadrados na largura do mapa' });
   const btn = h('button', { class: 'btn primary', type: 'submit' }, 'Escolher imagem e criar');
   return h('form', {
     class: 'stack',
@@ -33,9 +52,17 @@ function newSceneForm() {
       btn.disabled = true;
       btn.textContent = 'Enviando…';
       try {
+        const size = await imageSize(file);
         const url = await uploadImage(file);
-        const res = await emit('scene:create', { name: name.value || file.name.replace(/\.[^.]+$/, ''), img: url });
-        if (res) { name.value = ''; toast('Cena criada'); }
+        const res = await emit('scene:create', {
+          name: name.value || file.name.replace(/\.[^.]+$/, ''),
+          img: url,
+          gridSize: guessGrid(size?.w, Number(squares.value)),
+        });
+        if (res) {
+          name.value = ''; squares.value = '';
+          toast('Cena criada. Confira a grade em "Cena ativa".', 'ok', 5000);
+        }
       } catch (err) {
         toast(err.message, 'error');
       } finally {
@@ -43,7 +70,10 @@ function newSceneForm() {
         btn.textContent = 'Escolher imagem e criar';
       }
     },
-  }, name, h('div', { class: 'row gap wrap' }, btn,
+  }, name,
+  h('label', { class: 'mini', title: 'Conte quantos quadrados o desenho do mapa tem de uma borda à outra (na horizontal). Se deixar vazio, a mesa estima.' },
+    'Quadrados na largura do mapa', squares, h('span', { class: 'muted' }, '(opcional)')),
+  h('div', { class: 'row gap wrap' }, btn,
     h('button', {
       class: 'btn ghost', type: 'button',
       onclick: async () => { if (await emit('scene:create', { name: name.value || 'Mesa vazia', img: '' })) name.value = ''; },
@@ -76,6 +106,12 @@ function sceneSettings(state) {
     h('input', { type: 'number', class: 'num', step: String(step), value: String(s[key]), onchange: (e) => upd({ [key]: Number(e.target.value) }) }));
   return h('div', { class: 'stack' },
     h('label', {}, 'Nome', h('input', { value: s.name, onchange: (e) => upd({ name: e.target.value }) })),
+    h('label', { class: 'mini', title: 'Quantos quadrados o desenho do mapa tem na horizontal' }, 'Quadrados na largura',
+      h('input', {
+        type: 'number', class: 'num', min: '1', max: '200',
+        value: String(Math.round(mapSize().w / s.gridSize)),
+        onchange: (e) => { const n = Number(e.target.value); if (n > 0) upd({ gridSize: guessGrid(mapSize().w, n) }); },
+      })),
     h('div', { class: 'row gap wrap' },
       numIn('gridSize', 'Quadrado (px)', 0.5),
       numIn('gridOffsetX', 'Desloc. X', 0.5),
@@ -95,8 +131,10 @@ function freeSpot(sc, size) {
   const g = sc.gridSize;
   const s = size * g;
   const c = viewCenter();
-  const bx = Math.round((c.x - s / 2 - sc.gridOffsetX) / g) * g + sc.gridOffsetX;
-  const by = Math.round((c.y - s / 2 - sc.gridOffsetY) / g) * g + sc.gridOffsetY;
+  const m = mapSize();
+  const fitIn = (v, max) => Math.max(0, Math.min(v, max - s));
+  const bx = fitIn(Math.round((c.x - s / 2 - sc.gridOffsetX) / g) * g + sc.gridOffsetX, m.w);
+  const by = fitIn(Math.round((c.y - s / 2 - sc.gridOffsetY) / g) * g + sc.gridOffsetY, m.h);
   const taken = (x, y) => sc.tokens.some((t) => {
     const ts = t.size * g;
     return x < t.x + ts - 1 && x + s > t.x + 1 && y < t.y + ts - 1 && y + s > t.y + 1;
@@ -136,6 +174,7 @@ function npcForm() {
         hp: Number(hp.value) || 0, hpMax: Number(hp.value) || 0, x: spot.x, y: spot.y,
       });
       if (res) {
+        flashWhenReady(res.id);
         // mantém o nome com número seguinte para criar vários iguais rápido (Goblin 1 → Goblin 2)
         name.value = name.value.replace(/(\d+)$/, (n) => String(Number(n) + 1));
       }
@@ -162,7 +201,8 @@ function charPlacement(state) {
           class: 'btn sm',
           onclick: () => {
             const p = freeSpot(app.state.scene, 1);
-            emit('token:create', { sceneId: sc.id, characterId: c.id, name: c.name, size: 1, x: p.x, y: p.y });
+            emit('token:create', { sceneId: sc.id, characterId: c.id, name: c.name, size: 1, x: p.x, y: p.y })
+              .then((r) => r && flashWhenReady(r.id));
           },
         }, 'Colocar no mapa'));
   }));
@@ -356,7 +396,7 @@ export function renderGM(state) {
     setKids(pane, 
       h('div', { class: 'pane-title' }, h('h2', {}, 'Mestre')),
       section('Cenas (mapas)', h('div', { class: 'stack' }, newSceneForm(), slot('scenes'))),
-      section('Cena ativa', slot('settings'), false),
+      section('Cena ativa (grade)', slot('settings'), true),
       section('Tokens', h('div', { class: 'stack' },
         h('h4', {}, 'Personagens'), slot('chars-on-map'),
         h('h4', {}, 'NPCs e monstros'), npcForm(), slot('npcs'))),
@@ -368,7 +408,7 @@ export function renderGM(state) {
   }
   put('scenes', [state.scenes, state.activeSceneId], () => sceneList(state));
   const sc = state.scene;
-  put('settings', sc && [sc.id, sc.name, sc.gridSize, sc.gridOffsetX, sc.gridOffsetY, sc.showGrid, sc.snap], () => sceneSettings(state));
+  put('settings', sc && [sc.id, sc.name, sc.gridSize, sc.gridOffsetX, sc.gridOffsetY, sc.showGrid, sc.snap, mapSize().w], () => sceneSettings(state));
   put('chars-on-map', [sc?.id, sc?.tokens.filter((t) => t.characterId).map((t) => t.characterId), state.characters.map((c) => [c.id, c.name, c.img, c.ownerId]), state.users.map((u) => u.color)], () => charPlacement(state));
   put('npcs', sc?.tokens.filter((t) => !t.characterId).map((t) => [t.id, t.name, t.img, t.hidden, t.hp, t.hpMax]), () => tokenList(state));
   put('users', state.users, () => userList(state));

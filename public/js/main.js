@@ -125,6 +125,7 @@ function queueRender() {
 }
 // quando o usuário sai de um campo, aplica o que chegou enquanto ele digitava
 document.addEventListener('focusout', () => setTimeout(queueRender, 50));
+document.body.addEventListener('map-loaded', () => queueRender());
 
 // ---------------------------------------------------------------- conexão
 function setConn(ok) {

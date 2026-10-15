@@ -239,7 +239,7 @@ body.viewer .map-hint { display: none; }
 .token-name {
   position: absolute; left: 50%; top: 100%;
   transform: translate(-50%, 2px);
-  font-size: var(--label, 12px); line-height: 1.1;
+  font-size: max(var(--label, 12px), calc(11px * var(--inv, 1))); line-height: 1.1;
   white-space: nowrap; pointer-events: none;
   background: #14121ad9; padding: 1px 6px; border-radius: 4px;
   color: var(--text);
@@ -570,3 +570,11 @@ details.block > summary::-webkit-details-marker { display: none; }
 .folder { overflow-wrap: anywhere; margin: 0; }
 .lightbox.closed { cursor: default; }
 .lightbox.closed .login-card { text-align: center; align-items: center; }
+
+/* token recém-colocado pisca para ser encontrado */
+.token.flash .token-face { animation: token-flash 1.5s ease-out; }
+@keyframes token-flash {
+  0% { box-shadow: 0 0 0 0 var(--gold), 0 0 0 0 #e0b44c00; }
+  30% { box-shadow: 0 0 0 6px var(--gold), 0 0 40px 20px #e0b44c99; }
+  100% { box-shadow: 0 0 0 0 #e0b44c00, 0 3px 10px #000a; }
+}
