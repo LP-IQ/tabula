@@ -1,5 +1,12 @@
 # Histórico de versões
 
+## v4.1 — 15/10/2026
+**Correções**
+- A biblioteca SRD não abria: o arquivo `public/data/srd-monstros.json` ficava de fora do pacote e do
+  repositório (a regra que ignora a pasta `data` da campanha pegava também a `public/data`).
+- Se a biblioteca não carregar, aparece um aviso só, explicando o motivo, com um botão "Tentar de novo"
+  (antes, a tela tentava sem parar e enchia de avisos).
+
 ## v4 — 15/10/2026
 **Novidades**
 - **Pop-up das rolagens**: cada rolagem aparece num cartão ao lado do painel, para todos (as secretas, só para quem pode ver). Dá para desligar em *Dados → Rolagens na tela*.

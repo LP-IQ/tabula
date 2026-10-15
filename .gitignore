@@ -1,2 +1,3 @@
 node_modules/
-data/
+# só a pasta de dados da campanha na raiz (não a public/data, que tem a biblioteca de monstros)
+/data/

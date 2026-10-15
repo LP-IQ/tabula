@@ -17,15 +17,25 @@ let crFilter = '';
 let lastKey = '';
 let srd = null;             // biblioteca carregada sob demanda
 let srdLoading = null;
+let srdError = '';
 
+// Carrega a biblioteca uma vez. Se falhar, NÃO tenta de novo sozinho: mostra o erro e um botão.
 function loadSrd() {
   if (srd) return Promise.resolve(srd);
   if (!srdLoading) {
-    srdLoading = fetch('/data/srd-monstros.json').then((r) => r.json()).then((d) => {
-      srd = d;
-      srd.monsters.forEach((m, i) => { m.id = 'srd:' + m.srd; m._i = i; });
-      return srd;
-    }).catch(() => { srdLoading = null; toast('Não consegui carregar a biblioteca do SRD', 'error'); return null; });
+    srdError = '';
+    srdLoading = fetch('/data/srd-monstros.json')
+      .then((r) => {
+        if (!r.ok) throw new Error(r.status === 404 ? 'o arquivo public/data/srd-monstros.json não está na pasta da mesa' : `erro ${r.status}`);
+        return r.json();
+      })
+      .then((d) => {
+        srd = d;
+        srd.monsters.forEach((m, i) => { m.id = 'srd:' + m.srd; m._i = i; });
+        return srd;
+      })
+      .catch((e) => { srdError = e.message || 'erro desconhecido'; return null; })
+      .finally(() => { srdLoading = null; });
   }
   return srdLoading;
 }
@@ -394,8 +404,14 @@ function listView() {
   const drawList = () => {
     if (mode === 'srd') {
       if (!srd) {
+        if (srdError) {
+          setKids(listEl, h('li', { class: 'error-box' },
+            h('p', {}, 'Não consegui carregar a biblioteca do SRD: ', h('b', {}, srdError), '.'),
+            h('button', { class: 'btn sm', onclick: () => { srdError = ''; drawList(); } }, 'Tentar de novo')));
+          return;
+        }
         setKids(listEl, h('li', { class: 'muted' }, 'Carregando a biblioteca…'));
-        loadSrd().then(() => drawList());
+        if (!srdLoading) loadSrd().then(() => { if (mode === 'srd') drawList(); });
         return;
       }
       const list = filtered(srd.monsters).sort((a, b) => crValue(a.cr) - crValue(b.cr) || a.name.localeCompare(b.name, 'pt-BR'));
