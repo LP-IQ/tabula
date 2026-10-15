@@ -171,6 +171,17 @@ function connect(token) {
   socket.on('chat', (m) => { if (chatReady) addMessage(m); });
   socket.on('token:moved', onTokenMoved);
   socket.on('ping', showPing);
+  socket.on('restored', (x) => { if (!app.isGM) toast(`↺ ${x.by} carregou um backup da campanha`, 'secret', 6000); });
+  socket.on('server:closing', (x) => {
+    document.getElementById('closed-overlay')?.remove();
+    document.body.append(h('div', { class: 'lightbox closed', id: 'closed-overlay' },
+      h('div', { class: 'login-card' },
+        h('h2', {}, 'Sessão encerrada'),
+        h('p', {}, x.by ? `${x.by} encerrou a sessão.` : 'A mesa foi fechada.'),
+        h('p', { class: 'muted' }, 'A campanha foi salva. Até a próxima!'),
+        h('button', { class: 'btn', onclick: () => location.reload() }, 'Tentar reconectar'))));
+  });
+  socket.on('connect', () => document.getElementById('closed-overlay')?.remove());
   socket.on('handout:new', (x) => {
     toast(`✉ Novo segredo: ${x.title}`, 'secret', 6000);
     queueRender();

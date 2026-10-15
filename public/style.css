@@ -563,3 +563,10 @@ details.block > summary::-webkit-details-marker { display: none; }
   .attack { grid-template-columns: 1fr 46px 64px auto auto auto; }
   .attack input.num { width: 46px; }
 }
+
+/* ----------------------------------------------------------- backups / sessão encerrada */
+.backup-list { max-height: 260px; overflow-y: auto; }
+.backup-list li { border-bottom: 1px solid var(--line-soft); padding: 5px 0; }
+.folder { overflow-wrap: anywhere; margin: 0; }
+.lightbox.closed { cursor: default; }
+.lightbox.closed .login-card { text-align: center; align-items: center; }

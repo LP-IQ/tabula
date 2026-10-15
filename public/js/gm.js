@@ -247,6 +247,87 @@ function charList(state) {
     }, name, owner, h('button', { class: 'btn sm', type: 'submit' }, 'Criar')));
 }
 
+// ------------------------------------------------------- sessão e backups
+const KIND = {
+  abertura: 'Abertura da mesa',
+  auto: 'Automático (30 min)',
+  encerramento: 'Mesa fechada',
+  'fim-da-sessao': 'Fim da sessão',
+  'antes-de-restaurar': 'Antes de restaurar',
+  manual: 'Manual',
+};
+const fmtWhen = (ts) => new Date(ts).toLocaleString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+
+function backupSection() {
+  const listEl = h('ul', { class: 'plain-list backup-list' }, h('li', { class: 'muted small' }, 'Carregando…'));
+  const folderEl = h('p', { class: 'muted small folder' });
+
+  const refresh = async () => {
+    const res = await emit('backup:list');
+    if (!res) return;
+    folderEl.textContent = `Pasta: ${res.folder}`;
+    setKids(listEl,
+      res.list.length ? null : h('li', { class: 'muted small' }, 'Nenhum ponto de backup ainda.'),
+      res.list.slice(0, 40).map((b) => h('li', { class: 'row gap' },
+        h('span', { class: 'grow' },
+          h('b', {}, fmtWhen(b.ts)),
+          h('small', { class: 'muted' }, ' · ' + (KIND[b.label] || b.label.replace(/-/g, ' ')))),
+        h('button', {
+          class: 'btn sm',
+          title: 'Voltar a campanha para este ponto',
+          onclick: async () => {
+            const ok = confirm(`Voltar a campanha para ${fmtWhen(b.ts)}?\n\nO estado de agora também fica guardado como backup ("Antes de restaurar"), então dá para desfazer.`);
+            if (ok && await emit('backup:restore', { file: b.file })) { toast('Backup restaurado', 'ok'); refresh(); }
+          },
+        }, 'Restaurar'))));
+  };
+
+  const loadFile = async () => {
+    const file = await pickFile('application/json,.json');
+    if (!file) return;
+    let obj;
+    try { obj = JSON.parse(await file.text()); } catch { return toast('Esse arquivo não é um backup válido', 'error'); }
+    if (!confirm(`Carregar "${file.name}"?\n\nA campanha atual será substituída (e guardada antes como backup).`)) return;
+    const r = await fetch('/api/restore', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-token': localStorage.getItem('tabula.token') || '' },
+      body: JSON.stringify(obj),
+    });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) return toast(j.error || 'Não consegui carregar o backup', 'error');
+    toast('Backup carregado', 'ok');
+    refresh();
+  };
+
+  const det = section('Sessão e backups', h('div', { class: 'stack' },
+    h('p', { class: 'hint' }, 'A campanha salva sozinha a cada alteração. Além disso, a mesa guarda pontos de backup ao abrir, a cada 30 min e ao fechar, para você voltar no tempo se precisar.'),
+    h('div', { class: 'row gap wrap' },
+      h('button', {
+        class: 'btn',
+        onclick: async () => {
+          const label = prompt('Nome do ponto de backup (opcional):', 'antes do chefão');
+          if (label === null) return;
+          const r = await emit('backup:create', { label });
+          if (r) { toast('Ponto de backup criado', 'ok'); refresh(); }
+        },
+      }, '💾 Criar ponto agora'),
+      h('button', { class: 'btn', onclick: loadFile }, '📂 Carregar arquivo…'),
+      h('button', { class: 'btn ghost', onclick: downloadBackup }, '⬇ Baixar')),
+    h('h4', {}, 'Pontos salvos'),
+    listEl,
+    folderEl,
+    h('button', {
+      class: 'btn primary',
+      onclick: async () => {
+        if (!confirm('Salvar e encerrar a sessão?\n\nA campanha é salva, um backup "Fim da sessão" é criado, os jogadores são avisados e a mesa fecha.')) return;
+        await emit('session:end');
+      },
+    }, '⏻ Salvar e encerrar a sessão'),
+    h('button', { class: 'btn ghost danger', onclick: () => confirm('Apagar todo o histórico de dados e mensagens?') && emit('chat:clear') }, 'Limpar histórico do chat')), false);
+  det.addEventListener('toggle', () => { if (det.open) refresh(); });
+  return det;
+}
+
 async function downloadBackup() {
   const r = await fetch('/api/backup', { headers: { 'x-token': localStorage.getItem('tabula.token') || '' } });
   if (!r.ok) return toast('Não consegui gerar o backup', 'error');
@@ -282,9 +363,7 @@ export function renderGM(state) {
       section('Jogadores e personagens', h('div', { class: 'stack' },
         h('h4', {}, 'Usuários'), slot('users'), userForm(),
         h('h4', {}, 'Personagens'), slot('chars'))),
-      section('Mesa', h('div', { class: 'stack' },
-        h('button', { class: 'btn', onclick: downloadBackup }, '⬇ Baixar backup da campanha'),
-        h('button', { class: 'btn ghost danger', onclick: () => confirm('Apagar todo o histórico de dados e mensagens?') && emit('chat:clear') }, 'Limpar histórico do chat')), false),
+      backupSection(),
     );
   }
   put('scenes', [state.scenes, state.activeSceneId], () => sceneList(state));

@@ -201,7 +201,8 @@ function canSeeMsg(user, m) {
 // --------------------------------------------------------------- app http
 const app = express();
 app.disable('x-powered-by');
-app.use(express.json({ limit: '1mb' }));
+const smallJson = express.json({ limit: '1mb' });
+app.use((req, res, next) => (req.path === '/api/restore' ? next() : smallJson(req, res, next)));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(store.UPLOADS, { maxAge: '7d' }));
 
@@ -276,6 +277,17 @@ app.post('/api/upload', auth, (req, res) => {
   });
 });
 
+// Carregar um arquivo de backup (.json baixado antes) — só o mestre
+app.post('/api/restore', express.json({ limit: '50mb' }), auth, (req, res) => {
+  if (req.user.role !== 'gm') return res.status(403).json({ error: 'Só o mestre' });
+  try {
+    restoreFrom(req.body, req.user);
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
+
 app.get('/api/backup', auth, (req, res) => {
   if (req.user.role !== 'gm') return res.status(403).json({ error: 'Só o mestre' });
   const { sessions, ...rest } = D();
@@ -323,6 +335,38 @@ function notifyHandout(h, prevRecipients) {
     const had = before.has('all') || before.has(u.id);
     if (now && !had) s.emit('handout:new', { id: h.id, title: h.title });
   });
+}
+
+// Volta a campanha para um backup. Antes, guarda o estado atual (para poder desfazer).
+function restoreFrom(obj, user) {
+  const before = store.snapshot('antes-de-restaurar');
+  store.replace(obj);
+  console.log(`  [backup] ${user.name} restaurou um backup (o estado anterior ficou em backups/${before})`);
+  eachSocket((s, u) => s.emit('chat:history', D().chat.filter((m) => canSeeMsg(u, m))));
+  for (const s of io.sockets.sockets.values()) {
+    if (!D().users.some((x) => x.id === s.data.userId)) s.disconnect(true);
+    else s.emit('restored', { by: user.name });
+  }
+  broadcastState();
+}
+
+let closing = false;
+function closeTable(reason, label) {
+  if (closing) return;
+  closing = true;
+  console.log('\n  Salvando a campanha…');
+  try {
+    store.flush();
+    if (D().users.length) {
+      const name = store.snapshot(label);
+      console.log(`  ✓ Campanha salva. Backup desta sessão: backups${path.sep}${name}`);
+    } else {
+      console.log('  ✓ Campanha salva.');
+    }
+  } catch (e) {
+    console.error('  [ERRO] ao salvar:', e.message);
+  }
+  console.log(`  ${reason}\n`);
 }
 
 const handlers = {
@@ -670,6 +714,29 @@ const handlers = {
     requireGM(user);
     D().compendium = D().compendium.filter((x) => x.id !== p.id);
   },
+
+  // ---------- backups e encerramento (mestre)
+  'backup:list'(user) {
+    requireGM(user);
+    return { silent: true, list: store.listBackups(), folder: store.BACKUPS };
+  },
+  'backup:create'(user, p) {
+    requireGM(user);
+    store.flush();
+    return { silent: true, file: store.snapshot(p.label || 'manual') };
+  },
+  'backup:restore'(user, p) {
+    requireGM(user);
+    restoreFrom(store.readBackup(p.file), user);
+    return { silent: true };
+  },
+  'session:end'(user) {
+    requireGM(user);
+    closeTable('O mestre encerrou a sessão pelo navegador. Até a próxima!', 'fim-da-sessao');
+    io.emit('server:closing', { by: user.name });
+    setTimeout(() => process.exit(0), 800);
+    return { silent: true };
+  },
 };
 
 function compendiumFields(f, base) {
@@ -719,11 +786,27 @@ io.on('connection', (socket) => {
 });
 
 function shutdown() {
-  try { store.flush(); } catch (e) { console.error(e); }
-  process.exit(0);
+  closeTable('A mesa foi fechada. Até a próxima!', 'encerramento');
+  io.emit('server:closing', {});
+  setTimeout(() => process.exit(0), 300);
 }
-process.on('SIGINT', shutdown);
+process.on('SIGINT', shutdown);   // Ctrl + C
 process.on('SIGTERM', shutdown);
+process.on('SIGHUP', shutdown);   // janela do Windows fechada no X
+
+// backup automático a cada 30 minutos, se algo mudou
+setInterval(() => {
+  if (store.changedSinceSnapshot && D().users.length) store.snapshot('auto');
+}, 30 * 60 * 1000).unref();
+
+server.on('error', (e) => {
+  if (e.code === 'EADDRINUSE') {
+    console.error(`\n  [ERRO] Já tem uma mesa aberta na porta ${PORT} neste computador.`);
+    console.error('  Feche a outra janela da mesa (ou rode: taskkill /IM node.exe /F) e tente de novo.\n');
+    process.exit(1);
+  }
+  throw e;
+});
 
 server.listen(PORT, () => {
   const os = require('os');
@@ -732,7 +815,9 @@ server.listen(PORT, () => {
   console.log('\n  Tábula está no ar!');
   console.log(`  Neste computador:   http://localhost:${PORT}`);
   if (lan.length) console.log(`  Na mesma rede/Wi-Fi: ${lan.join('  ')}`);
-  console.log(`  Dados salvos em:    ${store.FILE}\n`);
+  console.log(`  Campanha salva em:  ${store.DATA_DIR}`);
+  if (D().users.length) store.snapshot('abertura');
+  console.log('  (salva sozinha a cada alteração; pontos de backup ficam na pasta "backups")\n');
 });
 
 module.exports = { server };

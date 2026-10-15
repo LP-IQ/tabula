@@ -122,6 +122,27 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   check(a.last.compendium.length === 2, 'mestre libera página e ela aparece para os jogadores');
   check(!(await call(gm, 'compendium:create', { title: 'x', images: ['javascript:alert(1)'] })).ok, 'imagem com endereço inválido é recusada');
 
+  // backups
+  const bk = await call(gm, 'backup:create', { label: 'Antes do chefão!' });
+  check(bk.ok && /antes-do-chefao\.json$/.test(bk.file), 'mestre cria ponto de backup com nome');
+  check(!(await call(p, 'backup:list')).ok, 'jogador NÃO vê a lista de backups');
+  await call(gm, 'compendium:create', { title: 'Página nova depois do backup', visibility: 'all' });
+  await wait(50);
+  const pagesBefore = a.last.compendium.length;
+  let restoredMsg = null;
+  a.on('restored', (m) => { restoredMsg = m; });
+  check((await call(gm, 'backup:restore', { file: bk.file })).ok, 'mestre restaura o backup');
+  await wait(100);
+  check(a.last.compendium.length === pagesBefore - 1 && restoredMsg, 'campanha volta ao ponto salvo e jogadores são avisados');
+  const list = (await call(gm, 'backup:list')).list;
+  check(list.some((b) => b.label === 'antes-de-restaurar'), 'estado anterior fica guardado antes de restaurar');
+  check(!(await call(gm, 'backup:restore', { file: '../campaign.json' })).ok, 'nome de backup malicioso é recusado');
+  const bad = await post('/api/restore', { qualquer: 'coisa' }, setup.body.token);
+  check(bad.status === 400, 'arquivo que não é backup da Tábula é recusado');
+  const backupJson = await (await fetch(URL + '/api/backup', { headers: { 'x-token': setup.body.token } })).json();
+  check((await post('/api/restore', backupJson, setup.body.token)).status === 200, 'carregar arquivo de backup baixado funciona');
+  check((await post('/api/restore', backupJson, lp.body.token)).status === 403, 'jogador NÃO carrega backup');
+
   a.close();
   gm.close(); p.close();
   server.close();
