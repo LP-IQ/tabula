@@ -19,6 +19,8 @@ function defaults() {
     initiative: { entries: [], currentId: null, round: 1, active: false },
     handouts: [],       // { id, title, body, img, recipients: ['all' | userId], createdAt }
     chat: [],
+    journal: [],        // diário do grupo: { id, userId, title, body, img, createdAt, updatedAt }
+    compendium: [],     // { id, title, category, body, images: [], visibility: 'gm'|'all', createdAt, updatedAt }
   };
 }
 

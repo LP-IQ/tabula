@@ -2,6 +2,7 @@
 import { app, emit } from './core.js';
 import { $, h, chooseAndUpload, pickFile, uploadImage, avatar, isEditingIn, toast, setKids } from './util.js';
 import { viewCenter, fit } from './map.js';
+import { openSheet } from './sheet.js';
 
 const pane = $('#pane-gm');
 let built = false;
@@ -232,6 +233,10 @@ function charList(state) {
         'aria-label': `Dono de ${c.name}`,
         onchange: (e) => emit('character:update', { id: c.id, patch: { ownerId: e.target.value || null } }),
       }, h('option', { value: '' }, '— sem dono —'), players.map((u) => h('option', { value: u.id, selected: u.id === c.ownerId }, u.name))),
+      h('button', {
+        class: 'btn sm', title: `Abrir a ficha de ${c.name}`,
+        onclick: () => { openSheet(c.id); document.body.dispatchEvent(new CustomEvent('open-tab', { detail: 'sheet' })); },
+      }, 'Ficha'),
       h('button', { class: 'btn ghost sm', title: 'Apagar personagem', onclick: () => confirm(`Apagar ${c.name}? (a ficha some)`) && emit('character:delete', { id: c.id }) }, '✕')))),
     h('form', {
       class: 'row gap',

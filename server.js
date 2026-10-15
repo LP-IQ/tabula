@@ -177,6 +177,8 @@ function viewFor(u) {
       .filter((h) => h.recipients.includes('all') || h.recipients.includes(u.id))
       .map(({ id, title, body, img, createdAt }) => ({ id, title, body, img, createdAt }));
 
+  const compendium = gm ? d.compendium : d.compendium.filter((x) => x.visibility === 'all');
+
   return {
     me: { id: u.id, name: u.name, role: u.role, color: u.color },
     users,
@@ -186,6 +188,8 @@ function viewFor(u) {
     activeSceneId: d.activeSceneId,
     initiative,
     handouts,
+    journal: d.journal,
+    compendium,
   };
 }
 
@@ -615,7 +619,68 @@ const handlers = {
     requireGM(user);
     D().handouts = D().handouts.filter((h) => h.id !== p.id);
   },
+
+  // ---------- diário do grupo (todos escrevem; autor ou mestre editam/apagam)
+  'journal:create'(user, p) {
+    if (user.role === 'viewer') throw new Error('O telão não escreve no diário');
+    const body = str(p.body, 20000).trim();
+    const img = imgUrl(p.img || '');
+    if (!body && !img) throw new Error('Escreva alguma coisa antes de publicar');
+    const e = {
+      id: uid(), userId: user.id, title: str(p.title, 120).trim(), body, img,
+      createdAt: Date.now(), updatedAt: null,
+    };
+    D().journal.unshift(e);
+    return { id: e.id };
+  },
+  'journal:update'(user, p) {
+    const e = D().journal.find((x) => x.id === p.id);
+    if (!e) throw new Error('Entrada não encontrada');
+    if (e.userId !== user.id && user.role !== 'gm') throw new Error('Só quem escreveu (ou o mestre) pode editar');
+    const f = p.patch || {};
+    if (f.title !== undefined) e.title = str(f.title, 120).trim();
+    if (f.body !== undefined) e.body = str(f.body, 20000).trim();
+    if (f.img !== undefined) e.img = imgUrl(f.img);
+    e.updatedAt = Date.now();
+  },
+  'journal:delete'(user, p) {
+    const e = D().journal.find((x) => x.id === p.id);
+    if (!e) return;
+    if (e.userId !== user.id && user.role !== 'gm') throw new Error('Só quem escreveu (ou o mestre) pode apagar');
+    D().journal = D().journal.filter((x) => x.id !== p.id);
+  },
+
+  // ---------- compêndio (só o mestre escreve; cada página é "só mestre" ou "todos")
+  'compendium:create'(user, p) {
+    requireGM(user);
+    const page = {
+      id: uid(), createdAt: Date.now(), updatedAt: Date.now(),
+      ...compendiumFields(p, { title: 'Sem título', category: 'Geral', body: '', images: [], visibility: 'gm' }),
+    };
+    D().compendium.unshift(page);
+    return { id: page.id };
+  },
+  'compendium:update'(user, p) {
+    requireGM(user);
+    const page = D().compendium.find((x) => x.id === p.id);
+    if (!page) throw new Error('Página não encontrada');
+    Object.assign(page, compendiumFields(p.patch || {}, page), { updatedAt: Date.now() });
+  },
+  'compendium:delete'(user, p) {
+    requireGM(user);
+    D().compendium = D().compendium.filter((x) => x.id !== p.id);
+  },
 };
+
+function compendiumFields(f, base) {
+  return {
+    title: f.title !== undefined ? str(f.title, 120).trim() || 'Sem título' : base.title,
+    category: f.category !== undefined ? str(f.category, 40).trim() || 'Geral' : base.category,
+    body: f.body !== undefined ? str(f.body, 50000) : base.body,
+    images: f.images !== undefined ? (Array.isArray(f.images) ? f.images : []).slice(0, 20).map(imgUrl).filter(Boolean) : base.images,
+    visibility: f.visibility !== undefined ? (f.visibility === 'all' ? 'all' : 'gm') : base.visibility,
+  };
+}
 
 io.use((socket, next) => {
   const u = userByToken(socket.handshake.auth?.token);

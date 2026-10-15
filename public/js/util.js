@@ -112,3 +112,12 @@ export function setKids(el, ...children) {
     .map((c) => (c instanceof Node ? c : String(c))));
   return el;
 }
+
+// Mostra uma imagem em tela cheia (toque/clique fecha)
+export function openImage(src) {
+  const box = h('div', { class: 'lightbox', role: 'dialog', 'aria-label': 'Imagem ampliada', onclick: () => box.remove() },
+    h('img', { src, alt: '' }));
+  const onKey = (e) => { if (e.key === 'Escape') { box.remove(); document.removeEventListener('keydown', onKey); } };
+  document.addEventListener('keydown', onKey);
+  document.body.append(box);
+}

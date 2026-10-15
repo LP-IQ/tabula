@@ -31,14 +31,61 @@ function available() {
   return app.isGM ? s.characters : s.characters.filter((c) => c.ownerId === s.me.id);
 }
 
-function patch(c, p) { return emit('character:update', { id: c.id, patch: p }); }
+// ---------------------------------------------- salvamento (automático)
+const STATUS = { editing: '✎ Editando…', saving: 'Salvando…', saved: '✓ Salvo', error: '⚠ Não salvou' };
+let pendingSaves = 0;
+function setStatus(kind) {
+  const el = pane.querySelector('.save-status');
+  if (!el) return;
+  el.dataset.kind = kind;
+  el.textContent = STATUS[kind];
+}
+
+function patch(c, p) {
+  const id = typeof c === 'string' ? c : c.id;
+  pendingSaves += 1;
+  setStatus('saving');
+  return emit('character:update', { id, patch: p }).then((r) => {
+    pendingSaves -= 1;
+    if (!pendingSaves) setStatus(r ? 'saved' : 'error');
+    return r;
+  });
+}
 
 const textSenders = new Map();
 function textSender(field) {
   if (!textSenders.has(field)) {
-    textSenders.set(field, debounce((id, value) => emit('character:update', { id, patch: { [field]: value } }), 700));
+    textSenders.set(field, debounce((id, value) => patch(id, { [field]: value }), 700));
   }
   return textSenders.get(field);
+}
+
+// Abre a ficha de um personagem (usado pela fileira de retratos e pelo painel do mestre)
+export function openSheet(id) {
+  currentId = id;
+  localStorage.setItem('tabula.sheet', id);
+  if (app.state) renderSheet(app.state);
+}
+
+let stripKey = '';
+function renderStrip(c) {
+  const slot = pane.querySelector('.char-strip');
+  if (!slot) return;
+  const chars = available();
+  const key = JSON.stringify([c.id, chars.map((x) => [x.id, x.name, x.img, x.ownerId])]);
+  if (key === stripKey) return;
+  stripKey = key;
+  slot.hidden = chars.length < 2;
+  setKids(slot, chars.map((x) => {
+    const owner = x.ownerId ? app.user(x.ownerId) : null;
+    return h('button', {
+      class: 'char-pick' + (x.id === c.id ? ' on' : ''),
+      role: 'tab',
+      'aria-selected': String(x.id === c.id),
+      title: owner ? `${x.name} — ${owner.name}` : `${x.name} (sem dono)`,
+      onclick: () => openSheet(x.id),
+    }, avatar(x.img, x.name, owner?.color, 40), h('span', {}, x.name));
+  }));
 }
 
 // ------------------------------------------------------------------ helpers
@@ -53,7 +100,7 @@ function field(c, key, opts = {}) {
     inputmode: opts.type === 'number' ? 'numeric' : null,
   });
   if (opts.multiline) {
-    el.addEventListener('input', () => textSender(key)(c.id, el.value));
+    el.addEventListener('input', () => { setStatus('editing'); textSender(key)(c.id, el.value); });
     el.addEventListener('blur', () => textSender(key).flush(c.id, el.value));
   } else {
     el.addEventListener('change', () => {
@@ -77,13 +124,8 @@ function initTotal(c) { return abilityMod(c.attrs.dex) + (c.initBonus || 0); }
 function build(c) {
   builtFor = c.id;
   attacksKey = '';
-  const chars = available();
-
-  const picker = chars.length > 1 ? h('select', {
-    class: 'sheet-picker',
-    'aria-label': 'Escolher ficha',
-    onchange: (e) => { currentId = e.target.value; localStorage.setItem('tabula.sheet', currentId); renderSheet(app.state); },
-  }, chars.map((x) => h('option', { value: x.id, selected: x.id === c.id }, x.name + (app.isGM && x.ownerId ? ` — ${app.user(x.ownerId)?.name || ''}` : '')))) : null;
+  stripKey = '';
+  const picker = h('div', { class: 'char-strip', role: 'tablist', 'aria-label': 'Escolher ficha', hidden: true });
 
   const avatarBtn = h('button', {
     class: 'avatar-btn', title: 'Trocar imagem (também vira o token)',
@@ -118,13 +160,15 @@ function build(c) {
           field(c, 'race', { placeholder: 'Raça', label: 'Raça' }),
           field(c, 'class', { placeholder: 'Classe', label: 'Classe' }),
           h('label', { class: 'mini' }, 'Nível', field(c, 'level', { type: 'number', class: 'num', label: 'Nível' }))),
-        h('button', {
-          class: 'link',
-          onclick: () => {
-            if (focusToken(c.id)) document.body.dispatchEvent(new CustomEvent('show-map'));
-            else toast('Esse personagem não está na cena atual');
-          },
-        }, '◎ Achar no mapa'))),
+        h('div', { class: 'row gap wrap sheet-meta' },
+          h('button', {
+            class: 'link',
+            onclick: () => {
+              if (focusToken(c.id)) document.body.dispatchEvent(new CustomEvent('show-map'));
+              else toast('Esse personagem não está na cena atual');
+            },
+          }, '◎ Achar no mapa'),
+          h('span', { class: 'save-status', dataset: { kind: 'saved' }, title: 'A ficha salva sozinha a cada alteração' }, '✓ Salvo')))),
 
     h('div', { class: 'stat-row' },
       h('div', { class: 'stat' }, h('small', {}, 'CA'), field(c, 'ac', { type: 'number', class: 'big num', label: 'Classe de Armadura' })),
@@ -279,8 +323,6 @@ export function renderSheet(state) {
   let c = chars.find((x) => x.id === currentId) || chars[0];
   currentId = c.id;
   if (builtFor !== c.id || !pane.querySelector('.sheet-head')) build(c);
-  // atualiza lista do seletor sem perder a seleção
-  const picker = pane.querySelector('.sheet-picker');
-  if (picker && !isEditingIn(picker.parentElement) && picker.options.length !== chars.length) build(c);
+  renderStrip(c);
   fill(c);
 }

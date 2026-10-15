@@ -7,6 +7,8 @@ import { initChat, setHistory, addMessage, updateChatLabels, scrollChatToEnd } f
 import { renderInitiative } from './initiative.js';
 import { renderHandouts, markAllSeen, unseenCount } from './handouts.js';
 import { renderGM } from './gm.js';
+import { renderJournal, resetJournal } from './journal.js';
+import { renderCompendium } from './compendium.js';
 
 const TOKEN_KEY = 'tabula.token';
 const mobile = window.matchMedia('(max-width: 820px)');
@@ -18,6 +20,8 @@ const TABS = [
   { id: 'chat', label: 'Dados', icon: '🎲' },
   { id: 'init', label: 'Iniciativa', icon: '⚔' },
   { id: 'handouts', label: 'Segredos', icon: '✉' },
+  { id: 'journal', label: 'Diário', icon: '📖' },
+  { id: 'compendium', label: 'Compêndio', icon: '📚' },
   { id: 'gm', label: 'Mestre', icon: '👑', gmOnly: true },
 ];
 let sideTab = localStorage.getItem('tabula.tab') || 'sheet';
@@ -40,12 +44,25 @@ function selectTab(id) {
   }
   if (activeTab() === 'chat') { unreadChat = 0; scrollChatToEnd(); }
   if (activeTab() === 'handouts') { renderHandouts(app.state, true); markAllSeen(); }
+  if (activeTab() === 'journal') markJournalSeen();
   layoutTabs();
+}
+
+// diário: conta entradas novas escritas por outras pessoas desde a última visita à aba
+const journalSeenKey = () => `tabula.journalSeen.${app.me?.id}`;
+function markJournalSeen() {
+  localStorage.setItem(journalSeenKey(), String(Date.now()));
+}
+function journalUnseen() {
+  if (!app.state) return 0;
+  const seen = Number(localStorage.getItem(journalSeenKey()) || 0);
+  return app.state.journal.filter((x) => x.userId !== app.me.id && x.createdAt > seen).length;
 }
 
 function badgeFor(id) {
   if (id === 'chat') return unreadChat;
   if (id === 'handouts') return unseenCount();
+  if (id === 'journal') return activeTab() === 'journal' ? 0 : journalUnseen();
   return 0;
 }
 
@@ -66,6 +83,7 @@ function layoutTabs() {
 }
 mobile.addEventListener('change', () => { layoutTabs(); setTimeout(fit, 50); });
 document.body.addEventListener('show-map', () => { if (mobile.matches) selectTab('map'); });
+document.body.addEventListener('open-tab', (e) => selectTab(e.detail));
 
 // --------------------------------------------------------------- presença
 function renderPresence(state) {
@@ -93,7 +111,10 @@ function renderAll() {
     renderInitiative(s);
     renderHandouts(s, activeTab() === 'handouts');
     renderGM(s);
+    renderJournal(s);
+    renderCompendium(s);
     updateChatLabels();
+    if (activeTab() === 'journal') markJournalSeen();
   }
   layoutTabs();
 }
@@ -139,6 +160,7 @@ function connect(token) {
       $('#login').hidden = true;
       $('#app').hidden = false;
       initChat(onChatMessage);
+      resetJournal();
       chatReady = true;
       if (pendingHistory) { setHistory(pendingHistory); pendingHistory = null; }
       if (state.me.role === 'viewer') mobileTab = 'map';

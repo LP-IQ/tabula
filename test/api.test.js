@@ -99,6 +99,30 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   await wait(50);
   check(p.last.initiative.active && p.last.initiative.round === 1, 'combate iniciado e visível ao jogador');
 
+  // diário
+  const j = await call(p, 'journal:create', { title: 'Sessão 1', body: 'Acordamos na torre.' });
+  check(j.ok, 'jogador escreve no diário');
+  const lb = await post('/api/login', { userId: and.id, password: 'bao123' });
+  const a = await connect(lb.body.token);
+  check(a.last.journal.length === 1 && a.last.journal[0].body === 'Acordamos na torre.', 'outro jogador lê o diário');
+  check(!(await call(a, 'journal:update', { id: j.id, patch: { body: 'hackeado' } })).ok, 'jogador NÃO edita entrada alheia do diário');
+  check(!(await call(a, 'journal:delete', { id: j.id })).ok, 'jogador NÃO apaga entrada alheia do diário');
+  check((await call(p, 'journal:update', { id: j.id, patch: { body: 'Acordamos na torre dos sonhos.' } })).ok, 'autor edita a própria entrada');
+  check((await call(gm, 'journal:delete', { id: j.id })).ok, 'mestre pode apagar qualquer entrada');
+
+  // compêndio
+  const cp1 = await call(gm, 'compendium:create', { title: 'Tabela de XP', category: 'Regras', body: 'nível 2: 300 XP', visibility: 'all' });
+  const cp2 = await call(gm, 'compendium:create', { title: 'Plano do Oziel', category: 'Segredos do mestre', body: 'spoiler' });
+  await wait(50);
+  check(cp1.ok && cp2.ok && gm.last.compendium.length === 2, 'mestre cria páginas no compêndio');
+  check(a.last.compendium.length === 1 && a.last.compendium[0].title === 'Tabela de XP', 'jogador só vê páginas públicas do compêndio');
+  check(!(await call(a, 'compendium:create', { title: 'x' })).ok, 'jogador NÃO cria páginas no compêndio');
+  await call(gm, 'compendium:update', { id: cp2.id, patch: { visibility: 'all' } });
+  await wait(50);
+  check(a.last.compendium.length === 2, 'mestre libera página e ela aparece para os jogadores');
+  check(!(await call(gm, 'compendium:create', { title: 'x', images: ['javascript:alert(1)'] })).ok, 'imagem com endereço inválido é recusada');
+
+  a.close();
   gm.close(); p.close();
   server.close();
   require('../server/store').flush();
