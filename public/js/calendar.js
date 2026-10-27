@@ -128,7 +128,7 @@ export function renderUpdate(state) {
   if (!u || !app.isGM || dismissed === u.latest) { banner.hidden = true; return; }
   banner.hidden = false;
   setKids(banner,
-    h('span', {}, '★ Versão ', h('b', {}, u.latest), ` disponível (você tem ${u.current}). Feche a mesa e dê dois cliques em `, h('code', {}, 'atualizar.bat'), '.'),
+    h('span', {}, '★ Versão ', h('b', {}, u.latest), ` disponível (você tem ${u.current}). Feche a mesa e rode `, h('code', {}, u.script || 'atualizar.bat'), '.'),
     h('a', { href: 'https://github.com/LP-IQ/tabula/blob/main/CHANGELOG.md', target: '_blank', rel: 'noopener' }, 'O que mudou'),
     h('button', {
       class: 'btn ghost sm', title: 'Esconder este aviso',

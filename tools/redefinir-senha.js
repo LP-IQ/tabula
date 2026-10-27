@@ -1,5 +1,5 @@
 // Redefine a senha de qualquer usuário, inclusive do mestre.
-// Rode com a mesa FECHADA:  node tools/redefinir-senha.js   (ou dois cliques em redefinir-senha.bat)
+// Rode com a mesa FECHADA:  node tools/redefinir-senha.js   (ou redefinir-senha.bat no Windows, ./redefinir-senha.sh no Linux e no Mac)
 const net = require('net');
 const crypto = require('crypto');
 const readline = require('readline/promises');

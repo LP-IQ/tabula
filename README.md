@@ -25,25 +25,33 @@ Página do projeto: **<https://lp-iq.github.io/tabula/>**
 | 📚 **Compêndio** | Páginas de consulta do mestre (tabelas de XP, preços, locais), só dele ou visíveis a todos |
 | 🐉 **Bestiário** | Fichas de NPCs e monstros com ataques roláveis, 334 monstros do SRD prontos, **ajuste de ND**, medidor de dificuldade do encontro e imagens em lote |
 | 💾 **Backups** | Salva a cada alteração, guarda pontos de backup e restaura com um clique |
-| ⬆ **Atualizar** | `atualizar.bat` baixa a versão nova do GitHub sem mexer na campanha; o mestre é avisado quando sai uma |
+| ⬆ **Atualizar** | `atualizar.bat` (ou `./atualizar.sh`) baixa a versão nova do GitHub sem mexer na campanha; o mestre é avisado quando sai uma |
 | 📺 **Telão** | Usuário que só vê o mapa, para uma TV no jogo presencial |
 
 <img src="docs/img/celular-v5.png" alt="Jogador no celular" width="260" align="right">
 
 ## Começar
 
-1. Instale o [Node.js](https://nodejs.org) (versão LTS).
+Funciona no **Windows**, no **Linux** e no **Mac**. Só o mestre instala.
+
+1. Instale o [Node.js](https://nodejs.org) (versão LTS, 18 ou mais nova).
 2. Baixe a última versão em **Releases**, ou o código em **Code → Download ZIP**, e descompacte.
-3. Dê dois cliques em `instalar.bat` (uma vez só).
-4. Para jogar: `iniciar.bat` (mesma casa / mesmo Wi-Fi) ou `online.bat` (amigos em outras casas).
-5. Para atualizar no futuro: feche a mesa e rode `atualizar.bat`.
+3. Instale (uma vez só) e jogue:
+
+| | Windows (dois cliques) | Linux e Mac (no terminal) |
+|---|---|---|
+| Instalar | `instalar.bat` | `./instalar.sh` |
+| Jogar em casa / mesmo Wi-Fi | `iniciar.bat` | `./iniciar.sh` |
+| Jogar pela internet | `online.bat` | `./online.sh` |
+| Atualizar (mesa fechada) | `atualizar.bat` | `./atualizar.sh` |
 
 O passo a passo completo, incluindo o jogo online e a resolução de problemas, está em
-**[docs/instalacao.md](docs/instalacao.md)**.
+**[docs/instalacao.md](docs/instalacao.md)** (Windows) e **[docs/instalacao-linux.md](docs/instalacao-linux.md)** (Linux e Mac).
 
 ## Documentação
 
 - **[Instalação e uso no Windows](docs/instalacao.md)**: instalar, jogar online e presencial, atualizar de versão, problemas comuns
+- **[Instalação e uso no Linux e no Mac](docs/instalacao-linux.md)**: o mesmo, com os atalhos `.sh`
 - **[Guia do mestre](docs/guia-do-mestre.md)**: preparar a mesa, cenas e grade, tokens, segredos, compêndio, backups
 - **[Guia do jogador](docs/guia-do-jogador.md)**: para mandar aos jogadores (entrar, ficha, dados, diário)
 - **[Desenvolvimento](docs/desenvolvimento.md)**: como o código está organizado, testes e como lançar uma versão nova

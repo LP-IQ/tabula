@@ -1,3 +1,6 @@
 node_modules/
-# só a pasta de dados da campanha na raiz (não a public/data, que tem a biblioteca de monstros)
 /data/
+# Linux/Mac: registros do online.sh e o cloudflared baixado por ele
+/tabula.log
+/tunel.log
+/cloudflared

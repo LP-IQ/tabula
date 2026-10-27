@@ -34,6 +34,7 @@ test/api.test.js     teste automático do servidor (npm test)
 tools/redefinir-senha.js   redefine a senha de um usuário (mesa fechada)
 tools/srd/converter.py     converte os monstros do 5e-database para o formato da Tábula (com traduções)
 *.bat                atalhos para Windows (instalar, iniciar, online, atualizar, redefinir-senha)
+*.sh                 os mesmos atalhos para Linux e Mac (bash; testados também com o dash)
 ```
 
 ## Como funciona
@@ -69,7 +70,8 @@ public/data/srd-monstros.json`
 | Variável | Padrão | Para quê |
 |---|---|---|
 | `PORT` | `3000` | porta do servidor |
-| `TABULA_DATA` | `./data` (o `iniciar.bat` usa `..\campanha`) | onde fica a campanha |
+| `TABULA_DATA` | `./data` (o `iniciar.bat` e o `iniciar.sh` usam `../campanha`) | onde fica a campanha |
+| `TABULA_SEM_NAVEGADOR` | — | o `iniciar.sh` não abre o navegador (útil num servidor sem tela) |
 | `TABULA_NO_UPDATE_CHECK` | — | se definida, não consulta o GitHub atrás de versão nova |
 
 ## Testes
@@ -86,11 +88,17 @@ calendário e descansos.
 
 1. Faça as mudanças e rode `npm test`.
 2. Suba o número em `package.json` (`version`). É ele que a mesa compara com o GitHub para avisar o
-   mestre, e o `atualizar.bat` baixa o que estiver na branch `main`.
+   mestre, e o `atualizar.bat`/`atualizar.sh` baixa o que estiver na branch `main` (só se for mais nova).
 3. Atualize o `CHANGELOG.md`.
 4. Faça o commit e crie uma tag: `git tag v4` (no GitHub Desktop: *History* → botão direito no commit → *Create Tag*).
 5. No GitHub, em **Releases → Draft a new release**, escolha a tag e anexe um zip da pasta
    (sem `node_modules` e sem `data`) com o nome `Tabula_v4.zip`.
+
+## Finais de linha e permissões
+
+- Os `.bat` precisam de CRLF; o `.gitattributes` os guarda como estão (`-text`), e o ZIP do GitHub sai certo.
+- Os `.sh` precisam de LF e da permissão de execução: ao criar um novo, `git update-index --chmod=+x arquivo.sh`.
+  O `instalar.sh` e o `atualizar.sh` também rodam `chmod +x *.sh`, para o caso de o descompactador tirar a permissão.
 
 ## Página do projeto
 

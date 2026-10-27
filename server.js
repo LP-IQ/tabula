@@ -226,7 +226,7 @@ function viewFor(u) {
     compendium,
     monsters: gm ? d.monsters : [],
     calendar: d.calendar,
-    update: gm && latestVersion && newer(latestVersion, pkg.version) ? { current: pkg.version, latest: latestVersion } : null,
+    update: gm && latestVersion && newer(latestVersion, pkg.version) ? { current: pkg.version, latest: latestVersion, script: UPDATE_SCRIPT } : null,
   };
 }
 
@@ -1088,6 +1088,9 @@ io.on('connection', (socket) => {
 // ------------------------------------------------- versão nova no GitHub
 const REPO_RAW = process.env.TABULA_REPO_RAW || 'https://raw.githubusercontent.com/LP-IQ/tabula/main/package.json';
 let latestVersion = null;
+// nome do atalho de atualização em cada sistema (Windows: .bat; Linux e Mac: .sh)
+const WIN = process.platform === 'win32';
+const UPDATE_SCRIPT = WIN ? 'atualizar.bat' : './atualizar.sh';
 function newer(a, b) {
   const pa = String(a).split('.').map(Number), pb = String(b).split('.').map(Number);
   for (let i = 0; i < 3; i++) { if ((pa[i] || 0) !== (pb[i] || 0)) return (pa[i] || 0) > (pb[i] || 0); }
@@ -1100,7 +1103,7 @@ async function checkUpdate() {
     if (!r.ok) return;
     const v = (await r.json()).version;
     if (v && v !== latestVersion) { latestVersion = v; broadcastState(); }
-    if (newer(v, pkg.version)) console.log(`  ★ Versão nova disponível: ${v} (você tem ${pkg.version}). Feche a mesa e rode atualizar.bat`);
+    if (newer(v, pkg.version)) console.log(`  ★ Versão nova disponível: ${v} (você tem ${pkg.version}). Feche a mesa e rode ${UPDATE_SCRIPT}`);
   } catch { /* sem internet: tudo bem */ }
 }
 setTimeout(checkUpdate, 3000).unref();
@@ -1123,7 +1126,9 @@ setInterval(() => {
 server.on('error', (e) => {
   if (e.code === 'EADDRINUSE') {
     console.error(`\n  [ERRO] Já tem uma mesa aberta na porta ${PORT} neste computador.`);
-    console.error('  Feche a outra janela da mesa (ou rode: taskkill /IM node.exe /F) e tente de novo.\n');
+    console.error(WIN
+      ? '  Feche a outra janela da mesa (ou rode: taskkill /IM node.exe /F) e tente de novo.\n'
+      : '  Feche o outro terminal da mesa (ou rode: pkill -f "node server.js") e tente de novo.\n');
     process.exit(1);
   }
   throw e;

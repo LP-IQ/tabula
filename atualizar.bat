@@ -41,7 +41,9 @@ if not exist "%TMPD%\tabula-main\server.js" goto semrede
 for /f "usebackq delims=" %%v in (`node -p "require(process.argv[1]).version" "%TMPD%\tabula-main\package.json"`) do set "NOVA=%%v"
 echo       Versão no GitHub: %NOVA%
 
-if /i "%ATUAL%"=="%NOVA%" (
+rem só atualiza se a do GitHub for mais nova
+node -e "const [a,b]=process.argv.slice(1).map(v=>v.split('.').map(Number));for(let i=0;i<3;i++){if((b[i]||0)!==(a[i]||0))process.exit((b[i]||0)>(a[i]||0)?0:1)}process.exit(1)" "%ATUAL%" "%NOVA%"
+if errorlevel 1 (
   echo.
   echo  Você já está na versão mais nova. Nada a fazer.
   goto fim

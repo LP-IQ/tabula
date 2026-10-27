@@ -1,5 +1,16 @@
 # Histórico de versões
 
+## v5.1 — 27/10/2026
+**Novidades**
+- **Linux e Mac**: atalhos `instalar.sh`, `iniciar.sh`, `online.sh`, `atualizar.sh` e `redefinir-senha.sh`,
+  equivalentes aos `.bat`. O `online.sh` baixa o `cloudflared` sozinho na primeira vez, abre a mesa e o link
+  num terminal só e mostra o endereço para os jogadores; Ctrl + C fecha tudo salvando a campanha.
+  Guia novo: [docs/instalacao-linux.md](docs/instalacao-linux.md).
+- O aviso de versão nova e as mensagens da mesa citam o atalho certo para o sistema.
+
+**Correções**
+- O `atualizar.bat` só atualiza se a versão do GitHub for **mais nova** (antes, bastava ser diferente).
+
 ## v5 — 27/10/2026
 **Novidades no mapa**
 - **Névoa de guerra**: na ferramenta 🌫 (só o mestre), ligue a névoa e revele ou esconda retângulos e

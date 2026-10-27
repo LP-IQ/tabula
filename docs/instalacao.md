@@ -1,5 +1,7 @@
 # Instalação e uso no Windows
 
+> Usa **Linux ou Mac**? Veja [instalacao-linux.md](instalacao-linux.md).
+
 > Os **jogadores não instalam nada**: abrem o link no navegador (Chrome, Edge, Firefox ou celular).
 > Este guia é para quem **hospeda** a mesa, ou seja, o mestre.
 
