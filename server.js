@@ -8,6 +8,8 @@ const multer = require('multer');
 const { Server } = require('socket.io');
 const store = require('./server/store');
 const { roll } = require('./server/dice');
+const world = require('./server/world');
+const pkg = require('./package.json');
 
 const PORT = Number(process.env.PORT) || 3000;
 const D = () => store.data;
@@ -77,6 +79,7 @@ function newCharacter(name, ownerId) {
     attrs: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
     saves: {}, skills: {}, attacks: [],
     features: '', spells: '', inventory: '', notes: '',
+    ...world.characterDefaults(),
   };
 }
 
@@ -103,7 +106,36 @@ const CHAR_FIELDS = {
   spells: (v) => str(v),
   inventory: (v) => str(v),
   notes: (v) => str(v),
+  conditions: (v) => [...new Set((Array.isArray(v) ? v : []).filter((c) => world.CONDITIONS.includes(c)))],
+  slots: (v) => Array.from({ length: 9 }, (_, i) => {
+    const max = int(v?.[i]?.max, 0, 9);
+    return { max, used: int(v?.[i]?.used, 0, max) };
+  }),
+  hitDie: (v) => (['d6', 'd8', 'd10', 'd12'].includes(v) ? v : 'd8'),
+  hdUsed: (v) => int(v, 0, 20),
+  coins: (v) => Object.fromEntries(['pc', 'pp', 'pe', 'po', 'pl'].map((k) => [k, int(v?.[k], 0, 9999999)])),
+  xp: (v) => int(v, 0, 9999999),
+  inspiration: (v) => !!v,
+  deathSaves: (v) => ({ s: int(v?.s, 0, 3), f: int(v?.f, 0, 3) }),
+  // definidos pelo mestre (o jogador só vê)
+  aspect: (v) => ({ month: str(v?.month, 40), name: str(v?.name, 80), base: str(v?.base, 2000), upgraded: str(v?.upgraded, 2000) }),
+  ring: (v) => ({ name: str(v?.name, 80), base: str(v?.base, 2000), upgraded: str(v?.upgraded, 2000) }),
 };
+const GM_ONLY_CHAR = new Set(['aspect', 'ring']);
+
+// fichas e cenas antigas ganham os campos novos ao carregar
+function migrate() {
+  const d = D();
+  for (const c of d.characters) for (const [k, v] of Object.entries(world.characterDefaults())) if (c[k] === undefined) c[k] = v;
+  for (const s of d.scenes) {
+    if (!s.fog) s.fog = { enabled: false, ops: [] };
+    if (!s.drawings) s.drawings = [];
+    for (const t of s.tokens) if (!t.conditions) t.conditions = [];
+  }
+  d.calendar = world.normalizeCalendar(d.calendar);
+  for (const h of d.handouts) if (h.queuedFor === undefined) { h.queuedFor = null; h.order = 0; }
+}
+migrate();
 
 function activeScene() {
   return D().scenes.find((s) => s.id === D().activeSceneId) || null;
@@ -150,7 +182,7 @@ function viewFor(u) {
 
   const characters = d.characters.map((c) => (gm || c.ownerId === u.id ? c : {
     id: c.id, name: c.name, img: c.img, ownerId: c.ownerId, class: c.class, race: c.race, level: c.level,
-    hp: c.hp, hpMax: c.hpMax, hpTemp: c.hpTemp,
+    hp: c.hp, hpMax: c.hpMax, hpTemp: c.hpTemp, conditions: c.conditions,
   }));
 
   const act = activeScene();
@@ -158,8 +190,10 @@ function viewFor(u) {
   if (act) {
     scene = {
       ...act,
+      // jogador não recebe NPC oculto nem NPC escondido pela névoa
       tokens: act.tokens
         .filter((t) => gm || !t.hidden)
+        .filter((t) => gm || t.characterId || !world.isCovered(act.fog, t.x + (t.size * act.gridSize) / 2, t.y + (t.size * act.gridSize) / 2))
         .map((t) => {
           if (gm || t.characterId) return t;
           const { hp, hpMax, monsterId, ...rest } = t; // jogador não vê PV exato nem a ficha do NPC
@@ -172,7 +206,7 @@ function viewFor(u) {
   const initiative = { ...ini, entries: ini.entries.filter((e) => gm || !e.hidden) };
 
   const handouts = gm
-    ? d.handouts
+    ? d.handouts.slice().sort((a, b) => (a.queuedFor && b.queuedFor ? a.order - b.order : 0))
     : d.handouts
       .filter((h) => h.recipients.includes('all') || h.recipients.includes(u.id))
       .map(({ id, title, body, img, createdAt }) => ({ id, title, body, img, createdAt }));
@@ -191,6 +225,8 @@ function viewFor(u) {
     journal: d.journal,
     compendium,
     monsters: gm ? d.monsters : [],
+    calendar: d.calendar,
+    update: gm && latestVersion && newer(latestVersion, pkg.version) ? { current: pkg.version, latest: latestVersion } : null,
   };
 }
 
@@ -342,6 +378,7 @@ function notifyHandout(h, prevRecipients) {
 function restoreFrom(obj, user) {
   const before = store.snapshot('antes-de-restaurar');
   store.replace(obj);
+  migrate();
   console.log(`  [backup] ${user.name} restaurou um backup (o estado anterior ficou em backups/${before})`);
   eachSocket((s, u) => s.emit('chat:history', D().chat.filter((m) => canSeeMsg(u, m))));
   for (const s of io.sockets.sockets.values()) {
@@ -416,6 +453,7 @@ const handlers = {
     if (!gm && c.ownerId !== user.id) throw new Error('Esse personagem não é seu');
     const patch = p.patch || {};
     if ('ownerId' in patch) requireGM(user);
+    if (!gm && Object.keys(patch).some((k) => GM_ONLY_CHAR.has(k))) throw new Error('O aspecto e o anel são definidos pelo mestre');
     for (const [k, v] of Object.entries(patch)) {
       if (k === 'ownerId') {
         requireGM(user);
@@ -439,6 +477,7 @@ const handlers = {
     const s = {
       id: uid(), name: str(p.name, 80).trim() || 'Nova cena', img: imgUrl(p.img),
       gridSize: num(p.gridSize, 10, 1000, 70), gridOffsetX: 0, gridOffsetY: 0, showGrid: true, snap: true, tokens: [],
+      fog: { enabled: false, ops: [] }, drawings: [],
     };
     D().scenes.push(s);
     if (!D().activeSceneId) D().activeSceneId = s.id;
@@ -482,7 +521,7 @@ const handlers = {
       id: uid(), characterId, monsterId: monster ? monster.id : null,
       name: str(p.name, 80).trim() || monster?.name || 'Token', img: imgUrl(p.img ?? monster?.img ?? ''),
       x: num(p.x, -1e5, 1e5), y: num(p.y, -1e5, 1e5), size: num(p.size, 0.5, 10, 1),
-      hidden: !!p.hidden,
+      hidden: !!p.hidden, conditions: [],
       hp: int(p.hp ?? monster?.hp, -999, 9999), hpMax: int(p.hpMax ?? p.hp ?? monster?.hp, 0, 9999),
     };
     s.tokens.push(t);
@@ -501,7 +540,7 @@ const handlers = {
         id: uid(), characterId: null, monsterId: monster.id,
         name: str(q.name, 80).trim() || monster.name, img: monster.img || '',
         x: num(q.x, -1e5, 1e5), y: num(q.y, -1e5, 1e5), size: num(q.size, 0.5, 10, 1),
-        hidden: !!p.hidden,
+        hidden: !!p.hidden, conditions: [],
         hp: int(q.hp ?? monster.hp, -999, 9999), hpMax: int(q.hp ?? monster.hp, 0, 9999),
       };
       s.tokens.push(t);
@@ -522,6 +561,7 @@ const handlers = {
     if (f.x !== undefined) t.x = num(f.x, -1e5, 1e5);
     if (f.y !== undefined) t.y = num(f.y, -1e5, 1e5);
     if (f.monsterId !== undefined) t.monsterId = f.monsterId ? findMonster(f.monsterId).id : null;
+    if (f.conditions !== undefined) t.conditions = CHAR_FIELDS.conditions(f.conditions);
   },
   'token:delete'(user, p) {
     requireGM(user);
@@ -552,6 +592,7 @@ const handlers = {
     pushChat(chatBase(user, {
       type: 'roll', label: str(p.label, 120), roll: result, private: !!p.private,
     }));
+    return { total: result.total };
   },
   'chat:send'(user, p) {
     const text = str(p.text, 2000).trim();
@@ -661,9 +702,11 @@ const handlers = {
   // ---------- segredos / handouts
   'handout:create'(user, p) {
     requireGM(user);
+    const queuedFor = p.queuedFor && D().users.some((u) => u.id === p.queuedFor) ? p.queuedFor : null;
+    const order = queuedFor ? Math.max(0, ...D().handouts.filter((x) => x.queuedFor === queuedFor).map((x) => x.order)) + 1 : 0;
     const h = {
       id: uid(), title: str(p.title, 120).trim() || 'Sem título', body: str(p.body), img: imgUrl(p.img || ''),
-      recipients: [], createdAt: Date.now(),
+      recipients: [], createdAt: Date.now(), queuedFor, order,
     };
     D().handouts.unshift(h);
     return { id: h.id };
@@ -739,6 +782,160 @@ const handlers = {
     D().compendium = D().compendium.filter((x) => x.id !== p.id);
   },
 
+  // ---------- névoa de guerra (mestre)
+  'fog:set'(user, p) {
+    requireGM(user);
+    const s = findScene(p.sceneId);
+    s.fog.enabled = !!p.enabled;
+  },
+  'fog:op'(user, p) {
+    requireGM(user);
+    const s = findScene(p.sceneId);
+    const op = p.op === 'hide' ? 'hide' : 'reveal';
+    let o;
+    if (p.shape === 'circle') o = { op, shape: 'circle', x: num(p.x, -1e5, 1e5), y: num(p.y, -1e5, 1e5), r: num(p.r, 1, 1e5) };
+    else if (p.shape === 'rect') o = { op, shape: 'rect', x: num(p.x, -1e5, 1e5), y: num(p.y, -1e5, 1e5), w: num(p.w, 1, 2e5), h: num(p.h, 1, 2e5) };
+    else throw new Error('Forma inválida');
+    s.fog.enabled = true;
+    s.fog.ops.push(o);
+    if (s.fog.ops.length > 600) s.fog.ops.splice(0, s.fog.ops.length - 600);
+  },
+  'fog:reset'(user, p) {
+    requireGM(user);
+    const s = findScene(p.sceneId);
+    s.fog.ops = p.mode === 'reveal' ? [{ op: 'reveal', shape: 'all' }] : [];
+    s.fog.enabled = true;
+  },
+  'fog:undo'(user, p) {
+    requireGM(user);
+    findScene(p.sceneId).fog.ops.pop();
+  },
+
+  // ---------- desenhos e áreas de magia (todos; cada um apaga o que é seu)
+  'draw:add'(user, p) {
+    if (user.role === 'viewer') throw new Error('O telão não desenha');
+    const s = findScene(p.sceneId);
+    const kinds = ['free', 'arrow', 'circle', 'cone', 'line', 'square'];
+    if (!kinds.includes(p.kind)) throw new Error('Desenho inválido');
+    const pts = (Array.isArray(p.pts) ? p.pts : []).slice(0, 2000).map((v) => Math.round(num(v, -1e5, 1e5)));
+    if (pts.length < 4 || pts.length % 2) throw new Error('Desenho vazio');
+    const d = { id: uid(), userId: user.id, kind: p.kind, pts, color: /^#[0-9a-f]{6}$/i.test(p.color) ? p.color : user.color };
+    s.drawings.push(d);
+    if (s.drawings.length > 300) s.drawings.shift();
+    return { id: d.id };
+  },
+  'draw:delete'(user, p) {
+    const s = findScene(p.sceneId);
+    const d = s.drawings.find((x) => x.id === p.id);
+    if (!d) return;
+    if (d.userId !== user.id && user.role !== 'gm') throw new Error('Só quem desenhou (ou o mestre) pode apagar');
+    s.drawings = s.drawings.filter((x) => x.id !== p.id);
+  },
+  'draw:clear'(user, p) {
+    const s = findScene(p.sceneId);
+    s.drawings = user.role === 'gm' && p.all ? [] : s.drawings.filter((x) => x.userId !== user.id);
+  },
+  // régua: não salva nada, só mostra para todos enquanto alguém mede
+  'measure'(user, p) {
+    const msg = p.clear ? { userId: user.id, clear: true } : {
+      userId: user.id, name: user.name, color: user.color,
+      x1: num(p.x1, -1e5, 1e5), y1: num(p.y1, -1e5, 1e5), x2: num(p.x2, -1e5, 1e5), y2: num(p.y2, -1e5, 1e5), label: str(p.label, 40),
+    };
+    io.emit('measure', msg);
+    return { silent: true };
+  },
+
+  // ---------- fila de memórias (segredos que o mestre libera em ordem)
+  'handout:releaseNext'(user, p) {
+    requireGM(user);
+    const d = D();
+    const targets = p.userId === 'all'
+      ? [...new Set(d.handouts.filter((h) => h.queuedFor).map((h) => h.queuedFor))]
+      : [p.userId];
+    let n = 0;
+    for (const uidT of targets) {
+      const next = d.handouts.filter((h) => h.queuedFor === uidT).sort((a, b) => a.order - b.order)[0];
+      if (!next) continue;
+      const prev = next.recipients.slice();
+      next.recipients = [uidT];
+      next.queuedFor = null;
+      next.createdAt = Date.now();
+      notifyHandout(next, prev);
+      n += 1;
+    }
+    if (!n) throw new Error('Não há memórias na fila');
+    return { released: n };
+  },
+  'handout:queueMove'(user, p) {
+    requireGM(user);
+    const h = D().handouts.find((x) => x.id === p.id);
+    if (!h || !h.queuedFor) return;
+    const list = D().handouts.filter((x) => x.queuedFor === h.queuedFor).sort((a, b) => a.order - b.order);
+    const i = list.indexOf(h);
+    const j = i + (p.dir < 0 ? -1 : 1);
+    if (j < 0 || j >= list.length) return;
+    [list[i].order, list[j].order] = [list[j].order, list[i].order];
+  },
+  'handout:queue'(user, p) {
+    requireGM(user);
+    const h = D().handouts.find((x) => x.id === p.id);
+    if (!h) throw new Error('Segredo não encontrado');
+    const q = p.userId && D().users.some((u) => u.id === p.userId) ? p.userId : null;
+    h.queuedFor = q;
+    if (q) {
+      h.recipients = [];
+      h.order = Math.max(0, ...D().handouts.filter((x) => x.queuedFor === q && x !== h).map((x) => x.order)) + 1;
+    }
+  },
+
+  // ---------- calendário e descansos
+  'calendar:advance'(user, p) {
+    requireGM(user);
+    const before = world.describe(D().calendar);
+    world.advance(D().calendar, int(p.minutes, -525600, 525600));
+    if (p.announce) pushChat(chatBase(user, { type: 'system', text: `⏳ ${str(p.announce, 80)} — agora: ${world.describe(D().calendar)}` }));
+    return { before };
+  },
+  'calendar:set'(user, p) {
+    requireGM(user);
+    const c = D().calendar;
+    c.year = int(p.year, -99999, 99999, c.year);
+    c.month = int(p.month, 0, c.months.length - 1, c.month);
+    c.day = int(p.day, 1, c.months[c.month].days, 1);
+    c.minutes = int(p.hour, 0, 23, 8) * 60 + int(p.minute, 0, 59, 0);
+  },
+  'calendar:config'(user, p) {
+    requireGM(user);
+    const months = (Array.isArray(p.months) ? p.months : []).slice(0, 40)
+      .map((m) => ({ name: str(m?.name, 40).trim() || '?', days: int(m?.days, 1, 100, 30), festival: !!m?.festival }));
+    if (!months.length) throw new Error('O calendário precisa de pelo menos um mês');
+    D().calendar = world.normalizeCalendar({ ...D().calendar, months, era: str(p.era, 12).trim() || 'DR' });
+  },
+  'calendar:reset'(user) {
+    requireGM(user);
+    D().calendar = world.defaultCalendar();
+  },
+  'rest:long'(user) {
+    requireGM(user);
+    world.advance(D().calendar, 8 * 60);
+    const players = new Set(D().users.filter((u) => u.role === 'player').map((u) => u.id));
+    for (const c of D().characters) {
+      if (!c.ownerId || !players.has(c.ownerId)) continue;
+      c.hp = c.hpMax;
+      c.hpTemp = 0;
+      c.slots = c.slots.map((sl) => ({ ...sl, used: 0 }));
+      c.hdUsed = Math.max(0, c.hdUsed - Math.max(1, Math.floor(c.level / 2)));
+      c.deathSaves = { s: 0, f: 0 };
+      c.conditions = c.conditions.filter((x) => x !== 'inconsciente');
+    }
+    pushChat(chatBase(user, { type: 'system', text: `🌙 Descanso longo — PV e espaços de magia recuperados. Agora: ${world.describe(D().calendar)}` }));
+  },
+  'rest:short'(user) {
+    requireGM(user);
+    world.advance(D().calendar, 60);
+    pushChat(chatBase(user, { type: 'system', text: `☕ Descanso curto (1 hora). Quem quiser pode gastar dados de vida na ficha. Agora: ${world.describe(D().calendar)}` }));
+  },
+
   // ---------- bestiário (só o mestre)
   'monster:create'(user, p) {
     requireGM(user);
@@ -750,7 +947,11 @@ const handlers = {
   'monster:update'(user, p) {
     requireGM(user);
     const m = findMonster(p.id);
+    const oldImg = m.img;
     Object.assign(m, monsterFields(p.patch || {}, m), { updatedAt: Date.now() });
+    if (m.img !== oldImg) {
+      for (const s of D().scenes) for (const t of s.tokens) if (t.monsterId === m.id && (!t.img || t.img === oldImg)) t.img = m.img;
+    }
   },
   'monster:delete'(user, p) {
     requireGM(user);
@@ -883,6 +1084,27 @@ io.on('connection', (socket) => {
     });
   }
 });
+
+// ------------------------------------------------- versão nova no GitHub
+const REPO_RAW = process.env.TABULA_REPO_RAW || 'https://raw.githubusercontent.com/LP-IQ/tabula/main/package.json';
+let latestVersion = null;
+function newer(a, b) {
+  const pa = String(a).split('.').map(Number), pb = String(b).split('.').map(Number);
+  for (let i = 0; i < 3; i++) { if ((pa[i] || 0) !== (pb[i] || 0)) return (pa[i] || 0) > (pb[i] || 0); }
+  return false;
+}
+async function checkUpdate() {
+  if (process.env.TABULA_NO_UPDATE_CHECK) return;
+  try {
+    const r = await fetch(REPO_RAW, { signal: AbortSignal.timeout(5000) });
+    if (!r.ok) return;
+    const v = (await r.json()).version;
+    if (v && v !== latestVersion) { latestVersion = v; broadcastState(); }
+    if (newer(v, pkg.version)) console.log(`  ★ Versão nova disponível: ${v} (você tem ${pkg.version}). Feche a mesa e rode atualizar.bat`);
+  } catch { /* sem internet: tudo bem */ }
+}
+setTimeout(checkUpdate, 3000).unref();
+setInterval(checkUpdate, 6 * 60 * 60 * 1000).unref();
 
 function shutdown() {
   closeTable('A mesa foi fechada. Até a próxima!', 'encerramento');

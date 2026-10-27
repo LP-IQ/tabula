@@ -191,3 +191,22 @@ export function rescale(m, newCr) {
 
 // Tamanho do token em quadrados a partir do tamanho da criatura
 export const SIZE_SQUARES = { Miúdo: 0.5, Pequeno: 1, Médio: 1, Grande: 2, Enorme: 3, Imenso: 4 };
+
+// Condições (Livro do Jogador, apêndice A) + concentração
+export const CONDITIONS = ['agarrado', 'amedrontado', 'atordoado', 'caido', 'cego', 'enfeiticado', 'envenenado', 'exaustao',
+  'impedido', 'incapacitado', 'inconsciente', 'invisivel', 'paralisado', 'petrificado', 'surdo', 'concentracao'];
+export const CONDITION_LABEL = {
+  agarrado: 'Agarrado', amedrontado: 'Amedrontado', atordoado: 'Atordoado', caido: 'Caído', cego: 'Cego',
+  enfeiticado: 'Enfeitiçado', envenenado: 'Envenenado', exaustao: 'Exaustão', impedido: 'Impedido',
+  incapacitado: 'Incapacitado', inconsciente: 'Inconsciente', invisivel: 'Invisível', paralisado: 'Paralisado',
+  petrificado: 'Petrificado', surdo: 'Surdo', concentracao: 'Concentração',
+};
+export const CONDITION_ICON = {
+  agarrado: '✊', amedrontado: '😱', atordoado: '💫', caido: '⤵', cego: '🕶', enfeiticado: '💘', envenenado: '🤢',
+  exaustao: '😩', impedido: '⛓', incapacitado: '🚫', inconsciente: '💤', invisivel: '👻', paralisado: '🧊',
+  petrificado: '🗿', surdo: '🔇', concentracao: '🔮',
+};
+
+// Pontos de experiência por nível (Livro do Jogador)
+export const XP_LEVELS = [0, 300, 900, 2700, 6500, 14000, 23000, 34000, 48000, 64000, 85000, 100000, 120000, 140000,
+  165000, 195000, 225000, 265000, 305000, 355000];

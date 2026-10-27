@@ -2,6 +2,7 @@
 import { app, emit, rollD20, doRoll, bus, setAdv } from './core.js';
 import { $, h, abilityMod, fmtMod, profBonus, debounce, chooseAndUpload, avatar, isEditingIn, toast, setKids } from './util.js';
 import { focusToken } from './map.js';
+import { CONDITIONS, CONDITION_ICON, CONDITION_LABEL, XP_LEVELS } from './rules.js';
 
 const pane = $('#pane-sheet');
 
@@ -50,6 +51,14 @@ function patch(c, p) {
     if (!pendingSaves) setStatus(r ? 'saved' : 'error');
     return r;
   });
+}
+
+// Ctrl+V com a ficha aberta: troca a imagem do personagem (e do token)
+export function pasteToSheet(url) {
+  const c = app.state?.characters.find((x) => x.id === builtFor);
+  if (!c || !available().some((x) => x.id === c.id)) return false;
+  patch(c, { img: url }).then((r) => r && toast('Imagem colada na ficha', 'ok'));
+  return true;
 }
 
 const textSenders = new Map();
@@ -124,11 +133,12 @@ function initTotal(c) { return abilityMod(c.attrs.dex) + (c.initBonus || 0); }
 function build(c) {
   builtFor = c.id;
   attacksKey = '';
+  for (const k of Object.keys(extraKeys)) delete extraKeys[k];
   stripKey = '';
   const picker = h('div', { class: 'char-strip', role: 'tablist', 'aria-label': 'Escolher ficha', hidden: true });
 
   const avatarBtn = h('button', {
-    class: 'avatar-btn', title: 'Trocar imagem (também vira o token)',
+    class: 'avatar-btn', title: 'Trocar imagem (também vira o token) — ou copie uma imagem e aperte Ctrl+V aqui na ficha',
     onclick: async () => { const url = await chooseAndUpload(); if (url) patch(c, { img: url }); },
   });
 
@@ -190,6 +200,9 @@ function build(c) {
         h('button', { class: 'btn sm danger', onclick: () => applyHp('dmg') }, 'Dano'),
         h('button', { class: 'btn sm ok', onclick: () => applyHp('heal') }, 'Cura'))),
 
+    h('div', { class: 'sx', id: 'sx-status' }),
+    h('div', { class: 'sx', id: 'sx-aspect' }),
+
     h('div', { class: 'section-title' }, h('span', {}, 'Próximo d20'), advSeg),
 
     h('div', { class: 'attrs' }, ATTRS.map(([k, short, long]) =>
@@ -233,7 +246,11 @@ function build(c) {
       }, '+ Ataque')),
 
     h('details', { class: 'block' }, h('summary', {}, 'Características e talentos'), field(c, 'features', { multiline: true, rows: 6, label: 'Características' })),
-    h('details', { class: 'block' }, h('summary', {}, 'Magias'), field(c, 'spells', { multiline: true, rows: 6, label: 'Magias' })),
+    h('details', { class: 'block' }, h('summary', {}, 'Magias'),
+      h('div', { class: 'sx', id: 'sx-slots' }),
+      field(c, 'spells', { multiline: true, rows: 6, label: 'Magias', placeholder: 'Truques e magias conhecidas/preparadas…' })),
+    h('details', { class: 'block', open: true }, h('summary', {}, 'Dados de vida e descanso'), h('div', { class: 'sx', id: 'sx-hd' })),
+    h('details', { class: 'block' }, h('summary', {}, 'Experiência e moedas'), h('div', { class: 'sx', id: 'sx-xp' })),
     h('details', { class: 'block' }, h('summary', {}, 'Inventário'), field(c, 'inventory', { multiline: true, rows: 5, label: 'Inventário' })),
     h('details', { class: 'block' }, h('summary', {}, 'Anotações'), field(c, 'notes', { multiline: true, rows: 6, label: 'Anotações' })),
     h('label', { class: 'mini muted' }, 'Bônus extra de iniciativa', field(c, 'initBonus', { type: 'number', class: 'num', label: 'Bônus extra de iniciativa' })),
@@ -272,6 +289,167 @@ function getPath(obj, path) {
   return path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj);
 }
 
+
+// ---------------------------------------------------- partes novas da ficha (v5)
+const extraKeys = {};
+function slotOf(id) { return pane.querySelector('#' + id); }
+function redraw(id, key, make) {
+  const el = slotOf(id);
+  if (!el || isEditingIn(el) || extraKeys[id] === key) return;
+  extraKeys[id] = key;
+  setKids(el, make());
+}
+
+function statusBox(c) {
+  const conds = c.conditions || [];
+  const ds = c.deathSaves || { s: 0, f: 0 };
+  const dying = c.hp <= 0 && c.hpMax > 0;
+  const pips = (kind, n, label) => h('span', { class: `ds ${kind}`, title: label },
+    [0, 1, 2].map((i) => h('button', {
+      class: 'pip' + (i < n ? ' on' : ''), 'aria-label': `${label} ${i + 1}`,
+      onclick: () => patch(c, { deathSaves: { ...ds, [kind]: i < n ? i : i + 1 } }),
+    })));
+  const deathRoll = async () => {
+    const r = await doRoll('1d20', `${c.name} — teste contra a morte`);
+    if (!r) return;
+    const v = r.total;
+    if (v === 20) { patch(c, { hp: 1, deathSaves: { s: 0, f: 0 }, conditions: conds.filter((x) => x !== 'inconsciente') }); toast('20 natural! Recupera 1 PV', 'ok'); return; }
+    let { s, f } = ds;
+    if (v === 1) f += 2; else if (v >= 10) s += 1; else f += 1;
+    s = Math.min(3, s); f = Math.min(3, f);
+    patch(c, { deathSaves: { s, f } });
+    if (s >= 3) toast(`${c.name} está estável`, 'ok');
+    if (f >= 3) toast(`${c.name} morreu…`, 'error', 6000);
+  };
+  return h('div', { class: 'status-box' + (dying ? ' dying' : '') },
+    h('div', { class: 'row gap wrap' },
+      h('small', { class: 'muted' }, 'Condições'),
+      h('span', { class: 'grow' }),
+      h('label', { class: 'mini toggle', title: 'Inspiração heroica' },
+        h('input', { type: 'checkbox', checked: !!c.inspiration, onchange: (e) => patch(c, { inspiration: e.target.checked }) }), '✨ Inspiração')),
+    h('div', { class: 'cond-picker' }, CONDITIONS.map((k) => {
+      const on = conds.includes(k);
+      return h('button', {
+        class: 'cond' + (on ? ' on' : ''), title: CONDITION_LABEL[k], 'aria-label': CONDITION_LABEL[k], 'aria-pressed': String(on),
+        onclick: () => patch(c, { conditions: on ? conds.filter((x) => x !== k) : [...conds, k] }),
+      }, CONDITION_ICON[k]);
+    })),
+    conds.length ? h('div', { class: 'small' }, conds.map((k) => CONDITION_LABEL[k]).join(' · ')) : null,
+    dying || ds.s || ds.f ? h('div', { class: 'row gap wrap death' },
+      h('b', {}, '☠ Testes contra a morte'),
+      h('span', {}, 'Sucessos '), pips('s', ds.s, 'Sucesso'),
+      h('span', {}, 'Falhas '), pips('f', ds.f, 'Falha'),
+      h('button', { class: 'btn sm', onclick: deathRoll }, '🎲 Rolar'),
+      ds.s || ds.f ? h('button', { class: 'btn ghost sm', onclick: () => patch(c, { deathSaves: { s: 0, f: 0 } }) }, 'Zerar') : null) : null);
+}
+
+function aspectBox(c) {
+  const gm = app.isGM;
+  const up = (Number(c.level) || 1) >= 5;
+  const card = (key, title, icon, fields) => {
+    const v = c[key] || {};
+    if (!gm && !v.name && !v.base) return null;
+    if (gm) {
+      const set = (f) => (e) => patch(c, { [key]: { ...app.char(c.id)[key], [f]: e.target.value } });
+      return h('div', { class: 'gift edit' },
+        h('div', { class: 'gift-title' }, icon, ' ', title, h('small', { class: 'muted' }, ' · só o mestre edita')),
+        h('div', { class: 'row gap wrap' },
+          fields.includes('month') ? h('input', { value: v.month || '', placeholder: 'Mês de nascimento', 'aria-label': 'Mês de nascimento', onchange: set('month') }) : null,
+          h('input', { value: v.name || '', placeholder: 'Nome', 'aria-label': 'Nome', onchange: set('name') })),
+        h('textarea', { rows: 2, value: v.base || '', placeholder: 'Efeito do nível 1 ao 4 (fraco, meio nonsense)', 'aria-label': 'Efeito base', onchange: set('base') }),
+        h('textarea', { rows: 2, value: v.upgraded || '', placeholder: 'Efeito a partir do nível 5', 'aria-label': 'Efeito melhorado', onchange: set('upgraded') }));
+    }
+    return h('div', { class: 'gift' },
+      h('div', { class: 'gift-title' }, icon, ' ', h('b', {}, v.name || title), v.month ? h('small', { class: 'muted' }, ` · ${v.month}`) : null),
+      h('p', { class: up ? 'old' : 'now' }, v.base || '—'),
+      v.upgraded ? h('p', { class: up ? 'now' : 'next' }, up ? v.upgraded : `No nível 5: ${v.upgraded}`) : null);
+  };
+  const a = card('aspect', 'Aspecto mágico', '✦', ['month']);
+  const r = card('ring', 'Anel', '💍', []);
+  if (!a && !r) return h('span');
+  return h('div', { class: 'gifts' }, a, r);
+}
+
+function slotsBox(c) {
+  const slots = c.slots || [];
+  const set = (i, patchSlot) => {
+    const cur = app.char(c.id).slots.map((x) => ({ ...x }));
+    Object.assign(cur[i], patchSlot);
+    cur[i].used = Math.min(cur[i].used, cur[i].max);
+    patch(c, { slots: cur });
+  };
+  const shown = slots.map((sl, i) => ({ ...sl, i })).filter((sl) => sl.max > 0);
+  const nextLevel = Math.min(9, (shown.length ? shown[shown.length - 1].i + 1 : 0) + 1);
+  return h('div', { class: 'slots' },
+    h('div', { class: 'row gap wrap' }, h('small', { class: 'muted' }, 'Espaços de magia — clique para gastar/recuperar')),
+    shown.map((sl) => h('div', { class: 'slot-row' },
+      h('b', {}, `${sl.i + 1}º`),
+      h('span', { class: 'slot-pips' }, Array.from({ length: sl.max }, (_, j) => h('button', {
+        class: 'pip' + (j < sl.used ? ' used' : ''), title: j < sl.used ? 'Gasto (clique para recuperar)' : 'Disponível (clique para gastar)',
+        onclick: () => set(sl.i, { used: j < sl.used ? j : j + 1 }),
+      }))),
+      h('span', { class: 'muted small' }, `${sl.max - sl.used}/${sl.max}`),
+      h('span', { class: 'grow' }),
+      h('button', { class: 'btn ghost sm', title: 'Menos um espaço', onclick: () => set(sl.i, { max: Math.max(0, sl.max - 1) }) }, '−'),
+      h('button', { class: 'btn ghost sm', title: 'Mais um espaço', onclick: () => set(sl.i, { max: Math.min(9, sl.max + 1) }) }, '+'))),
+    h('button', { class: 'btn sm', onclick: () => set(nextLevel - 1, { max: Math.max(1, (slots[nextLevel - 1]?.max || 0) + 1) }) },
+      shown.length ? `+ Espaço de ${nextLevel}º círculo` : '+ Espaços de magia (1º círculo)'));
+}
+
+function hdBox(c) {
+  const total = Math.max(1, Number(c.level) || 1);
+  const left = Math.max(0, total - (c.hdUsed || 0));
+  const con = abilityMod(c.attrs?.con);
+  const spend = async () => {
+    const cur = app.char(c.id);
+    if (total - (cur.hdUsed || 0) <= 0) return toast('Sem dados de vida. Eles voltam no descanso longo.', 'error');
+    const formula = `1${cur.hitDie || 'd8'}${con ? fmtMod(con) : ''}`;
+    const r = await doRoll(formula, `${cur.name} — dado de vida (descanso curto)`);
+    if (!r) return;
+    const heal = Math.max(0, r.total);
+    const now = app.char(c.id);
+    patch(c, { hp: Math.min(now.hpMax, Math.max(0, now.hp) + heal), hdUsed: (now.hdUsed || 0) + 1 });
+    toast(`+${heal} PV`, 'ok');
+  };
+  return h('div', { class: 'stack' },
+    h('div', { class: 'row gap wrap' },
+      h('label', { class: 'mini' }, 'Dado',
+        h('select', { onchange: (e) => patch(c, { hitDie: e.target.value }) },
+          ['d6', 'd8', 'd10', 'd12'].map((d) => h('option', { value: d, selected: d === (c.hitDie || 'd8') }, d)))),
+      h('span', {}, h('b', { class: 'big-inline' }, String(left)), ` de ${total} disponíveis`),
+      h('span', { class: 'grow' }),
+      h('button', { class: 'btn sm primary', disabled: left <= 0, onclick: spend }, `☕ Gastar 1 (1${c.hitDie || 'd8'}${con ? fmtMod(con) : ''})`)),
+    h('p', { class: 'muted small' }, 'No descanso curto, gaste dados de vida para recuperar PV. No descanso longo (o mestre marca), PV e espaços de magia voltam e você recupera metade dos dados de vida.'));
+}
+
+function xpBox(c) {
+  const lvl = Math.max(1, Math.min(20, Number(c.level) || 1));
+  const xp = c.xp || 0;
+  const next = XP_LEVELS[lvl] ?? null;
+  const reach = XP_LEVELS.filter((v) => xp >= v).length;
+  const coins = c.coins || {};
+  const coin = (k, label, title) => h('label', { class: 'mini col coin', title }, label,
+    h('input', { type: 'number', class: 'num', min: '0', value: String(coins[k] || 0), 'aria-label': title,
+      onchange: (e) => patch(c, { coins: { ...app.char(c.id).coins, [k]: Number(e.target.value) } }) }));
+  return h('div', { class: 'stack' },
+    h('div', { class: 'row gap wrap' },
+      h('label', { class: 'mini' }, 'XP', h('input', { type: 'number', class: 'num xp', min: '0', value: String(xp), onchange: (e) => patch(c, { xp: Number(e.target.value) }) })),
+      next != null ? h('span', { class: 'muted small' }, `próximo nível em ${next.toLocaleString('pt-BR')} XP`) : h('span', { class: 'muted small' }, 'nível máximo')),
+    next != null ? h('div', { class: 'hp-bar' }, h('i', { style: { width: `${Math.min(100, ((xp - XP_LEVELS[lvl - 1]) / (next - XP_LEVELS[lvl - 1])) * 100)}%`, background: 'var(--gold)' } })) : null,
+    reach > lvl ? h('p', { class: 'level-up' }, `⬆ Já dá para subir para o nível ${reach}! Fale com o mestre.`) : null,
+    h('div', { class: 'row gap wrap coins' },
+      coin('pc', 'PC', 'Peças de cobre'), coin('pp', 'PP', 'Peças de prata'), coin('pe', 'PE', 'Peças de electrum'),
+      coin('po', 'PO', 'Peças de ouro'), coin('pl', 'PL', 'Peças de platina')));
+}
+
+function renderExtras(c) {
+  redraw('sx-status', JSON.stringify([c.conditions, c.inspiration, c.deathSaves, c.hp <= 0, c.name]), () => statusBox(c));
+  redraw('sx-aspect', JSON.stringify([c.aspect, c.ring, c.level, app.isGM]), () => aspectBox(c));
+  redraw('sx-slots', JSON.stringify(c.slots), () => slotsBox(c));
+  redraw('sx-hd', JSON.stringify([c.level, c.hdUsed, c.hitDie, c.attrs?.con]), () => hdBox(c));
+  redraw('sx-xp', JSON.stringify([c.xp, c.level, c.coins]), () => xpBox(c));
+}
+
 function fill(c) {
   for (const el of pane.querySelectorAll('[data-f]')) {
     if (el === document.activeElement) continue;
@@ -304,6 +482,7 @@ function fill(c) {
     setKids(ab, avatar(c.img, c.name, app.user(c.ownerId)?.color, 72), h('span', { class: 'avatar-edit' }, '✎'));
   }
   renderAttacks(c);
+  renderExtras(c);
 }
 
 function syncAdv() {

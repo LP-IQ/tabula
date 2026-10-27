@@ -80,11 +80,20 @@ campanha\
 
 ## Atualizar para uma versão nova
 
-1. Feche a mesa.
-2. Extraia a versão nova (ex.: `Tabula_v3`) **ao lado** das outras, na mesma pasta onde está a `campanha`.
-3. Dentro dela, rode `instalar.bat` e depois `iniciar.bat`.
+**A partir da v5**, é um clique:
 
-A versão nova abre a mesma campanha. Se algo der errado, é só voltar a usar a pasta da versão anterior.
+1. Feche a mesa.
+2. Dê dois cliques em **`atualizar.bat`**, dentro da pasta da Tábula.
+
+Ele baixa a versão mais nova do GitHub, guarda uma cópia da versão atual em `Tabula_anterior` (ao lado),
+copia os arquivos novos por cima e roda o `npm install`. A campanha não é tocada, porque fica na pasta
+`campanha`. Quando sai uma versão nova, o mestre vê um aviso no topo da mesa.
+
+Com isso, não precisa mais de uma pasta por versão: dá para renomear a pasta para só `Tabula`.
+Se a atualização der problema, a versão anterior está em `Tabula_anterior` e abre a mesma campanha.
+
+**Vindo da v4.1 ou anterior** (ainda sem o `atualizar.bat`): extraia a v5 **ao lado** das outras pastas,
+na mesma pasta onde está a `campanha`, rode `instalar.bat` e depois `iniciar.bat`. Daí em diante, use o `atualizar.bat`.
 
 ## Problemas comuns
 
@@ -97,3 +106,4 @@ A versão nova abre a mesma campanha. Se algo der errado, é só voltar a usar a
 | Token "não aparece" ou fica minúsculo | A grade não bate com o mapa. Mestre → **Cena ativa (grade)** → informe **Quadrados na largura** |
 | Jogadores não conseguem entrar pelo link | Confira se as duas janelas (mesa e túnel) estão abertas e se mandou o link desta sessão |
 | Celulares no Wi-Fi não entram | Permita o Node.js no firewall do Windows (redes privadas) |
+| `atualizar.bat` diz que não conseguiu baixar | Confira a internet. Dá para baixar à mão em <https://github.com/LP-IQ/tabula/archive/refs/heads/main.zip> e copiar por cima, menos a pasta `data` |

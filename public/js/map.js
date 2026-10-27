@@ -1,6 +1,7 @@
 // Mapa: imagem de fundo, grade, tokens redondos, zoom/arrasto, sinalização (ping).
 import { app, emit, doRoll, rollD20 } from './core.js';
 import { $, h, initials, isEditingIn, chooseAndUpload, setKids } from './util.js';
+import { CONDITIONS, CONDITION_ICON, CONDITION_LABEL } from './rules.js';
 
 const vp = $('#map-viewport');
 const layer = $('#map-layer');
@@ -24,6 +25,10 @@ let drag = null;
 let pan = null;
 let pinch = null;
 let lastTap = { t: 0, x: 0, y: 0 };
+let toolHooks = null;        // ferramentas (régua, desenho, névoa) — ver tools.js
+let toolActive = false;
+export function setToolHooks(hk) { toolHooks = hk; }
+export function getScene() { return scene; }
 
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 
@@ -161,6 +166,7 @@ export function renderMap(state) {
     clearTokens();
     renderPanel(state);
     renderInitStrip(state);
+    toolHooks?.render(state);
     return;
   }
   layer.hidden = false;
@@ -192,6 +198,7 @@ export function renderMap(state) {
   renderTokens(state);
   renderPanel(state);
   renderInitStrip(state);
+  toolHooks?.render(state);
 }
 
 function clearTokens() {
@@ -229,6 +236,7 @@ function renderTokens(state) {
       el = h('div', { class: 'token', dataset: { id: t.id } },
         h('div', { class: 'token-face' }),
         h('div', { class: 'token-hp' }, h('i')),
+        h('div', { class: 'token-conds' }),
         h('div', { class: 'token-name' }));
       els.set(t.id, el);
       tokensEl.append(el);
@@ -260,6 +268,12 @@ function renderTokens(state) {
       }
     }
     el.querySelector('.token-name').textContent = info.name;
+    const conds = (info.c ? info.c.conditions : t.conditions) || [];
+    const condEl = el.querySelector('.token-conds');
+    if (condEl.dataset.k !== conds.join()) {
+      condEl.dataset.k = conds.join();
+      setKids(condEl, conds.map((k) => h('span', { title: CONDITION_LABEL[k] || k }, CONDITION_ICON[k] || '•')));
+    }
 
     // barra de vida: PJs para todos; NPCs só para o mestre
     const showHp = info.hpMax > 0 && (!!info.c || app.isGM);
@@ -348,6 +362,18 @@ function renderPanel(state) {
       h('input', { type: 'number', class: 'num', value: String(t.hp), 'aria-label': 'PV atuais', onchange: (e) => upd({ hp: Number(e.target.value) }) }),
       h('span', { class: 'muted' }, '/'),
       h('input', { type: 'number', class: 'num', value: String(t.hpMax), 'aria-label': 'PV máximos', onchange: (e) => upd({ hpMax: Number(e.target.value) }) })) : null,
+    h('div', { class: 'cond-picker' }, CONDITIONS.map((k) => {
+      const list = (t.characterId ? state.characters.find((c) => c.id === t.characterId)?.conditions : t.conditions) || [];
+      const on = list.includes(k);
+      return h('button', {
+        class: 'cond' + (on ? ' on' : ''), title: CONDITION_LABEL[k],
+        onclick: () => {
+          const next = on ? list.filter((x) => x !== k) : [...list, k];
+          if (t.characterId) emit('character:update', { id: t.characterId, patch: { conditions: next } });
+          else upd({ conditions: next });
+        },
+      }, CONDITION_ICON[k]);
+    })),
     npc ? h('div', { class: 'row gap' }, amount,
       h('button', { class: 'btn sm danger', onclick: () => hpChange(-1) }, 'Dano'),
       h('button', { class: 'btn sm ok', onclick: () => hpChange(1) }, 'Cura')) : null,
@@ -449,11 +475,13 @@ vp.addEventListener('pointerdown', (e) => {
 
   if (pointers.size === 2) {
     if (drag) { endDrag(); }
+    if (toolActive) { toolActive = false; toolHooks?.cancel(); }
     pan = null;
     startPinch();
     return;
   }
   if (pointers.size > 2) return;
+  if (e.button === 0 && toolHooks?.down(e, toMap(e.clientX, e.clientY))) { toolActive = true; return; }
 
   const tokEl = e.target.closest('.token');
   const t = tokEl && scene.tokens.find((x) => x.id === tokEl.dataset.id);
@@ -487,6 +515,7 @@ vp.addEventListener('pointermove', (e) => {
     applyView();
     return;
   }
+  if (toolActive) { toolHooks.move(e, toMap(e.clientX, e.clientY)); return; }
   if (drag) {
     if (!drag.moved && Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) < 4) return;
     drag.moved = true;
@@ -531,6 +560,7 @@ function pointerEnd(e, cancelled) {
     pan = null;
     return;
   }
+  if (toolActive) { toolActive = false; if (cancelled) toolHooks.cancel(); else toolHooks.up(e, toMap(e.clientX, e.clientY)); return; }
   if (drag) { endDrag(); return; }
   if (pan) {
     const wasTap = !pan.moved && !cancelled;

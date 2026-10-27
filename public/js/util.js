@@ -160,3 +160,11 @@ export function localRoll(formula) {
   }
   return total;
 }
+
+// Colar imagem (Ctrl+V): janelas abertas registram um alvo; o último registrado recebe a imagem.
+const pasteStack = [];
+export function pushPasteTarget(fn) {
+  pasteStack.push(fn);
+  return () => { const i = pasteStack.lastIndexOf(fn); if (i >= 0) pasteStack.splice(i, 1); };
+}
+export const topPasteTarget = () => pasteStack[pasteStack.length - 1] || null;

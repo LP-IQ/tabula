@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tábula — mesa virtual de D&amp;D</title>
+<meta name="description" content="Mesa virtual feita para uma campanha de D&D 5e: mapa com névoa, tokens, fichas, dados e bestiário. Roda no computador do mestre; os jogadores entram pelo navegador.">
+<meta property="og:title" content="Tábula — mesa virtual de D&amp;D">
+<meta property="og:description" content="Mapa, tokens, fichas e dados para jogar D&D 5e online ou na mesma sala.">
+<meta property="og:image" content="https://lp-iq.github.io/tabula/img/regua.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2 29 9.5v13L16 30 3 22.5v-13z' fill='%23d4a94e'/%3E%3Cpath d='M16 7 25 22H7z' fill='%232b1e17'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --walnut: #2b1e17;
+  --walnut-2: #36261d;
+  --walnut-3: #4a3427;
+  --bone: #efe3cc;
+  --bone-dim: #c2b195;
+  --gold: #d4a94e;
+  --wax: #a8352e;
+  --parchment: #d9c49b;
+  --parchment-2: #c8b083;
+  --ink: #2a1c13;
+  --display: 'IM Fell English', 'Iowan Old Style', Georgia, serif;
+  --text: 'Alegreya Sans', 'Segoe UI', system-ui, sans-serif;
+  --measure: 34rem;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  background:
+    radial-gradient(1200px 600px at 75% -10%, #4a3020 0%, transparent 60%),
+    var(--walnut);
+  color: var(--bone);
+  font: 400 1.125rem/1.6 var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--gold); text-underline-offset: .18em; text-decoration-thickness: 1px; }
+a:hover { color: #ecc56b; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 3px; }
+img { max-width: 100%; display: block; }
+.wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+
+/* ---------- topo */
+.top { display: flex; align-items: center; gap: 24px; padding: 20px 0; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--bone); text-decoration: none; font: 1.6rem/1 var(--display); }
+.brand svg { width: 30px; height: 30px; }
+.top nav { margin-left: auto; display: flex; gap: 22px; flex-wrap: wrap; font-size: 1rem; }
+.top nav a { color: var(--bone-dim); text-decoration: none; }
+.top nav a:hover { color: var(--bone); }
+
+/* ---------- abertura */
+.hero { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 56px; align-items: center; padding: 48px 0 88px; }
+.hero h1 {
+  font: 400 clamp(2.6rem, 5.4vw, 4.5rem)/1.02 var(--display);
+  margin: 0 0 24px;
+  letter-spacing: -.01em;
+}
+.lead { font-size: 1.25rem; line-height: 1.55; color: var(--bone-dim); max-width: var(--measure); margin: 0 0 32px; }
+.ctas { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 13px 22px; border-radius: 6px; font: 700 1.05rem/1 var(--text);
+  text-decoration: none; border: 1px solid transparent; cursor: pointer;
+}
+.btn.gold { background: var(--gold); color: var(--ink); box-shadow: 0 2px 0 #8d6a24; }
+.btn.gold:hover { background: #e0b75c; color: var(--ink); }
+.btn.line { border-color: var(--walnut-3); color: var(--bone); }
+.btn.line:hover { border-color: var(--bone-dim); color: var(--bone); }
+.small { font-size: .95rem; color: var(--bone-dim); }
+.hero .small { margin-top: 18px; }
+
+/* ---------- o tabuleiro de demonstração */
+.board-frame {
+  position: relative;
+  padding: 14px;
+  background: linear-gradient(160deg, #5a3d2b, #3b281d);
+  border-radius: 10px;
+  box-shadow: 0 30px 60px -20px #0009, inset 0 1px 0 #ffffff1a;
+}
+.board {
+  --cols: 12; --rows: 8;
+  position: relative; aspect-ratio: 12 / 8; width: 100%;
+  border-radius: 4px; overflow: hidden;
+  background:
+    linear-gradient(#0000 calc(100% - 1px), #2a1c1326 0) 0 0 / calc(100% / var(--cols)) calc(100% / var(--rows)),
+    linear-gradient(90deg, #0000 calc(100% - 1px), #2a1c1326 0) 0 0 / calc(100% / var(--cols)) calc(100% / var(--rows)),
+    radial-gradient(circle at 30% 40%, var(--parchment) 0%, var(--parchment-2) 75%);
+  touch-action: none; user-select: none;
+}
+.wall { position: absolute; background: #5b4430; box-shadow: inset 0 0 0 1px #2a1c1355; border-radius: 2px; }
+.rug { position: absolute; border-radius: 50%; background: radial-gradient(#9b3a30, #74291f); opacity: .75; }
+.fog { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.ruler { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.ruler line { stroke: var(--wax); stroke-width: 3; stroke-dasharray: 8 6; stroke-linecap: round; }
+.ruler circle { fill: var(--wax); }
+.ruler text { font: 700 15px var(--text); fill: #fff; paint-order: stroke; stroke: var(--ink); stroke-width: 4px; }
+.tok {
+  position: absolute; width: calc(100% / 12); aspect-ratio: 1;
+  display: grid; place-items: center;
+  transition: left .12s ease-out, top .12s ease-out, opacity .4s;
+}
+.tok > span {
+  display: grid; place-items: center; width: 86%; height: 86%; border-radius: 50%;
+  font: 700 clamp(.7rem, 1.6vw, 1rem)/1 var(--text); color: var(--bone);
+  border: 3px solid var(--ring); background: var(--walnut-2);
+  box-shadow: 0 3px 6px #0006;
+}
+.tok.pc { cursor: grab; z-index: 3; --ring: var(--gold); }
+.tok.pc.drag { cursor: grabbing; transition: none; }
+.tok.pc.drag > span { transform: scale(1.08); }
+.tok.foe { --ring: var(--wax); opacity: 0; z-index: 2; }
+.tok.foe.seen { opacity: 1; }
+.board-note { display: flex; gap: 16px; align-items: baseline; justify-content: space-between; flex-wrap: wrap; margin: 14px 4px 0; color: var(--bone-dim); font-size: .98rem; }
+.board-note b { color: var(--bone); font-weight: 500; }
+.roll { font: 700 .95rem/1 var(--text); padding: 8px 14px; border-radius: 6px; border: 1px solid var(--gold); background: none; color: var(--gold); cursor: pointer; }
+.roll:hover { background: #d4a94e1a; }
+.roll[hidden] { display: none; }
+
+/* ---------- seções */
+section { padding: 72px 0; }
+h2 { font: 400 clamp(2rem, 3.6vw, 2.8rem)/1.1 var(--display); margin: 0 0 14px; }
+.intro { max-width: var(--measure); color: var(--bone-dim); margin: 0 0 44px; }
+.band { background: #00000026; border-block: 1px solid #ffffff0d; }
+
+/* três frentes: mesa, ficha, mestre */
+.fronts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; }
+.front figure { margin: 0 0 22px; }
+.front figure img { border-radius: 6px; border: 1px solid #ffffff14; aspect-ratio: 16 / 10; object-fit: cover; object-position: left top; width: 100%; }
+.front h3 { font: 400 1.7rem/1.15 var(--display); margin: 0 0 12px; color: var(--parchment); }
+.front ul { list-style: none; margin: 0; padding: 0; }
+.front li { padding: 9px 0; border-top: 1px solid #ffffff12; line-height: 1.45; }
+.front li b { color: var(--bone); font-weight: 700; }
+.front li span { color: var(--bone-dim); }
+
+/* destaque: celular + segredos */
+.duo { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 56px; align-items: center; }
+.duo .shots { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; max-width: 620px; }
+.duo .shots img:last-child { margin-top: 48px; }
+.duo .shots img { border-radius: 6px; border: 1px solid #ffffff14; }
+.duo p { color: var(--bone-dim); max-width: var(--measure); }
+
+/* passos de instalação */
+.steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; }
+.steps li { counter-increment: s; padding: 0 22px 0 0; position: relative; }
+.steps li::before {
+  content: counter(s); display: grid; place-items: center;
+  width: 44px; height: 44px; margin-bottom: 16px; border-radius: 50%;
+  font: 400 1.5rem/1 var(--display); color: var(--ink);
+  background: var(--parchment); box-shadow: 0 0 0 4px var(--walnut);
+  position: relative; z-index: 1;
+}
+.steps li::after { content: ''; position: absolute; top: 22px; left: 44px; right: 0; height: 1px; background: var(--walnut-3); }
+.steps li:last-child::after { display: none; }
+.steps b { display: block; font-weight: 700; margin-bottom: 6px; }
+.steps span { color: var(--bone-dim); font-size: 1rem; line-height: 1.5; }
+code { font: .92em/1 ui-monospace, 'Cascadia Mono', Consolas, monospace; background: #00000033; padding: 2px 6px; border-radius: 4px; color: var(--parchment); }
+.after-steps { margin-top: 44px; display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+
+/* rodapé */
+footer { padding: 48px 0 64px; color: var(--bone-dim); font-size: .95rem; border-top: 1px solid #ffffff0f; }
+footer .cols { display: flex; gap: 40px; justify-content: space-between; flex-wrap: wrap; }
+footer p { max-width: 40rem; margin: 0 0 8px; }
+
+@media (max-width: 980px) {
+  .hero { grid-template-columns: 1fr; gap: 40px; padding-top: 24px; }
+  .fronts { grid-template-columns: 1fr; gap: 56px; }
+  .duo { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr; gap: 26px; }
+  .steps li { padding: 0 0 0 64px; min-height: 44px; }
+  .steps li::before { position: absolute; left: 0; top: 0; margin: 0; }
+  .steps li::after { top: 44px; bottom: -26px; left: 22px; right: auto; width: 1px; height: auto; }
+}
+@media (max-width: 560px) {
+  .top nav { gap: 14px; font-size: .95rem; }
+  .top nav .gh, .top nav .guide { display: none; }
+  .board-frame { padding: 8px; }
+}
+</style>
+</head>
+<body>
+<header class="wrap top">
+  <a class="brand" href="#">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 29 9.5v13L16 30 3 22.5v-13z" fill="#d4a94e"/><path d="M16 7 25 22H7z" fill="#2b1e17"/></svg>
+    Tábula
+  </a>
+  <nav aria-label="Principal">
+    <a href="#recursos">O que tem</a>
+    <a href="#instalar">Instalar</a>
+    <a class="guide" href="https://github.com/LP-IQ/tabula/blob/main/docs/guia-do-mestre.md">Guia do mestre</a>
+    <a class="gh" href="https://github.com/LP-IQ/tabula">GitHub</a>
+  </nav>
+</header>
+
+<main>
+  <div class="wrap hero">
+    <div>
+      <h1>A mesa da campanha, aberta no navegador.</h1>
+      <p class="lead">Mapa com névoa, tokens, fichas e dados para jogar D&amp;D&nbsp;5e online ou na mesma sala. A Tábula roda no computador do mestre e os jogadores entram por um link, do PC ou do celular.</p>
+      <div class="ctas">
+        <a class="btn gold" href="https://github.com/LP-IQ/tabula/archive/refs/heads/main.zip">Baixar a Tábula</a>
+        <a class="btn line" href="#instalar">Como instalar</a>
+      </div>
+      <p class="small">Grátis e de código aberto. Precisa do Windows (ou Mac/Linux) com Node.js.</p>
+    </div>
+
+    <div>
+      <div class="board-frame">
+        <div class="board" id="board" aria-label="Demonstração: arraste o token do Tharkino pelo mapa">
+          <div class="rug" style="left:62%;top:8%;width:22%;height:30%"></div>
+          <div class="wall" style="left:41.66%;top:0;width:8.33%;height:50%"></div>
+          <div class="wall" style="left:41.66%;top:62.5%;width:41.66%;height:12.5%"></div>
+          <div class="wall" style="left:0;top:62.5%;width:16.66%;height:12.5%"></div>
+          <div class="tok foe" data-x="9" data-y="2" style="left:75%;top:25%"><span>G1</span></div>
+          <div class="tok foe" data-x="10" data-y="6" style="left:83.33%;top:75%"><span>G2</span></div>
+          <canvas class="fog" id="fog"></canvas>
+          <svg class="ruler" id="ruler" aria-hidden="true"></svg>
+          <div class="tok pc" id="hero" tabindex="0" role="button" aria-label="Tharkino. Arraste, ou use as setas do teclado" style="left:8.33%;top:25%"><span>T</span></div>
+        </div>
+      </div>
+      <div class="board-note" aria-live="polite">
+        <span id="note">Arraste o <b>Tharkino</b> (ou use as setas). A régua mede em metros, a névoa abre por onde ele passa.</span>
+        <button class="roll" id="roll" hidden>Rolar iniciativa</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="band" id="recursos">
+    <div class="wrap">
+      <h2>O que tem na mesa</h2>
+      <p class="intro">Feita para uma campanha de verdade e crescendo a cada sessão. O mestre vê tudo; cada jogador mexe só no próprio personagem.</p>
+      <div class="fronts">
+        <article class="front">
+          <figure><img src="img/card-mapa.png" alt="Mapa com régua medindo 7,5 metros entre dois pontos, vista pelo mestre" loading="lazy"></figure>
+          <h3>O mapa</h3>
+          <ul>
+            <li><b>Tokens redondos</b> <span>com a foto do personagem, PV e condições à vista.</span></li>
+            <li><b>Névoa de guerra</b> <span>que o mestre revela aos poucos. Monstro na névoa nem chega ao jogador.</span></li>
+            <li><b>Régua e áreas de magia</b> <span>em esfera, cone, linha e cubo, contadas em quadrados de 1,5 m.</span></li>
+            <li><b>Desenho livre e setas</b> <span>para combinar a tática antes do turno.</span></li>
+          </ul>
+        </article>
+        <article class="front">
+          <figure><img src="img/card-ficha.png" alt="Ficha do jogador com condições, aspecto mágico e pontos de vida" loading="lazy"></figure>
+          <h3>A ficha</h3>
+          <ul>
+            <li><b>Rolagens com um toque</b> <span>em atributos, perícias e ataques, com vantagem e desvantagem.</span></li>
+            <li><b>Espaços de magia e dados de vida</b> <span>gastos e recuperados nos descansos.</span></li>
+            <li><b>Condições, inspiração e testes contra a morte</b> <span>marcados na própria ficha.</span></li>
+            <li><b>XP e moedas</b> <span>com aviso de quando dá para subir de nível.</span></li>
+          </ul>
+        </article>
+        <article class="front">
+          <figure><img src="img/card-lote.png" alt="Bestiário do mestre recebendo várias imagens de monstros de uma vez" loading="lazy"></figure>
+          <h3>Atrás do escudo</h3>
+          <ul>
+            <li><b>Bestiário com 334 monstros do SRD</b> <span>em português, prontos para pôr no mapa.</span></li>
+            <li><b>Ajuste de ND</b> <span>para deixar um monstro à altura do grupo, e o medidor de dificuldade do encontro.</span></li>
+            <li><b>Calendário do mundo</b> <span>com descanso curto e longo para o grupo inteiro.</span></li>
+            <li><b>Backups automáticos</b> <span>e um botão para salvar e encerrar a sessão.</span></li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap duo">
+      <div class="shots">
+        <img src="img/card-fila.png" alt="Aba de segredos do mestre com a fila de memórias de um jogador" loading="lazy">
+        <img src="img/celular-v5.png" alt="A Tábula aberta no celular de um jogador, com o mapa e as ferramentas" loading="lazy">
+      </div>
+      <div>
+        <h2>Segredos para um jogador só</h2>
+        <p>Mande uma pista, uma imagem ou uma memória perdida direto para quem precisa saber. Deixe as memórias numa fila e libere uma por vez, na hora certa da história.</p>
+        <p>No celular a mesa vira abas: mapa, ficha, dados e diário. Dá para jogar na mesma sala, cada um com o seu, e a TV mostra o mapa.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="instalar">
+    <div class="wrap">
+      <h2>Como começar</h2>
+      <p class="intro">Só o mestre instala. Os jogadores não precisam de nada além do navegador.</p>
+      <ol class="steps">
+        <li><b>Instale o Node.js</b><span>A versão LTS, em <a href="https://nodejs.org">nodejs.org</a>.</span></li>
+        <li><b>Baixe e descompacte</b><span>A pasta da Tábula pode ficar em qualquer lugar.</span></li>
+        <li><b>Rode o <code>instalar.bat</code></b><span>Uma vez só. Ele prepara tudo.</span></li>
+        <li><b>Abra a mesa</b><span><code>iniciar.bat</code> para jogar em casa, <code>online.bat</code> para jogar pela internet.</span></li>
+        <li><b>Mande o link</b><span>Crie as contas dos jogadores na aba Mestre e passe o endereço para eles.</span></li>
+      </ol>
+      <div class="after-steps">
+        <a class="btn gold" href="https://github.com/LP-IQ/tabula/archive/refs/heads/main.zip">Baixar a Tábula</a>
+        <a class="btn line" href="https://github.com/LP-IQ/tabula/blob/main/docs/instalacao.md">Instalação passo a passo</a>
+        <span class="small">Para atualizar depois, é só rodar o <code>atualizar.bat</code>. A campanha fica guardada à parte.</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap cols">
+    <div>
+      <p>Guias: <a href="https://github.com/LP-IQ/tabula/blob/main/docs/guia-do-mestre.md">do mestre</a>, <a href="https://github.com/LP-IQ/tabula/blob/main/docs/guia-do-jogador.md">do jogador</a> e <a href="https://github.com/LP-IQ/tabula/blob/main/docs/desenvolvimento.md">para quem quer mexer no código</a>. O que mudou em cada versão está no <a href="https://github.com/LP-IQ/tabula/blob/main/CHANGELOG.md">histórico</a>.</p>
+    </div>
+    <div>
+      <p>Os monstros vêm do System Reference Document 5.1 da Wizards of the Coast, licença <a href="https://creativecommons.org/licenses/by/4.0/legalcode">CC-BY-4.0</a>. A Tábula não é afiliada à Wizards of the Coast.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const board = document.getElementById('board');
+  const hero = document.getElementById('hero');
+  const fog = document.getElementById('fog');
+  const ruler = document.getElementById('ruler');
+  const note = document.getElementById('note');
+  const roll = document.getElementById('roll');
+  const foes = [...board.querySelectorAll('.tok.foe')];
+  const COLS = 12, ROWS = 8, SIGHT = 2.6;           // visão em quadrados
+  const walls = [[5, 0, 1, 4], [5, 5, 5, 1], [0, 5, 2, 1]];   // x, y, largura, altura
+  const pos = { x: 1, y: 2 };
+  const seen = [];
+  let found = 0;
+
+  const blocked = (x, y) => x < 0 || y < 0 || x >= COLS || y >= ROWS || walls.some(([wx, wy, ww, wh]) => x >= wx && x < wx + ww && y >= wy && y < wy + wh);
+
+  function size() {
+    const r = board.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    fog.width = Math.round(r.width * dpr); fog.height = Math.round(r.height * dpr);
+    ruler.setAttribute('viewBox', `0 0 ${r.width} ${r.height}`);
+    drawFog();
+  }
+  function drawFog() {
+    const g = fog.getContext('2d');
+    const sq = fog.width / COLS;
+    g.globalCompositeOperation = 'source-over';
+    g.clearRect(0, 0, fog.width, fog.height);
+    g.fillStyle = '#1a120c';
+    g.fillRect(0, 0, fog.width, fog.height);
+    g.globalCompositeOperation = 'destination-out';
+    for (const p of seen) {
+      const cx = (p.x + .5) * sq, cy = (p.y + .5) * sq, r = SIGHT * sq;
+      const grad = g.createRadialGradient(cx, cy, r * .55, cx, cy, r);
+      grad.addColorStop(0, '#000'); grad.addColorStop(1, '#0000');
+      g.fillStyle = grad;
+      g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.fill();
+    }
+  }
+  function reveal() {
+    if (!seen.some((p) => p.x === pos.x && p.y === pos.y)) seen.push({ ...pos });
+    drawFog();
+    for (const f of foes) {
+      if (f.classList.contains('seen')) continue;
+      const d = Math.hypot(f.dataset.x - pos.x, f.dataset.y - pos.y);
+      if (d <= SIGHT - .4) { f.classList.add('seen'); found += 1; }
+    }
+    if (found === foes.length) {
+      note.innerHTML = '<b>Dois goblins</b> saíram da névoa. Hora da iniciativa.';
+      roll.hidden = false;
+    } else if (found === 1) {
+      note.innerHTML = 'Um <b>goblin</b>! Será que ele está sozinho?';
+    }
+  }
+  function place() {
+    hero.style.left = (pos.x * 100 / COLS) + '%';
+    hero.style.top = (pos.y * 100 / ROWS) + '%';
+  }
+  function measure(a, b) {
+    if (!a) { ruler.innerHTML = ''; return; }
+    const sq = board.clientWidth / COLS;
+    const sqs = Math.max(Math.abs(b.x - a.x), Math.abs(b.y - a.y));
+    const x1 = (a.x + .5) * sq, y1 = (a.y + .5) * sq, x2 = (b.x + .5) * sq, y2 = (b.y + .5) * sq;
+    const label = `${(sqs * 1.5).toLocaleString('pt-BR')} m`;
+    ruler.innerHTML = `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/><circle cx="${x1}" cy="${y1}" r="5"/>` +
+      (sqs ? `<text x="${(x1 + x2) / 2}" y="${(y1 + y2) / 2 - 12}" text-anchor="middle">${label}</text>` : '');
+  }
+
+  let start = null;
+  hero.addEventListener('pointerdown', (e) => {
+    hero.setPointerCapture(e.pointerId);
+    hero.classList.add('drag');
+    start = { ...pos };
+  });
+  hero.addEventListener('pointermove', (e) => {
+    if (!start) return;
+    const r = board.getBoundingClientRect();
+    const x = Math.floor((e.clientX - r.left) / (r.width / COLS));
+    const y = Math.floor((e.clientY - r.top) / (r.height / ROWS));
+    if ((x !== pos.x || y !== pos.y) && !blocked(x, y)) {
+      pos.x = x; pos.y = y; place(); reveal();
+    }
+    measure(start, pos);
+  });
+  const end = () => { if (!start) return; start = null; hero.classList.remove('drag'); setTimeout(() => measure(null), 900); };
+  hero.addEventListener('pointerup', end);
+  hero.addEventListener('pointercancel', end);
+
+  let keyStart = null, keyTimer = 0;
+  hero.addEventListener('keydown', (e) => {
+    const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+    if (!d) return;
+    e.preventDefault();
+    const x = pos.x + d[0], y = pos.y + d[1];
+    if (blocked(x, y)) return;
+    if (!keyStart) keyStart = { ...pos };
+    pos.x = x; pos.y = y; place(); reveal(); measure(keyStart, pos);
+    clearTimeout(keyTimer);
+    keyTimer = setTimeout(() => { keyStart = null; measure(null); }, 1200);
+  });
+
+  roll.addEventListener('click', () => {
+    const t = 1 + Math.floor(Math.random() * 20);
+    const g = 1 + Math.floor(Math.random() * 20) + 2;
+    note.innerHTML = `Iniciativa: <b>Tharkino ${t}</b>, goblins ${g}. ${t >= g ? 'Tharkino age primeiro.' : 'Os goblins agem primeiro.'}`;
+    roll.textContent = 'Rolar de novo';
+  });
+
+  window.addEventListener('resize', size);
+  size();
+  reveal();
+})();
+</script>
+</body>
+</html>

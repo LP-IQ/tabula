@@ -1,15 +1,17 @@
 // Ponto de entrada: login, conexão em tempo real, abas e distribuição do estado.
 import { app } from './core.js';
-import { $, h, toast, avatar, setKids } from './util.js';
+import { $, h, toast, avatar, setKids, uploadImage, topPasteTarget } from './util.js';
 import { renderMap, onTokenMoved, showPing, fit } from './map.js';
-import { renderSheet } from './sheet.js';
+import { renderSheet, pasteToSheet } from './sheet.js';
 import { initChat, setHistory, addMessage, updateChatLabels, scrollChatToEnd } from './chat.js';
 import { renderInitiative } from './initiative.js';
 import { renderHandouts, markAllSeen, unseenCount } from './handouts.js';
 import { renderGM } from './gm.js';
 import { renderJournal, resetJournal } from './journal.js';
 import { renderCompendium } from './compendium.js';
-import { renderBestiary, openStatBlock } from './bestiary.js';
+import { renderBestiary, openStatBlock, pasteToBestiary } from './bestiary.js';
+import { onMeasure } from './tools.js';
+import { renderClock, renderUpdate } from './calendar.js';
 
 const TOKEN_KEY = 'tabula.token';
 const mobile = window.matchMedia('(max-width: 820px)');
@@ -88,6 +90,22 @@ document.body.addEventListener('show-map', () => { if (mobile.matches) selectTab
 document.body.addEventListener('open-tab', (e) => selectTab(e.detail));
 document.body.addEventListener('open-statblock', (e) => openStatBlock(e.detail.monsterId, e.detail.who));
 
+// ------------------------------------------------------- colar imagem (Ctrl+V)
+document.addEventListener('paste', async (e) => {
+  if (!app.state || app.state.me.role === 'viewer') return;
+  const file = [...(e.clipboardData?.files || [])].find((f) => /^image\/(png|jpeg|webp|gif)$/.test(f.type));
+  if (!file) return;                       // texto colado segue normal
+  const target = topPasteTarget();
+  const tab = activeTab();
+  if (!target && tab !== 'sheet' && tab !== 'bestiary') return;
+  e.preventDefault();
+  let url;
+  try { toast('Enviando imagem…'); url = await uploadImage(file); } catch (err) { return toast(err.message, 'error'); }
+  if (target) return target(url);
+  const ok = tab === 'sheet' ? pasteToSheet(url) : app.isGM && pasteToBestiary(url);
+  if (!ok) toast(tab === 'sheet' ? 'Abra uma ficha para colar a imagem' : 'Abra uma das suas fichas do bestiário para colar a imagem', 'error');
+});
+
 // --------------------------------------------------------------- presença
 function renderPresence(state) {
   setKids($('#presence'), ...state.users.filter((u) => u.online).map((u) => {
@@ -108,6 +126,8 @@ function renderAll() {
   document.body.classList.toggle('gm', app.isGM);
   document.body.classList.toggle('viewer', s.me.role === 'viewer');
   renderPresence(s);
+  renderClock(s);
+  renderUpdate(s);
   renderMap(s);
   if (s.me.role !== 'viewer') {
     renderSheet(s);
@@ -176,6 +196,7 @@ function connect(token) {
   socket.on('chat', (m) => { if (chatReady) addMessage(m); });
   socket.on('token:moved', onTokenMoved);
   socket.on('ping', showPing);
+  socket.on('measure', onMeasure);
   socket.on('restored', (x) => { if (!app.isGM) toast(`↺ ${x.by} carregou um backup da campanha`, 'secret', 6000); });
   socket.on('server:closing', (x) => {
     document.getElementById('closed-overlay')?.remove();

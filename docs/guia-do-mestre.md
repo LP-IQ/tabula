@@ -54,6 +54,37 @@ ocultar/revelar e remover. Com o token selecionado, as **setas do teclado** anda
 Os jogadores veem a barra de vida dos personagens, mas não a dos monstros: só um **aro vermelho**
 quando o monstro está com metade da vida ou menos, e o token **cinza com ✖** quando ele cai.
 
+**Condições**: no painel do token, clique nos ícones (envenenado 🤢, caído ⤵, amedrontado 😱,
+concentração 🔮…). Elas aparecem no token para todos. Num personagem, a condição vai também para a ficha dele.
+
+## Ferramentas do mapa
+
+A barra à esquerda do mapa (todos têm, menos a névoa):
+
+| | |
+|---|---|
+| ✋ | Mover e selecionar (Esc volta para ela) |
+| 📏 | Régua: arraste para medir. Diagonal conta como um quadrado (1,5 m). Todos veem a régua de quem está medindo |
+| ◯ ◣ ━ ▢ | Áreas de magia: esfera (arraste do centro até a borda), cone, linha e cubo. A medida aparece escrita |
+| ✏ ➜ | Desenho livre e seta |
+| 🧽 | Borracha: toque num desenho. Cada jogador apaga os seus; você apaga qualquer um |
+| 🗑 | Limpar: você apaga todos os desenhos da cena; o jogador, só os dele |
+
+Atalhos: **R** régua, **C** círculo, **D** desenho, **Esc** mover.
+
+### Névoa de guerra
+
+![Mapa com névoa: só a sala onde o grupo está aparece para o jogador](img/nevoa-jogador.png)
+
+1. Clique em **🌫** e marque **Ligada**: o mapa inteiro fica coberto para os jogadores.
+2. Escolha **▭ Revelar** ou **◯ Revelar** e arraste no mapa sobre o que o grupo está vendo.
+3. **▭ Esconder** cobre de novo; **↶** desfaz o último; **Cobrir tudo** e **Revelar tudo** fazem o óbvio.
+
+Para você a névoa é translúcida, para continuar vendo o mapa. Para os jogadores ela é escura, e os
+**monstros que estão na névoa nem são enviados** para o navegador deles (não dá para "espiar").
+Os personagens dos jogadores aparecem sempre.
+
+
 ## Bestiário (fichas de NPCs e monstros)
 
 Aba **🐉 Bestiário**, só sua. As fichas ficam salvas na campanha.
@@ -98,6 +129,15 @@ Em **Mestre → Tokens** (e ao colocar monstros) aparece **Fácil / Médio / Dif
 como no capítulo 3 do Livro do Mestre: limites de XP pelo nível de cada personagem dos jogadores,
 XP dos monstros vivos na cena e o multiplicador pela quantidade de monstros. Tokens sem ficha não entram na conta.
 
+### Imagens de muitas fichas de uma vez
+**🖼 Imagens em lote** → escolha várias imagens. O **nome do arquivo** diz de qual monstro é:
+`goblin.png`, `Lobo.jpg`, `Dragão Vermelho Adulto.webp` ou o código do SRD (`adult-red-dragon.png`).
+Antes de aplicar, a janela mostra quem recebe cada imagem e quais arquivos não acharam ficha.
+Se o monstro só existe na Biblioteca SRD, ele vira uma ficha sua, já com a imagem.
+
+Para uma ficha só: abra a ficha (ou o editor) e **cole a imagem com Ctrl+V**. Os tokens daquela ficha
+que já estão no mapa trocam de imagem junto.
+
 ### Token de NPC no mapa
 Clique no token: o painel mostra a ficha (**📜 Ficha**), os ataques com botões de rolar, PV com
 **Dano/Cura**, tamanho, a ficha vinculada (dá para vincular um token antigo a uma ficha), ocultar e remover.
@@ -121,6 +161,28 @@ Para memórias, pistas, cartas, mapas do tesouro…
 
 1. Aba **✉ Segredos** → título, texto, imagem → **Criar segredo**.
 2. Escolha quem vê: **Todos** ou jogadores específicos. Quem recebe é avisado na hora; os outros não veem nada.
+
+**Fila de memórias**: para ir devolvendo as memórias de um personagem aos poucos. Ao criar o segredo,
+escolha *Pôr na fila de memórias de…* (ou, num segredo já criado, *Pôr na fila de…*). Na caixa
+**🧠 Fila de memórias** você reordena com ↑ ↓ e, na hora certa, clica **Liberar próxima**: só a primeira
+da fila chega ao jogador. **Liberar a próxima de cada um** faz isso para todos de uma vez.
+
+### Calendário e descansos
+A data do mundo fica no topo da tela, para todos. Clique nela para:
+
+<img src="img/calendario.png" alt="Janela do calendário do mundo com os botões de passar o tempo e de descanso" width="640">
+
+- **Passar o tempo**: +10 min, +1 hora, +8 horas, +1 dia, +1 semana (dez dias, como em Faerûn).
+- **☕ Descanso curto**: passa 1 hora e avisa no chat; cada jogador gasta os próprios dados de vida na ficha.
+- **🌙 Descanso longo**: passa 8 horas e, para os personagens dos jogadores, enche os PV, recupera os
+  espaços de magia, devolve metade dos dados de vida e zera os testes contra a morte.
+- **Definir a data** e trocar os **meses do mundo** (um por linha, `Nome | dias`, `| festival` para dias
+  festivos). O padrão é o calendário de Harptos, com a era *DR*.
+
+### Aspecto mágico e anel
+Na ficha de cada personagem, logo abaixo dos PV, há dois quadros que só você edita: **Aspecto mágico**
+(com o mês de nascimento) e **Anel**. Escreva o efeito do nível 1 ao 4 e o efeito a partir do nível 5.
+O jogador vê o quadro na ficha dele; quando o personagem chega ao nível 5, a versão melhorada aparece no lugar.
 
 ### Diário do grupo
 Todos escrevem. Cada jogador edita e apaga só o que escreveu; o mestre pode apagar qualquer entrada.

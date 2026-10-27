@@ -15,8 +15,15 @@ No celular, as abas ficam embaixo: **Mapa · Ficha · Dados · Iniciativa · Seg
 - **Arrastar o fundo** move a visão; **rodinha do mouse** ou **pinça com dois dedos** dá zoom; ⤢ ajusta à tela.
 - **Dois cliques ou dois toques** no mapa mostram um sinal para todo mundo ("olha aqui!").
 - Na Ficha, **◎ Achar no mapa** centraliza no seu token.
+- **Ferramentas** (barra à esquerda do mapa): 📏 régua para medir a distância (cada quadrado é 1,5 m;
+  todos veem enquanto você mede), ◯ ◣ ━ ▢ áreas de magia (esfera, cone, linha, cubo), ✏ desenho livre,
+  ➜ seta, 🧽 borracha para apagar os seus desenhos. Volte para ✋ para andar com o token.
+- Partes escuras do mapa são **névoa**: o mestre revela quando vocês chegarem lá.
+- O **relógio no topo** mostra o dia e a hora no mundo do jogo.
 
 ## Ficha
+
+<img src="img/ficha-v5.png" alt="Ficha do jogador com condições, aspecto mágico e pontos de vida" width="640">
 
 - Tudo salva sozinho: aparece **"✓ Salvo"** ao lado de "Achar no mapa".
 - **Clique no retrato** para trocar a foto. Ela também vira o seu token.
@@ -24,6 +31,16 @@ No celular, as abas ficam embaixo: **Mapa · Ficha · Dados · Iniciativa · Seg
   perícias (○ sem proficiência, ● proficiente, ◉ especialista), iniciativa, ataques e dano.
 - **Vantagem/Desvantagem**: escolha antes de clicar. Vale para a próxima rolagem de d20 e depois volta ao normal.
 - **PV**: digite um número e clique em **Dano** (gasta primeiro os PV temporários) ou **Cura**.
+- **Imagem nova**: além de clicar no retrato, dá para copiar uma imagem e apertar **Ctrl+V** com a ficha aberta.
+- **Condições**: toque nos ícones (envenenado, caído, amedrontado…). Elas aparecem no seu token.
+  Marque **✨ Inspiração** quando o mestre der.
+- **Testes contra a morte**: com 0 PV aparece o quadro ☠. **🎲 Rolar** faz o teste e marca sozinho
+  (20 natural volta com 1 PV; 1 natural conta duas falhas).
+- **Espaços de magia** (dentro de *Magias*): crie os espaços de cada círculo com **+** e toque nas bolinhas para gastar.
+- **Dados de vida**: no descanso curto, **☕ Gastar 1** rola o dado + CON e cura na hora.
+  No descanso longo o mestre recupera PV, espaços e metade dos dados de vida de todo mundo.
+- **XP e moedas**: em *Experiência e moedas*. Quando o XP passar do próximo nível, aparece um aviso.
+- **Aspecto mágico e anel**: se o mestre tiver definido, aparecem embaixo dos PV.
 
 ## Dados
 

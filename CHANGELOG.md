@@ -1,5 +1,39 @@
 # Histórico de versões
 
+## v5 — 27/10/2026
+**Novidades no mapa**
+- **Névoa de guerra**: na ferramenta 🌫 (só o mestre), ligue a névoa e revele ou esconda retângulos e
+  círculos arrastando no mapa; dá para desfazer, cobrir tudo e revelar tudo. Para o mestre a névoa é
+  translúcida; para os jogadores, escura. Tokens de monstros cobertos pela névoa nem são enviados aos jogadores.
+- **Régua e áreas de magia**: régua em metros (regra de 1,5 m por quadrado, diagonal conta como um),
+  esfera, cone, linha e cubo com a medida escrita. A régua de cada um aparece ao vivo para os outros.
+- **Desenho livre, setas e borracha**: cada um apaga os seus; o mestre apaga qualquer um ou limpa a cena.
+- **Condições nos tokens**: envenenado, caído, amedrontado, concentração e as outras aparecem como
+  ícones no token. O mestre marca pelo painel do token; o jogador, pela ficha.
+
+**Novidades na ficha**
+- Condições, inspiração e **testes contra a morte** (com rolagem automática: 20 volta com 1 PV, 1 conta duas falhas).
+- **Espaços de magia** por círculo, clicando para gastar e recuperar.
+- **Dados de vida**: escolha o dado e gaste no descanso curto; a cura rolada entra direto nos PV.
+- **XP e moedas** (PC, PP, PE, PO, PL), com aviso de quando já dá para subir de nível.
+- **Aspecto mágico e anel**: o mestre escreve o efeito base e o do nível 5; o jogador vê na ficha,
+  e a partir do nível 5 a versão melhorada aparece no lugar.
+- **Colar imagem com Ctrl+V** na ficha (vira o retrato e o token) e nas fichas do bestiário.
+
+**Novidades do mestre**
+- **Calendário do mundo** no topo da tela, para todos. O mestre passa o tempo (+10 min, +1 h, +8 h,
+  +1 dia…), define a data e troca os meses. O padrão é o calendário de Harptos (Faerûn).
+- **Descanso curto e longo** para o grupo: o longo passa 8 horas e devolve PV, espaços de magia e metade dos dados de vida.
+- **Fila de memórias** nos Segredos: guarde várias para um jogador, ordene e libere uma de cada vez.
+- **Imagens em lote no bestiário**: escolha várias imagens de uma vez; o nome do arquivo diz de qual
+  monstro é (português, inglês ou o código do SRD). Monstros da biblioteca viram fichas suas já com a imagem.
+- Trocar a imagem de uma ficha atualiza os tokens dela que estão no mapa.
+- **`atualizar.bat`**: baixa a versão mais nova do GitHub, guarda a anterior em `Tabula_anterior` e
+  não mexe na campanha. Quando sai versão nova, o mestre vê um aviso no topo da mesa.
+
+**Correções**
+- A régua dos outros mostrava a posição de um instante antes, e não a final.
+
 ## v4.1 — 15/10/2026
 **Correções**
 - A biblioteca SRD não abria: o arquivo `public/data/srd-monstros.json` ficava de fora do pacote e do

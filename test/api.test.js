@@ -7,6 +7,7 @@ const path = require('path');
 
 process.env.TABULA_DATA = fs.mkdtempSync(path.join(os.tmpdir(), 'tabula-test-'));
 process.env.PORT = '3999';
+process.env.TABULA_NO_UPDATE_CHECK = '1';
 const { io } = require('socket.io-client');
 const { server } = require('../server');
 
@@ -171,6 +172,64 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const backupJson = await (await fetch(URL + '/api/backup', { headers: { 'x-token': setup.body.token } })).json();
   check((await post('/api/restore', backupJson, setup.body.token)).status === 200, 'carregar arquivo de backup baixado funciona');
   check((await post('/api/restore', backupJson, lp.body.token)).status === 403, 'jogador NÃO carrega backup');
+
+  // ---------- v5: névoa, desenhos, condições, fila de memórias, calendário, ficha
+  const sid = sc.id;
+  await call(gm, 'token:create', { sceneId: sid, name: 'Espreitador', x: 1400, y: 1400, hp: 5 });
+  await call(gm, 'fog:reset', { sceneId: sid, mode: 'cover' });
+  await wait(50);
+  check(!p.last.scene.tokens.some((t) => t.name === 'Espreitador') && p.last.scene.tokens.some((t) => t.characterId === cT.id),
+    'névoa esconde NPC do jogador, mas não o próprio personagem');
+  await call(gm, 'fog:op', { sceneId: sid, op: 'reveal', shape: 'rect', x: 1300, y: 1300, w: 300, h: 300 });
+  await wait(50);
+  check(p.last.scene.tokens.some((t) => t.name === 'Espreitador'), 'revelar a área mostra o NPC');
+  check(!(await call(p, 'fog:op', { sceneId: sid, op: 'reveal', shape: 'rect', x: 0, y: 0, w: 9, h: 9 })).ok, 'jogador NÃO mexe na névoa');
+  await call(gm, 'fog:set', { sceneId: sid, enabled: false });
+
+  const dr = await call(p, 'draw:add', { sceneId: sid, kind: 'circle', pts: [100, 100, 160, 100] });
+  await wait(50);
+  check(dr.ok && gm.last.scene.drawings.length === 1, 'jogador desenha uma área de magia e o mestre vê');
+  check(!(await call(a, 'draw:delete', { sceneId: sid, id: dr.id })).ok, 'outro jogador NÃO apaga o desenho alheio');
+  check((await call(gm, 'draw:delete', { sceneId: sid, id: dr.id })).ok, 'mestre apaga qualquer desenho');
+
+  check((await call(p, 'character:update', { id: cT.id, patch: { conditions: ['envenenado', 'xyz', 'envenenado'] } })).ok, 'jogador marca condição no próprio personagem');
+  await wait(50);
+  check(a.last.characters.find((c) => c.id === cT.id).conditions.join() === 'envenenado', 'condição válida aparece para os outros (inválida e repetida descartadas)');
+  check(!(await call(p, 'character:update', { id: cT.id, patch: { aspect: { name: 'trapaça' } } })).ok, 'jogador NÃO edita o próprio aspecto mágico');
+  check((await call(gm, 'character:update', { id: cT.id, patch: { aspect: { month: 'Hammer', name: 'Centelha', base: 'choque', upgraded: 'raio' } } })).ok, 'mestre define o aspecto mágico');
+
+  const m1 = await call(gm, 'handout:create', { title: 'Memória 1', body: 'a', queuedFor: pat.id });
+  const m2 = await call(gm, 'handout:create', { title: 'Memória 2', body: 'b', queuedFor: pat.id });
+  await call(gm, 'handout:create', { title: 'Memória do Bao', body: 'c', queuedFor: and.id });
+  await wait(50);
+  const before = p.last.handouts.length;
+  check(!p.last.handouts.some((x) => x.title.startsWith('Memória ')), 'memórias na fila ficam invisíveis');
+  await call(gm, 'handout:queueMove', { id: m2.id, dir: -1 });
+  await call(gm, 'handout:releaseNext', { userId: pat.id });
+  await wait(50);
+  check(p.last.handouts.length === before + 1 && p.last.handouts.some((x) => x.title === 'Memória 2'), 'liberar próxima entrega a primeira da fila (respeitando a ordem)');
+  const rAll = await call(gm, 'handout:releaseNext', { userId: 'all' });
+  await wait(50);
+  check(rAll.released === 2 && a.last.handouts.some((x) => x.title === 'Memória do Bao') && !a.last.handouts.some((x) => x.title === 'Memória 1'),
+    'liberar para todos entrega uma de cada, cada um só vê a sua');
+
+  check(gm.last.calendar.months.length === 17 && gm.last.calendar.year === 1492, 'calendário padrão (Harptos)');
+  await call(gm, 'calendar:set', { year: 1492, month: 0, day: 30, hour: 20, minute: 0 });
+  await call(gm, 'calendar:advance', { minutes: 6 * 60 });
+  await wait(50);
+  const cal = p.last.calendar;
+  check(cal.month === 1 && cal.day === 1 && cal.minutes === 120, 'passar o tempo vira o dia e o mês (Hammer 30 → Midwinter, 02:00)');
+  check(!(await call(p, 'calendar:advance', { minutes: 60 })).ok, 'jogador NÃO mexe no calendário');
+
+  await call(p, 'character:update', { id: cT.id, patch: { hpMax: 20, hp: 3, slots: [{ max: 2, used: 2 }, { max: 9, used: 99 }], hdUsed: 2, level: 4 } });
+  await wait(50);
+  check(p.last.characters.find((c) => c.id === cT.id).slots[1].used === 9, 'espaços de magia não passam do máximo');
+  await call(gm, 'rest:long');
+  await wait(50);
+  const th = p.last.characters.find((c) => c.id === cT.id);
+  check(th.hp === 20 && th.slots[0].used === 0 && th.hdUsed === 0, 'descanso longo recupera PV, espaços e dados de vida');
+  const rr = await call(p, 'roll', { formula: '1d8+2' });
+  check(rr.ok && rr.total >= 3 && rr.total <= 10, 'rolagem devolve o total (para gastar dado de vida)');
 
   a.close();
   gm.close(); p.close();

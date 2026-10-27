@@ -3,25 +3,32 @@
 **Mesa virtual de RPG feita para a nossa campanha.** O mestre roda a mesa no próprio computador,
 como no Foundry VTT, e os jogadores entram pelo navegador, no PC ou no celular, sem instalar nada.
 
-![Visão do mestre: mapa com tokens e painel lateral](docs/img/mestre.png)
+Página do projeto: **<https://lp-iq.github.io/tabula/>**
+
+![Mapa com régua medindo a distância, visto pelo mestre](docs/img/regua.png)
 
 ## O que ela faz
 
 | | |
 |---|---|
 | 🗺 **Mapa** | Imagem de fundo enviada pelo mestre, grade ajustável, zoom e arrasto (mouse, trackpad ou dedos) |
+| 🌫 **Névoa de guerra** | O mestre revela e esconde partes do mapa; monstros na névoa nem chegam aos jogadores |
+| 📏 **Régua e áreas** | Régua em metros e áreas de magia (esfera, cone, linha, cubo), desenho livre e setas, que todos veem |
 | ⬤ **Tokens** | Redondos, com a foto do personagem. Cada jogador move só o seu; o mestre move todos, cria monstros, oculta e revela |
 | 📜 **Ficha 5e** | Atributos, resistências, perícias, PV com dano/cura, ataques, magias, inventário. Clicar num número rola o dado |
+| 🔮 **Mais na ficha** | Condições (aparecem no token), inspiração, testes contra a morte, espaços de magia, dados de vida, XP e moedas, aspecto mágico e anel |
 | 🎲 **Dados** | Rolados no servidor: `1d20+5`, `2d6+1d4`, vantagem/desvantagem, rolagem secreta. Cada rolagem aparece num pop-up para todos |
 | ⚔ **Iniciativa** | Ordem de turnos visível no topo do mapa para todos |
-| ✉ **Segredos** | Textos e imagens que o mestre libera só para um jogador (ou alguns, ou todos) |
+| ✉ **Segredos** | Textos e imagens que o mestre libera só para um jogador (ou alguns, ou todos), e uma **fila de memórias** para liberar uma por vez |
+| 🕰 **Calendário** | Data e hora do mundo no topo (Harptos por padrão, editável), descanso curto e longo para o grupo |
 | 📖 **Diário** | Todo o grupo escreve; cada um edita o que é seu |
 | 📚 **Compêndio** | Páginas de consulta do mestre (tabelas de XP, preços, locais), só dele ou visíveis a todos |
-| 🐉 **Bestiário** | Fichas de NPCs e monstros com ataques roláveis, 334 monstros do SRD prontos, **ajuste de ND** e medidor de dificuldade do encontro |
+| 🐉 **Bestiário** | Fichas de NPCs e monstros com ataques roláveis, 334 monstros do SRD prontos, **ajuste de ND**, medidor de dificuldade do encontro e imagens em lote |
 | 💾 **Backups** | Salva a cada alteração, guarda pontos de backup e restaura com um clique |
+| ⬆ **Atualizar** | `atualizar.bat` baixa a versão nova do GitHub sem mexer na campanha; o mestre é avisado quando sai uma |
 | 📺 **Telão** | Usuário que só vê o mapa, para uma TV no jogo presencial |
 
-<img src="docs/img/celular.png" alt="Jogador no celular" width="260" align="right">
+<img src="docs/img/celular-v5.png" alt="Jogador no celular" width="260" align="right">
 
 ## Começar
 
@@ -29,6 +36,7 @@ como no Foundry VTT, e os jogadores entram pelo navegador, no PC ou no celular, 
 2. Baixe a última versão em **Releases**, ou o código em **Code → Download ZIP**, e descompacte.
 3. Dê dois cliques em `instalar.bat` (uma vez só).
 4. Para jogar: `iniciar.bat` (mesma casa / mesmo Wi-Fi) ou `online.bat` (amigos em outras casas).
+5. Para atualizar no futuro: feche a mesa e rode `atualizar.bat`.
 
 O passo a passo completo, incluindo o jogo online e a resolução de problemas, está em
 **[docs/instalacao.md](docs/instalacao.md)**.
@@ -43,8 +51,8 @@ O passo a passo completo, incluindo o jogo online e a resolução de problemas, 
 
 ## Onde ficam os dados
 
-A campanha **não** fica no repositório. Ela mora numa pasta `campanha` ao lado das pastas de versão
-(`Tabula_v1`, `Tabula_v2`…), então todas as versões abrem a mesma campanha. Veja
+A campanha **não** fica no repositório. Ela mora numa pasta `campanha` ao lado da pasta da Tábula,
+então atualizar (ou ter várias versões lado a lado) nunca mexe nela. Veja
 [docs/instalacao.md](docs/instalacao.md#onde-fica-a-campanha).
 
 <br clear="right">

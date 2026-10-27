@@ -53,6 +53,7 @@
         <span>Tábula</span>
       </div>
       <div id="presence" class="presence" aria-label="Quem está online"></div>
+      <button id="clock" class="clock" hidden title="Data no mundo do jogo"></button>
       <div class="me">
         <span id="conn" class="conn" title="Conexão"></span>
         <span id="me-name"></span>
@@ -66,7 +67,10 @@
           <div id="map-layer" class="map-layer">
             <img id="map-img" alt="" draggable="false">
             <div id="map-grid" class="map-grid"></div>
+            <svg id="map-draw" class="map-svg" aria-hidden="true"></svg>
+            <canvas id="map-fog" class="map-fog" hidden></canvas>
             <div id="map-tokens"></div>
+            <svg id="map-live" class="map-svg live" aria-hidden="true"></svg>
             <div id="map-fx"></div>
           </div>
           <div id="map-empty" class="map-empty" hidden></div>
@@ -78,6 +82,8 @@
           <button class="btn icon" id="zoom-out" title="Afastar">−</button>
           <button class="btn icon" id="zoom-fit" title="Ajustar à tela">⤢</button>
         </div>
+        <div id="map-tools" class="map-tools" role="toolbar" aria-label="Ferramentas do mapa"></div>
+        <div id="fog-tools" class="fog-tools" hidden></div>
         <div id="token-panel" class="token-panel" hidden></div>
         <div class="map-hint muted">Toque duas vezes no mapa para sinalizar um ponto</div>
       </section>

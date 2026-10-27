@@ -1,6 +1,6 @@
 // Bestiário do mestre: fichas de NPCs e monstros, biblioteca do SRD, ajuste de ND e colocação no mapa.
 import { app, emit, doRoll, rollD20, bus, setPrivate } from './core.js';
-import { $, h, setKids, avatar, abilityMod, fmtMod, chooseAndUpload, openModal, toast, localRoll, isEditingIn } from './util.js';
+import { $, h, setKids, avatar, abilityMod, fmtMod, chooseAndUpload, uploadImage, openModal, toast, localRoll, isEditingIn, pushPasteTarget } from './util.js';
 import { CRS, crValue, xpFor, rescale, encounter, LEVELS, SIZE_SQUARES, avgDice } from './rules.js';
 import { freeSpots, flashWhenReady } from './map.js';
 
@@ -128,6 +128,7 @@ function editor(m0, onSaved) {
     oninput: (e) => { m[key] = attrs.type === 'number' ? Number(e.target.value) : e.target.value; },
   });
   const imgPrev = h('div', { class: 'img-prev' });
+  pasteImgSetter = (url) => { m.img = url; showImg(); };
   const showImg = () => setKids(imgPrev, m.img ? [avatar(m.img, m.name, '#b0473e', 44), h('button', { type: 'button', class: 'btn ghost sm', onclick: () => { m.img = ''; showImg(); } }, 'Tirar')] : h('span', { class: 'muted small' }, 'Sem imagem'));
   showImg();
 
@@ -196,13 +197,26 @@ function editor(m0, onSaved) {
     h('div', { class: 'stack' }, h('h4', {}, 'Reações'), listEditor('reactions', 'Reação', true), h('h4', {}, 'Ações lendárias'), listEditor('legendary', 'Ação lendária', true))),
   h('label', {}, 'Anotações do mestre', h('textarea', { rows: 3, value: m.notes || '', oninput: (e) => { m.notes = e.target.value; } })),
   h('div', { class: 'row gap' }, h('span', {}, 'Imagem (vira o token)'), imgPrev,
-    h('button', { type: 'button', class: 'btn sm', onclick: async () => { const u = await chooseAndUpload(); if (u) { m.img = u; showImg(); } } }, 'Escolher…')),
+    h('button', { type: 'button', class: 'btn sm', onclick: async () => { const u = await chooseAndUpload(); if (u) { m.img = u; showImg(); } } }, 'Escolher…'),
+    h('span', { class: 'muted tiny' }, 'ou Ctrl+V para colar')),
   h('div', { class: 'row gap' }, h('span', { class: 'grow' }), h('button', { class: 'btn primary', type: 'submit' }, m0?.id ? 'Salvar ficha' : 'Criar ficha')));
   return form;
 }
 
+let pasteImgSetter = null;
 function openEditor(m0) {
-  const modal = openModal(m0?.id ? `Editar: ${m0.name}` : 'Nova ficha', editor(m0, (id) => { modal.close(); viewing = { kind: 'mine', id, pending: !findMine(id) }; mode = 'mine'; render(true); }), { wide: true });
+  const content = editor(m0, (id) => { modal.close(); viewing = { kind: 'mine', id, pending: !findMine(id) }; mode = 'mine'; render(true); });
+  const setImg = pasteImgSetter;
+  const unpaste = pushPasteTarget((url) => { setImg(url); toast('Imagem colada na ficha', 'ok'); });
+  const modal = openModal(m0?.id ? `Editar: ${m0.name}` : 'Nova ficha', content, { wide: true, onClose: unpaste });
+}
+
+// Ctrl+V com a aba do bestiário aberta: vai para a ficha que está sendo vista
+export function pasteToBestiary(url) {
+  if (!viewing || viewing.kind !== 'mine' || !findMine(viewing.id)) return false;
+  const m = findMine(viewing.id);
+  emit('monster:update', { id: m.id, patch: { img: url } }).then((r) => r && toast(`Imagem colada em "${m.name}"`, 'ok'));
+  return true;
 }
 
 // ----------------------------------------------------------- ajuste de ND
@@ -332,6 +346,77 @@ async function placeOnMap(m, kind) {
   ]);
 }
 
+// ----------------------------------------------------------- imagens em lote
+// O nome do arquivo diz de quem é a imagem: "goblin.png", "Dragão Vermelho Adulto.jpg", "adult-red-dragon.webp"…
+export const normName = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '')
+  .toLowerCase().replace(/\.[a-z0-9]+$/, '').replace(/\(nd [^)]*\)/g, '').replace(/[_\-.]+/g, ' ')
+  .replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ').trim();
+
+function pickFiles() {
+  return new Promise((resolve) => {
+    const input = h('input', { type: 'file', multiple: true, accept: 'image/png,image/jpeg,image/webp,image/gif', style: { display: 'none' } });
+    input.addEventListener('change', () => { resolve([...input.files]); input.remove(); });
+    document.body.append(input);
+    input.click();
+  });
+}
+
+function matchFile(file) {
+  const key = normName(file.name);
+  const alt = key.replace(/ \d+$/, '');              // "goblin 2.png" → goblin
+  const hit = (m) => [m.name, m.nameEn, baseName(m.name), m.srd].some((n) => n && (normName(n) === key || normName(n) === alt));
+  const own = mine().find(hit);
+  if (own) return { kind: 'mine', m: own };
+  const lib = srd?.monsters.find(hit);
+  if (lib) {
+    const copy = mine().find((x) => x.srd === lib.srd);
+    return copy ? { kind: 'mine', m: copy } : { kind: 'srd', m: lib };
+  }
+  return null;
+}
+
+async function bulkImages() {
+  const files = await pickFiles();
+  if (!files.length) return;
+  await loadSrd();
+  const rows = files.map((f) => ({ f, hit: matchFile(f), use: h('input', { type: 'checkbox', checked: true }) }));
+  const ok = rows.filter((r) => r.hit);
+  const miss = rows.filter((r) => !r.hit);
+  const go = h('button', { class: 'btn primary', disabled: !ok.length }, `Aplicar ${ok.length} imagem(ns)`);
+  const modal = openModal('Imagens em lote', [
+    h('p', { class: 'muted small' }, 'Cada arquivo vai para a ficha com o mesmo nome (português, inglês ou o código do SRD). Monstros da Biblioteca SRD viram fichas suas, já com a imagem.'),
+    ok.length ? h('ul', { class: 'plain-list bulk-list' }, ok.map((r) => h('li', {},
+      h('label', { class: 'row gap' }, r.use,
+        h('span', { class: 'grow' }, h('code', {}, r.f.name), ' → ', h('b', {}, r.hit.m.name),
+          r.hit.kind === 'srd' ? h('small', { class: 'muted' }, ' · nova ficha do SRD') : r.hit.m.img ? h('small', { class: 'muted' }, ' · troca a imagem') : null))))) : null,
+    miss.length ? h('details', { class: 'block', open: !ok.length }, h('summary', {}, `${miss.length} sem ficha com esse nome`),
+      h('p', { class: 'muted small' }, 'Renomeie o arquivo com o nome do monstro ou crie a ficha antes: ', miss.map((r) => r.f.name).join(', '))) : null,
+    h('div', { class: 'row gap' }, h('span', { class: 'grow' }), go),
+  ], { wide: true });
+  go.addEventListener('click', async () => {
+    go.disabled = true;
+    let done = 0;
+    const seenSrd = new Map();
+    for (const r of ok) {
+      if (!r.use.checked) continue;
+      go.textContent = `Enviando ${done + 1}…`;
+      try {
+        const img = await uploadImage(r.f);
+        if (r.hit.kind === 'mine') await emit('monster:update', { id: r.hit.m.id, patch: { img } });
+        else if (seenSrd.has(r.hit.m.srd)) await emit('monster:update', { id: seenSrd.get(r.hit.m.srd), patch: { img } });
+        else {
+          const { id, _i, ...data } = r.hit.m;
+          const res = await emit('monster:create', { ...data, img });
+          if (res) seenSrd.set(r.hit.m.srd, res.id);
+        }
+        done += 1;
+      } catch (e) { toast(`${r.f.name}: ${e.message}`, 'error'); }
+    }
+    modal.close();
+    toast(`${done} imagem(ns) aplicada(s)`, 'ok');
+  });
+}
+
 // ----------------------------------------------------------- lista e detalhe
 function rowView(m, kind) {
   return h('li', {}, h('button', {
@@ -431,7 +516,10 @@ function listView() {
   drawList();
 
   return [
-    h('div', { class: 'pane-title' }, h('h2', {}, 'Bestiário'), h('button', { class: 'btn primary sm', onclick: () => openEditor(null) }, '+ Nova ficha')),
+    h('div', { class: 'pane-title' }, h('h2', {}, 'Bestiário'),
+      h('div', { class: 'row gap' },
+        h('button', { class: 'btn sm', title: 'Escolha várias imagens de uma vez; o nome do arquivo diz de qual monstro é', onclick: bulkImages }, '🖼 Imagens em lote'),
+        h('button', { class: 'btn primary sm', onclick: () => openEditor(null) }, '+ Nova ficha'))),
     encounterBox(),
     tabs,
     h('div', { class: 'row gap' }, search, crSel),
