@@ -10,6 +10,7 @@ const store = require('./server/store');
 const { roll } = require('./server/dice');
 const world = require('./server/world');
 const itemsLib = require('./server/items');
+const cls = require('./server/classes');
 const pkg = require('./package.json');
 
 const PORT = Number(process.env.PORT) || 3000;
@@ -114,6 +115,7 @@ const CHAR_FIELDS = {
   }),
   hitDie: (v) => (['d6', 'd8', 'd10', 'd12'].includes(v) ? v : 'd8'),
   hdUsed: (v) => int(v, 0, 20),
+  hdUsedBy: (v) => Object.fromEntries(['d6', 'd8', 'd10', 'd12'].map((d) => [d, int(v?.[d], 0, 20)])),
   coins: (v) => Object.fromEntries(['pc', 'pp', 'pe', 'po', 'pl'].map((k) => [k, int(v?.[k], 0, 9999999)])),
   xp: (v) => int(v, 0, 9999999),
   inspiration: (v) => !!v,
@@ -129,7 +131,11 @@ const GM_ONLY_CHAR = new Set(['aspect', 'ring']);
 // fichas e cenas antigas ganham os campos novos ao carregar
 function migrate() {
   const d = D();
-  for (const c of d.characters) for (const [k, v] of Object.entries(world.characterDefaults())) if (c[k] === undefined) c[k] = v;
+  for (const c of d.characters) {
+    for (const [k, v] of Object.entries(world.characterDefaults())) if (c[k] === undefined) c[k] = v;
+    cls.syncClasses(c);
+    c.hpRolls = cls.hpEntries(c);
+  }
   for (const s of d.scenes) {
     if (!s.fog) s.fog = { enabled: false, ops: [] };
     if (!s.drawings) s.drawings = [];
@@ -469,6 +475,7 @@ const handlers = {
     requireGM(user);
     const owner = p.ownerId && D().users.find((u) => u.id === p.ownerId);
     const c = newCharacter(CHAR_FIELDS.name(p.name), owner ? owner.id : null);
+    cls.syncClasses(c);
     D().characters.push(c);
     return { id: c.id };
   },
@@ -479,6 +486,7 @@ const handlers = {
     const patch = { ...(p.patch || {}) };
     if ('ownerId' in patch) requireGM(user);
     if (c.hpAuto) delete patch.hpMax;          // com PV pela classe, o máximo é calculado
+    if ((c.classes?.length || 0) > 1 && !('classes' in patch)) { delete patch.class; delete patch.level; delete patch.hitDie; }
     const prevMax = c.hpMax;
     if (!gm && Object.keys(patch).some((k) => GM_ONLY_CHAR.has(k))) throw new Error('O aspecto e o anel são definidos pelo mestre');
     for (const [k, v] of Object.entries(patch)) {
@@ -489,12 +497,17 @@ const handlers = {
         c[k] = CHAR_FIELDS[k](v);
       }
     }
-    // escolher a classe já define o dado de vida (se o dado não veio junto na mesma alteração)
-    if ('class' in patch && !('hitDie' in patch)) {
-      const die = world.classDie(c.class);
-      if (die) c.hitDie = 'd' + die;
+    // classes: com uma classe só, a ficha edita class/level/hitDie; com várias (multiclasse), a lista manda
+    const keys = new Set(Object.keys(patch));
+    if (keys.has('classes')) {
+      const next = cls.normalizeClasses(patch.classes, c.classes || []);
+      if (!next.length) throw new Error('O personagem precisa de pelo menos uma classe');
+      const ids = new Set(next.map((k) => k.id));
+      c.hpRolls = cls.hpEntries(c).filter((r) => ids.has(r.cid));   // classe removida leva junto os PV dela
+      c.classes = next;
     }
-    world.applyAutoHp(c, prevMax);
+    cls.syncClasses(c, keys);
+    cls.applyAutoHp(c, prevMax);
     itemsLib.applyAutoAc(c);
     return { hitDie: c.hitDie };
   },
@@ -510,44 +523,50 @@ const handlers = {
     const prevMax = c.hpMax;
     c.hpAuto = true;
     if (!Array.isArray(c.hpRolls)) c.hpRolls = [];
-    world.applyAutoHp(c, prevMax);
-    return { pending: world.hpPending(c) };
+    cls.syncClasses(c);
+    cls.applyAutoHp(c, prevMax);
+    return { pending: cls.hpPending(c) };
   },
   'hp:level'(user, p) {
     const c = myChar(user, p.charId);
     if (!c.hpAuto) throw new Error('Ligue antes os PV pela classe');
-    if (!world.hpPending(c)) throw new Error('Não há nível novo para ganhar PV');
+    const pend = cls.hpPendingList(c);
+    if (!pend.length) throw new Error('Não há nível novo para ganhar PV');
+    const which = pend.find((x) => x.cid === p.cid) || pend[0];
     const rule = D().rules?.hp || 'choose';
     const mode = p.mode === 'avg' ? 'avg' : 'roll';
     if (user.role !== 'gm' && rule !== 'choose' && rule !== mode) {
       throw new Error(rule === 'roll' ? 'Nesta mesa os PV de cada nível são rolados' : 'Nesta mesa os PV de cada nível são a média fixa');
     }
-    const sides = world.dieSides(c.hitDie);
-    const level = c.hpRolls.length + 2;
-    const per = world.conMod(c) + (Number(c.hpBonus) || 0);
+    const k = c.classes.find((x) => x.id === which.cid);
+    const sides = k.die;
+    const done = cls.hpEntries(c).filter((r) => r.cid === k.id).length;
+    const classLevel = done + (c.classes[0].id === k.id ? 2 : 1);
+    const label = c.classes.length > 1 ? `${k.name || 'classe'} ${classLevel}` : `${classLevel}º nível`;
+    const per = cls.conMod(c) + (Number(c.hpBonus) || 0);
     let value;
     if (mode === 'roll') {
       // rola o dado já com a CON (e o bônus por nível), para o chat mostrar o total ganho
       const r = roll(`1d${sides}${per ? (per > 0 ? '+' : '') + per : ''}`);
       value = r.total - per;
-      pushChat(chatBase(user, { type: 'roll', label: `${c.name} — PV do ${level}º nível`, roll: r }));
+      pushChat(chatBase(user, { type: 'roll', label: `${c.name} — PV de ${label}`, roll: r }));
     } else {
-      value = world.dieAverage(sides);
+      value = cls.dieAverage(sides);
     }
     const prevMax = c.hpMax;
-    c.hpRolls.push(value);
-    world.applyAutoHp(c, prevMax);
+    c.hpRolls = [...cls.hpEntries(c), { cid: k.id, v: value }];
+    cls.applyAutoHp(c, prevMax);
     const gain = c.hpMax - prevMax;
-    pushChat(chatBase(user, { type: 'system', text: `⬆ ${c.name}, ${level}º nível: +${gain} PV (${mode === 'roll' ? `rolou ${value}` : `média ${value}`}${per ? ` ${per > 0 ? '+' : '−'} ${Math.abs(per)}` : ''}). PV máximos: ${c.hpMax}.` }));
-    return { value, gain, hpMax: c.hpMax, pending: world.hpPending(c) };
+    pushChat(chatBase(user, { type: 'system', text: `⬆ ${c.name}, ${label}: +${gain} PV (${mode === 'roll' ? `rolou ${value}` : `média ${value}`}${per ? ` ${per > 0 ? '+' : '−'} ${Math.abs(per)}` : ''}). PV máximos: ${c.hpMax}.` }));
+    return { value, gain, hpMax: c.hpMax, pending: cls.hpPending(c) };
   },
   'hp:undo'(user, p) {
     requireGM(user);
     const c = myChar(user, p.charId);
     if (!c.hpRolls?.length) throw new Error('Não há rolagem de PV para desfazer');
     const prevMax = c.hpMax;
-    c.hpRolls.pop();
-    world.applyAutoHp(c, prevMax);
+    c.hpRolls = cls.hpEntries(c).slice(0, -1);
+    cls.applyAutoHp(c, prevMax);
     return { hpMax: c.hpMax };
   },
   'rules:set'(user, p) {
@@ -1095,7 +1114,7 @@ const handlers = {
       c.hp = c.hpMax;
       c.hpTemp = 0;
       c.slots = c.slots.map((sl) => ({ ...sl, used: 0 }));
-      c.hdUsed = Math.max(0, c.hdUsed - Math.max(1, Math.floor(c.level / 2)));
+      cls.longRestHitDice(c);
       c.deathSaves = { s: 0, f: 0 };
       c.conditions = c.conditions.filter((x) => x !== 'inconsciente');
     }

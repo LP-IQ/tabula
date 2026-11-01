@@ -8,6 +8,28 @@ A campanha não é tocada. Quando sai uma versão nova, o mestre vê um aviso no
 
 ---
 
+## v5.4 — Multiclasse (01/11/2026)
+
+<img src="img/multiclasse.png" alt="Lista de classes: Paladino 2 e Mago 1" width="340" align="right">
+
+**Mais de uma classe por personagem.** **＋ Multiclasse** abre a lista de classes: cada uma com o nível e o dado de vida.
+O cabeçalho mostra "Paladino 2 / Mago 1" e o nível total, que vale para a proficiência e o XP.
+
+A ficha segue as regras do capítulo 6 do Livro do Jogador: os PV de cada nível novo usam o dado **da classe que subiu**,
+os dados de vida ficam em montes separados por tipo, os requisitos de atributo 13 aparecem como aviso, e os espaços de
+magia são sugeridos pela tabela de conjurador multiclasse (com o bruxo à parte).
+
+**Experimente:**
+1. Clique **＋ Multiclasse** e escreva **Mago** na linha nova.
+2. Veja o quadro "⬆ Mago 1: ganhe os PV" e role o d6.
+3. Abra *Magias* e clique **Usar esses** na sugestão de espaços.
+
+<br clear="right">
+
+Veja no manual: [Multiclasse](ferramentas.md#multiclasse)
+
+---
+
 ## v5.3 — PV pela classe (01/11/2026)
 
 <img src="img/pv-nivel.png" alt="Quadro de subida de nível com os botões Rolar e Média" width="340" align="right">

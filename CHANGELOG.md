@@ -1,5 +1,14 @@
 # Histórico de versões
 
+## v5.4 — 01/11/2026
+**Novidades**
+- **Multiclasse**: lista de classes por personagem (nome, nível, dado de vida). Nível total e "Classe A 3 / Classe B 2"
+  calculados; fichas antigas viram uma lista com uma classe, sem perder nada.
+- PV por nível de cada classe (o 1º nível vem da primeira classe); dados de vida em montes por tipo; descanso longo
+  recupera metade do total, maiores primeiro.
+- Aviso dos requisitos de multiclasse (atributo 13).
+- Sugestão de espaços de magia pela tabela da classe ou pela de conjurador multiclasse; Magia de Pacto do bruxo à parte.
+
 ## v5.3 — 01/11/2026
 **Novidades**
 - **A classe define o dado de vida**: o campo Classe sugere as classes do Livro do Jogador e, ao escolher (também em

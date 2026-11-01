@@ -2,7 +2,7 @@
 import { app, emit, rollD20, doRoll, bus, setAdv } from './core.js';
 import { $, h, abilityMod, fmtMod, profBonus, debounce, chooseAndUpload, avatar, isEditingIn, toast, setKids, openModal } from './util.js';
 import { focusToken } from './map.js';
-import { CONDITIONS, CONDITION_ICON, CONDITION_LABEL, XP_LEVELS, CLASSES, classDie, dieAverage } from './rules.js';
+import { CONDITIONS, CONDITION_ICON, CONDITION_LABEL, XP_LEVELS, CLASSES, classDie, dieAverage, prereqProblems, suggestSlots } from './rules.js';
 import { equipmentBox, dollView } from './equipment.js';
 import { computeAc, weaponAttacks } from './itemdata.js';
 import { openWindow, getWindow, isMobile, activeWindow } from './windows.js';
@@ -140,54 +140,123 @@ export function createSheet(pane, opts = {}) {
   }
 
   // PV pela classe: liga o cálculo, mostra os níveis pendentes e rola (ou pega a média) para cada um
+  // PV por nível de cada classe (espelho de server/classes.js)
+  function hpInfo(c) {
+    const classes = c.classes?.length ? c.classes : [{ id: '_', name: c.class, level: c.level, die: Number(String(c.hitDie || 'd8').slice(1)) || 8 }];
+    const entries = (c.hpRolls || []).map((r) => (typeof r === 'number' ? { cid: classes[0].id, v: r } : r));
+    const per = classes.map((k, i) => {
+      const done = entries.filter((r) => r.cid === k.id);
+      const need = k.level - (i === 0 ? 1 : 0);
+      return { ...k, first: i === 0, done: done.slice(0, need).map((r) => r.v), pending: Math.max(0, need - done.length) };
+    });
+    return { classes: per, pending: per.filter((k) => k.pending > 0) };
+  }
+
+  // PV pela classe: liga o cálculo, mostra os níveis pendentes e rola (ou pega a média) para cada um
   function hpClassBox(c) {
-    const sides = Number(String(c.hitDie || 'd8').slice(1)) || 8;
+    const info = hpInfo(c);
+    const multi = info.classes.length > 1;
+    const first = info.classes[0];
     const con = abilityMod(c.attrs?.con);
     const per = con + (Number(c.hpBonus) || 0);
-    const level = Math.max(1, Number(c.level) || 1);
-    const rolls = c.hpRolls || [];
-    const pending = Math.max(0, level - 1 - rolls.length);
     const rule = app.state.rules?.hp || 'choose';
-    const known = classDie(c.class);
+    const known = info.classes.some((k) => classDie(k.name));
     const sign = (n) => (n ? `${n > 0 ? ' + ' : ' − '}${Math.abs(n)}` : '');
     if (!c.hpAuto) {
       return h('div', { class: 'hpclass off' },
         h('span', { class: 'muted small grow' }, known
-          ? `PV pela classe: ${sides} no 1º nível, depois d${sides} por nível (rolar ou média) + CON.`
+          ? `PV pela classe: ${first.die} no 1º nível, depois o dado de cada classe por nível (rolar ou média) + CON.`
           : 'Escolha a classe para os PV seguirem o dado de vida dela.'),
         h('button', {
           class: 'btn sm',
           onclick: async () => {
-            const ok = confirm(`Calcular os PV pela classe?\n\n1º nível: ${sides}${sign(per)}. A cada nível seguinte: 1d${sides} (ou ${dieAverage(sides)})${sign(per)}.\n\nOs PV máximos digitados (${c.hpMax}) passam a ser calculados. Se o personagem já tem nível acima de 1, você ganha os PV de cada nível agora.`);
+            const ok = confirm(`Calcular os PV pela classe?\n\n1º nível: ${first.die}${sign(per)}. A cada nível seguinte: o dado da classe daquele nível (ou a média)${sign(per)}.\n\nOs PV máximos digitados (${c.hpMax}) passam a ser calculados. Se o personagem já tem nível acima de 1, você ganha os PV de cada nível agora.`);
             if (ok) await emit('hp:auto', { charId: c.id, on: true });
           },
-        }, `❤ PV pela classe (d${sides})`));
+        }, `❤ PV pela classe (d${first.die})`));
     }
-    const nextLevel = rolls.length + 2;
     const canRoll = rule !== 'avg' || app.isGM;
     const canAvg = rule !== 'roll' || app.isGM;
-    const history = [`1º ${sides}`, ...rolls.slice(0, level - 1).map((r, i) => `${i + 2}º ${r}`)].join(' · ');
-    return h('div', { class: 'hpclass' + (pending ? ' pending' : '') },
-      pending ? h('div', { class: 'level-gain' },
-        h('b', {}, `⬆ ${nextLevel}º nível: ganhe os PV`),
-        pending > 1 ? h('span', { class: 'muted small' }, ` (faltam ${pending} níveis)`) : null,
+    const next = info.pending[0];
+    const lvlLabel = (k) => {
+      const n = k.done.length + (k.first ? 2 : 1);
+      return multi ? `${k.name || 'Classe'} ${n}` : `${n}º nível`;
+    };
+    const totalPending = info.pending.reduce((s, k) => s + k.pending, 0);
+    const history = info.classes.map((k) => {
+      const vals = [...(k.first ? [k.die] : []), ...k.done];
+      return multi ? `${k.name || '?'}: ${vals.join(' · ') || '—'}` : vals.map((v, i) => `${i + 1}º ${v}`).join(' · ');
+    }).join('  |  ');
+    return h('div', { class: 'hpclass' + (next ? ' pending' : '') },
+      next ? h('div', { class: 'level-gain' },
+        h('b', {}, `⬆ ${lvlLabel(next)}: ganhe os PV`),
+        totalPending > 1 ? h('span', { class: 'muted small' }, ` (faltam ${totalPending} níveis)`) : null,
         h('div', { class: 'row gap wrap' },
           canRoll ? h('button', {
             class: 'btn sm primary',
-            onclick: async () => { const r = await emit('hp:level', { charId: c.id, mode: 'roll' }); if (r) toast(`+${r.gain} PV`, 'ok'); },
-          }, `🎲 Rolar 1d${sides}${sign(per)}`) : null,
+            onclick: async () => { const r = await emit('hp:level', { charId: c.id, mode: 'roll', cid: next.id }); if (r) toast(`+${r.gain} PV`, 'ok'); },
+          }, `🎲 Rolar 1d${next.die}${sign(per)}`) : null,
           canAvg ? h('button', {
             class: 'btn sm' + (canRoll ? '' : ' primary'),
-            onclick: async () => { const r = await emit('hp:level', { charId: c.id, mode: 'avg' }); if (r) toast(`+${r.gain} PV`, 'ok'); },
-          }, `Média: ${dieAverage(sides)}${sign(per)} = ${Math.max(1, dieAverage(sides) + per)}`) : null),
+            onclick: async () => { const r = await emit('hp:level', { charId: c.id, mode: 'avg', cid: next.id }); if (r) toast(`+${r.gain} PV`, 'ok'); },
+          }, `Média: ${dieAverage(next.die)}${sign(per)} = ${Math.max(1, dieAverage(next.die) + per)}`) : null),
         rule !== 'choose' && !app.isGM ? h('span', { class: 'muted tiny' }, rule === 'roll' ? 'Nesta mesa os PV são rolados.' : 'Nesta mesa os PV são a média fixa.') : null) : null,
       h('div', { class: 'row gap wrap hp-rule' },
-        h('span', { class: 'small' }, `❤ PV pela classe · d${sides} · CON ${fmtMod(con)}`),
-        h('span', { class: 'muted tiny grow', title: 'O que cada nível rendeu no dado (sem a CON)' }, history),
+        h('span', { class: 'small' }, `❤ PV pela classe · ${multi ? info.classes.map((k) => 'd' + k.die).join('/') : 'd' + first.die} · CON ${fmtMod(con)}`),
+        h('span', { class: 'muted tiny grow', title: `O que cada nível rendeu no dado (sem a CON): ${history}` }, history),
         h('label', { class: 'mini', title: 'PV extras por nível: anão da colina +1, talento Robusto +2, feiticeiro dracônico +1…' }, 'Bônus/nível',
           h('input', { type: 'number', class: 'num', min: '-5', max: '10', value: String(c.hpBonus || 0), onchange: (e) => patch(c, { hpBonus: Number(e.target.value) }) })),
-        app.isGM && rolls.length ? h('button', { class: 'btn ghost sm', title: 'Desfazer a última rolagem de PV (só o mestre)', onclick: () => confirm('Desfazer a última rolagem de PV deste personagem?') && emit('hp:undo', { charId: c.id }) }, '↶') : null,
+        app.isGM && (c.hpRolls || []).length ? h('button', { class: 'btn ghost sm', title: 'Desfazer a última rolagem de PV (só o mestre)', onclick: () => confirm('Desfazer a última rolagem de PV deste personagem?') && emit('hp:undo', { charId: c.id }) }, '↶') : null,
         app.isGM ? h('button', { class: 'btn ghost sm', title: 'Voltar aos PV digitados à mão (só o mestre)', onclick: () => confirm('Desligar os PV pela classe? Os PV máximos voltam a ser digitados à mão (as rolagens ficam guardadas).') && emit('hp:auto', { charId: c.id, on: false }) }, 'desligar') : null));
+  }
+
+  // Classes do personagem: com uma só, um link para a multiclasse; com várias, a lista para editar
+  function classesBox(c) {
+    const list = (c.classes || []).map((k) => ({ ...k }));
+    const save = (next) => patch(c, { classes: next });
+    if (list.length <= 1) {
+      return h('div', { class: 'classes-line' },
+        h('button', {
+          class: 'link small',
+          title: 'Dar ao personagem níveis em outra classe (Livro do Jogador, cap. 6)',
+          onclick: () => save([...list, { name: '', level: 1, die: 8 }]),
+        }, '＋ Multiclasse'));
+    }
+    const total = list.reduce((s, k) => s + k.level, 0);
+    const problems = prereqProblems(c);
+    const row = (k, i) => {
+      const name = h('input', { value: k.name, list: 'tabula-classes', placeholder: 'Classe', 'aria-label': `Classe ${i + 1}`, autocomplete: 'off' });
+      const dieSel = h('select', {
+        'aria-label': `Dado de vida de ${k.name || 'classe'}`, title: 'Dado de vida',
+        onchange: (e) => { const next = list.map((x) => ({ ...x })); next[i].die = Number(e.target.value); save(next); },
+      }, [6, 8, 10, 12].map((d) => h('option', { value: String(d), selected: d === k.die }, 'd' + d)));
+      name.addEventListener('change', () => {
+        const next = list.map((x) => ({ ...x }));
+        next[i].name = name.value;
+        const die = classDie(name.value);
+        if (die) { next[i].die = die; dieSel.value = String(die); }   // mostra já, sem esperar o servidor
+        list[i] = next[i];
+        save(next);
+      });
+      return h('div', { class: 'class-row' },
+        name,
+        h('label', { class: 'mini' }, 'Nível', h('input', {
+          type: 'number', class: 'num', min: '1', max: '20', value: String(k.level), 'aria-label': `Nível em ${k.name || 'classe'}`,
+          onchange: (e) => { const next = list.map((x) => ({ ...x })); next[i].level = Number(e.target.value) || 1; save(next); },
+        })),
+        dieSel,
+        i === 0 ? h('span', { class: 'muted tiny', title: 'A classe em que o personagem começou: ela dá os PV do 1º nível' }, '1ª') :
+          h('button', {
+            class: 'btn ghost sm', title: `Tirar ${k.name || 'esta classe'}`,
+            onclick: () => confirm(`Tirar ${k.name || 'esta classe'} do personagem? Os níveis e os PV dela saem junto.`) && save(list.filter((_, j) => j !== i)),
+          }, '✕'));
+    };
+    return h('div', { class: 'classes-box' },
+      h('div', { class: 'row gap' }, h('b', { class: 'grow' }, 'Multiclasse'), h('span', { class: 'muted small' }, `nível total ${total}`)),
+      list.map(row),
+      total < 20 ? h('button', { class: 'btn sm', onclick: () => save([...list, { name: '', level: 1, die: 8 }]) }, '＋ Outra classe') : null,
+      problems.length ? h('p', { class: 'warn small' }, '⚠ Requisitos de multiclasse (atributo 13 ou mais): ', problems.join('; '), '. Confira com o mestre.') : null,
+      h('p', { class: 'muted tiny' }, 'O bônus de proficiência e o XP usam o nível total. Ao ganhar um nível, suba o nível da classe escolhida aqui.'));
   }
 
   // --------------------------------------------------------------- construção
@@ -245,6 +314,8 @@ export function createSheet(pane, opts = {}) {
             }, '◎ Achar no mapa'),
             opts.inWindow ? null : h('button', { class: 'link desk-only', title: 'Abrir esta ficha numa janela por cima do mapa', onclick: () => openSheetWindow(c.id) }, '⧉ Em janela'),
             h('span', { class: 'save-status', dataset: { kind: 'saved' }, title: 'A ficha salva sozinha a cada alteração' }, '✓ Salvo')))),
+
+      h('div', { class: 'sx', dataset: { sx: 'classes' } }),
 
       h('div', { class: 'stat-row' },
         h('div', { class: 'stat' }, h('small', {}, 'CA'), field(c, 'ac', { type: 'number', class: 'big num', label: 'Classe de Armadura' })),
@@ -458,8 +529,19 @@ export function createSheet(pane, opts = {}) {
     };
     const shown = slots.map((sl, i) => ({ ...sl, i })).filter((sl) => sl.max > 0);
     const nextLevel = Math.min(9, (shown.length ? shown[shown.length - 1].i + 1 : 0) + 1);
+    const sug = suggestSlots(c);
+    const same = sug.slots.length && sug.slots.every((n, i) => (slots[i]?.max || 0) === n) && slots.slice(sug.slots.length).every((x) => !x.max);
+    const applySug = () => {
+      const cur = app.char(c.id).slots.map((x, i) => ({ max: sug.slots[i] || 0, used: Math.min(x.used, sug.slots[i] || 0) }));
+      patch(c, { slots: cur });
+    };
     return h('div', { class: 'slots' },
       h('div', { class: 'row gap wrap' }, h('small', { class: 'muted' }, 'Espaços de magia — clique para gastar/recuperar')),
+      sug.slots.length && !same ? h('div', { class: 'row gap wrap slot-suggest' },
+        h('span', { class: 'small' }, `${sug.multi ? 'Pela tabela de multiclasse' : 'Pela tabela da classe'} (nível de conjurador ${sug.casterLevel}): `,
+          h('b', {}, sug.slots.map((n, i) => `${n}×${i + 1}º`).join(' · '))),
+        h('button', { class: 'btn sm', onclick: applySug }, 'Usar esses')) : null,
+      sug.pact ? h('p', { class: 'muted small' }, `Bruxo: Magia de Pacto à parte — ${sug.pact.count} espaço(s) de ${sug.pact.circle}º círculo, que voltam no descanso curto.`) : null,
       shown.map((sl) => h('div', { class: 'slot-row' },
         h('b', {}, `${sl.i + 1}º`),
         h('span', { class: 'slot-pips' }, Array.from({ length: sl.max }, (_, j) => h('button', {
@@ -475,29 +557,37 @@ export function createSheet(pane, opts = {}) {
   }
 
   function hdBox(c) {
-    const total = Math.max(1, Number(c.level) || 1);
-    const left = Math.max(0, total - (c.hdUsed || 0));
     const con = abilityMod(c.attrs?.con);
-    const spend = async () => {
+    const multi = (c.classes || []).length > 1;
+    const pools = {};
+    for (const k of (c.classes?.length ? c.classes : [{ level: c.level, die: Number(String(c.hitDie || 'd8').slice(1)) }])) pools['d' + k.die] = (pools['d' + k.die] || 0) + k.level;
+    const usedBy = c.hdUsedBy && Object.keys(c.hdUsedBy).length ? c.hdUsedBy : { [c.hitDie || 'd8']: c.hdUsed || 0 };
+    const spend = async (d) => {
       const cur = app.char(c.id);
-      if (total - (cur.hdUsed || 0) <= 0) return toast('Sem dados de vida. Eles voltam no descanso longo.', 'error');
-      const formula = `1${cur.hitDie || 'd8'}${con ? fmtMod(con) : ''}`;
-      const r = await doRoll(formula, `${cur.name} — dado de vida (descanso curto)`);
+      const used = { ...(cur.hdUsedBy || {}) };
+      if ((pools[d] || 0) - (used[d] || 0) <= 0) return toast('Sem dados de vida desse tipo. Eles voltam no descanso longo.', 'error');
+      const r = await doRoll(`1${d}${con ? fmtMod(con) : ''}`, `${cur.name} — dado de vida (descanso curto)`);
       if (!r) return;
       const heal = Math.max(0, r.total);
       const now = app.char(c.id);
-      patch(c, { hp: Math.min(now.hpMax, Math.max(0, now.hp) + heal), hdUsed: (now.hdUsed || 0) + 1 });
+      patch(c, { hp: Math.min(now.hpMax, Math.max(0, now.hp) + heal), hdUsedBy: { ...(now.hdUsedBy || {}), [d]: ((now.hdUsedBy || {})[d] || 0) + 1 } });
       toast(`+${heal} PV`, 'ok');
     };
+    const dice = Object.keys(pools).sort((a, b) => Number(b.slice(1)) - Number(a.slice(1)));
     return h('div', { class: 'stack' },
-      h('div', { class: 'row gap wrap' },
-        h('label', { class: 'mini' }, 'Dado',
-          h('select', { onchange: (e) => patch(c, { hitDie: e.target.value }) },
-            ['d6', 'd8', 'd10', 'd12'].map((d) => h('option', { value: d, selected: d === (c.hitDie || 'd8') }, d)))),
-        h('span', {}, h('b', { class: 'big-inline' }, String(left)), ` de ${total} disponíveis`),
-        h('span', { class: 'grow' }),
-        h('button', { class: 'btn sm primary', disabled: left <= 0, onclick: spend }, `☕ Gastar 1 (1${c.hitDie || 'd8'}${con ? fmtMod(con) : ''})`)),
-      h('p', { class: 'muted small' }, 'No descanso curto, gaste dados de vida para recuperar PV. No descanso longo (o mestre marca), PV e espaços de magia voltam e você recupera metade dos dados de vida.'));
+      dice.map((d) => {
+        const left = Math.max(0, pools[d] - (usedBy[d] || 0));
+        return h('div', { class: 'row gap wrap' },
+          multi ? h('b', { class: 'hd-die' }, d) : h('label', { class: 'mini' }, 'Dado',
+            h('select', { onchange: (e) => patch(c, { hitDie: e.target.value }) },
+              ['d6', 'd8', 'd10', 'd12'].map((x) => h('option', { value: x, selected: x === (c.hitDie || 'd8') }, x)))),
+          h('span', {}, h('b', { class: 'big-inline' }, String(left)), ` de ${pools[d]} disponíveis`),
+          h('span', { class: 'grow' }),
+          h('button', { class: 'btn sm primary', disabled: left <= 0, onclick: () => spend(d) }, `☕ Gastar 1 (1${d}${con ? fmtMod(con) : ''})`));
+      }),
+      h('p', { class: 'muted small' }, multi
+        ? 'Na multiclasse, cada tipo de dado tem o seu monte. No descanso longo você recupera metade do total (os maiores primeiro).'
+        : 'No descanso curto, gaste dados de vida para recuperar PV. No descanso longo (o mestre marca), PV e espaços de magia voltam e você recupera metade dos dados de vida.'));
   }
 
   function xpBox(c) {
@@ -521,13 +611,14 @@ export function createSheet(pane, opts = {}) {
   }
 
   function renderExtras(c) {
-    redraw('hpclass', JSON.stringify([c.hpAuto, c.hitDie, c.level, c.hpRolls, c.hpBonus, c.attrs?.con, c.class, c.hpMax, app.state.rules, app.isGM]), () => hpClassBox(c));
+    redraw('hpclass', JSON.stringify([c.hpAuto, c.hitDie, c.level, c.hpRolls, c.hpBonus, c.attrs?.con, c.classes, c.hpMax, app.state.rules, app.isGM]), () => hpClassBox(c));
+    redraw('classes', JSON.stringify([c.classes, c.attrs]), () => classesBox(c));
     redraw('equip', JSON.stringify([c.items, c.attrs, c.autoAc, c.ac, c.level, c.ownerId, app.isGM,
       app.state.characters.map((x) => [x.id, x.name])]), () => equipmentBox(c, { patch }));
     redraw('status', JSON.stringify([c.conditions, c.inspiration, c.deathSaves, c.hp <= 0, c.name]), () => statusBox(c));
     redraw('aspect', JSON.stringify([c.aspect, c.ring, c.level, app.isGM]), () => aspectBox(c));
-    redraw('slots', JSON.stringify(c.slots), () => slotsBox(c));
-    redraw('hd', JSON.stringify([c.level, c.hdUsed, c.hitDie, c.attrs?.con]), () => hdBox(c));
+    redraw('slots', JSON.stringify([c.slots, c.classes, c.class, c.level]), () => slotsBox(c));
+    redraw('hd', JSON.stringify([c.level, c.hdUsed, c.hdUsedBy, c.hitDie, c.classes, c.attrs?.con]), () => hdBox(c));
     redraw('xp', JSON.stringify([c.xp, c.level, c.coins]), () => xpBox(c));
   }
 
@@ -556,6 +647,14 @@ export function createSheet(pane, opts = {}) {
       const r = c.hpMax ? Math.max(0, Math.min(1, c.hp / c.hpMax)) : 0;
       bar.style.width = r * 100 + '%';
       bar.dataset.level = r <= 0 ? 'down' : r <= 0.5 ? 'low' : 'ok';
+    }
+    const multi = (c.classes || []).length > 1;
+    for (const f of ['class', 'level']) {
+      const el = pane.querySelector(`[data-f="${f}"]`);
+      if (!el) continue;
+      el.readOnly = multi;
+      el.classList.toggle('auto', multi);
+      el.title = multi ? `${c.class} — multiclasse: edite as classes e os níveis na lista logo abaixo` : '';
     }
     const maxEl = pane.querySelector('[data-f="hpMax"]');
     if (maxEl) {

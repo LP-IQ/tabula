@@ -10,6 +10,7 @@ server.js            HTTP (login, upload, backup) + Socket.IO (tempo real) + reg
 server/store.js      campaign.json: leitura, gravação atômica, pontos de backup, restauração
 server/dice.js       rolador de dados (rola no servidor, com crypto.randomInt)
 server/world.js      calendário do mundo, névoa (isCovered), condições, padrões novos da ficha
+server/classes.js    classes e multiclasse: dado de vida, PV por nível, dados de vida, requisitos
 server/items.js      itens: tipos e espaços, validação, equipar (duas mãos/versátil), sintonia, CA automática
 public/index.html    esqueleto da página
 public/style.css     visual (cores em :root, no topo)

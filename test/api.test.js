@@ -323,6 +323,33 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   check(!(await call(p, 'hp:undo', { charId: cT.id })).ok, 'jogador não desfaz rolagem de PV');
   await call(gm, 'rules:set', { hp: 'choose' });
 
+  // ---------- v5.4: multiclasse
+  while ((await call(gm, 'hp:level', { charId: cT.id, mode: 'avg' })).ok);   // completa os PV do guerreiro 4
+  await wait(50);
+  const g0 = tk().classes[0];
+  check(tk().classes.length === 1 && g0.name === 'Guerreiro (Campeão)' && g0.level === 4 && g0.die === 10, 'ficha antiga vira uma lista com uma classe');
+  const maxG4 = tk().hpMax;
+  await call(p, 'character:update', { id: cT.id, patch: { classes: [{ id: g0.id, name: 'Guerreiro', level: 4 }, { name: 'Mago', level: 1 }] } });
+  await wait(30);
+  check(tk().level === 5 && tk().class === 'Guerreiro 4 / Mago 1' && tk().hitDie === 'd10', 'multiclasse: nível total 5, "Guerreiro 4 / Mago 1"');
+  const mg = tk().classes[1];
+  check(mg.die === 6, 'a classe nova traz o próprio dado de vida (mago d6)');
+  const mlv = await call(p, 'hp:level', { charId: cT.id, mode: 'avg', cid: mg.id });
+  await wait(30);
+  check(mlv.ok && tk().hpMax === maxG4 + 4 + 3, 'PV do nível de mago: média do d6 (4) + CON');
+  await call(p, 'character:update', { id: cT.id, patch: { level: 9 } });
+  await wait(30);
+  check(tk().level === 5, 'com multiclasse, o nível total vem das classes (não se digita)');
+  check(tk().hdUsedBy.d10 === 0 && tk().hdUsedBy.d6 === 0 && Object.keys(tk().hdUsedBy).sort().join() === 'd10,d6', 'dados de vida separados por tipo (d10 e d6)');
+  await call(p, 'character:update', { id: cT.id, patch: { hdUsedBy: { d10: 3, d6: 1 } } });
+  await call(gm, 'rest:long');
+  await wait(30);
+  check(tk().hdUsedBy.d10 === 1 && tk().hdUsedBy.d6 === 1, 'descanso longo devolve metade do total (2), começando pelos maiores');
+  await call(p, 'character:update', { id: cT.id, patch: { classes: [{ id: g0.id, name: 'Guerreiro', level: 4 }] } });
+  await wait(30);
+  check(tk().level === 4 && tk().hpMax === maxG4 && tk().class === 'Guerreiro', 'tirar a classe leva junto os níveis e os PV dela');
+  check(!(await call(p, 'character:update', { id: cT.id, patch: { classes: [] } })).ok, 'o personagem precisa de pelo menos uma classe');
+
   a.close();
   gm.close(); p.close();
   server.close();

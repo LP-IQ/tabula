@@ -980,3 +980,12 @@ label.mini input.dtype { width: 130px; }
   background: linear-gradient(160deg, #3a2f12, var(--panel)); border: 1px solid #e0b44c66;
 }
 .level-gain b { color: var(--gold); }
+
+/* v5.4: multiclasse */
+.classes-line { display: flex; justify-content: flex-end; margin-top: -6px; }
+.classes-box { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; background: var(--panel); border: 1px solid var(--line-soft); border-radius: var(--radius); }
+.class-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; gap: 6px; align-items: center; }
+.class-row select { width: auto; }
+.warn { color: #f0b35a; margin: 0; }
+.hd-die { min-width: 34px; color: var(--gold); }
+.slot-suggest { padding: 6px 8px; border-radius: 8px; background: var(--gold-soft); align-items: center; }

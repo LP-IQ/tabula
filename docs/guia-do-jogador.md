@@ -44,6 +44,8 @@ No celular, as abas ficam embaixo: **Mapa · Ficha · Dados · Iniciativa · Seg
 - **Classe e PV**: escolha a classe da lista e o dado de vida se ajusta. Com **❤ PV pela classe** ligado, cada vez que
   você sobe de nível aparece um quadro para rolar o dado (ou pegar a média) e ganhar os PV. Detalhes no
   [manual](ferramentas.md#classe-dado-de-vida-e-pv-por-nível).
+- **Multiclasse**: **＋ Multiclasse** (abaixo do nome) abre a lista de classes; o nível total, os PV, os dados de vida e
+  a sugestão de espaços de magia seguem as regras. Veja o [manual](ferramentas.md#multiclasse).
 - **XP e moedas**: em *Experiência e moedas*. Quando o XP passar do próximo nível, aparece um aviso.
 - **Aspecto mágico e anel**: se o mestre tiver definido, aparecem embaixo dos PV.
 - **⧉ Em janela** (ao lado de "Achar no mapa") abre a ficha numa janela por cima do mapa, que dá para

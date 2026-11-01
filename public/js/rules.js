@@ -230,3 +230,77 @@ export function classDie(text) {
   return null;
 }
 export const dieAverage = (sides) => sides / 2 + 1;
+
+// ------------------------------------------------------------------ multiclasse (Livro do Jogador, cap. 6)
+const KEY_ALIAS = {
+  barbarian: 'barbaro', bard: 'bardo', warlock: 'bruxo', cleric: 'clerigo', druid: 'druida', sorcerer: 'feiticeiro',
+  fighter: 'guerreiro', rogue: 'ladino', wizard: 'mago', monk: 'monge', paladin: 'paladino', ranger: 'patrulheiro', artificer: 'artifice',
+};
+const plain = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+export function classKey(text) {
+  for (const w of plain(text).split(/[^a-z]+/)) {
+    if (CLASS_DIE[w]) return KEY_ALIAS[w] || w;
+  }
+  return null;
+}
+// requisitos para entrar (e sair) de uma classe na multiclasse: cada grupo precisa de um atributo 13+
+const PREREQ = {
+  barbaro: [['str']], bardo: [['cha']], bruxo: [['cha']], clerigo: [['wis']], druida: [['wis']], feiticeiro: [['cha']],
+  guerreiro: [['str', 'dex']], ladino: [['dex']], mago: [['int']], monge: [['dex'], ['wis']], paladino: [['str'], ['cha']],
+  patrulheiro: [['dex'], ['wis']], artifice: [['int']],
+};
+const ATTR_PT = { str: 'Força', dex: 'Destreza', con: 'Constituição', int: 'Inteligência', wis: 'Sabedoria', cha: 'Carisma' };
+export function prereqProblems(c) {
+  const list = c.classes || [];
+  if (list.length < 2) return [];
+  const out = [];
+  for (const k of list) {
+    for (const any of PREREQ[classKey(k.name)] || []) {
+      if (!any.some((a) => (Number(c.attrs?.[a]) || 0) >= 13)) out.push(`${k.name}: ${any.map((a) => ATTR_PT[a]).join(' ou ')} 13`);
+    }
+  }
+  return out;
+}
+
+// Espaços de magia: uma classe conjuradora usa a tabela dela; várias somam o nível de conjurador
+// (completo, metade para baixo, terço para baixo; artífice metade para cima). Bruxo (Magia de Pacto) fica à parte.
+const SLOT_TABLE = [
+  [], [2], [3], [4, 2], [4, 3], [4, 3, 2], [4, 3, 3], [4, 3, 3, 1], [4, 3, 3, 2], [4, 3, 3, 3, 1], [4, 3, 3, 3, 2],
+  [4, 3, 3, 3, 2, 1], [4, 3, 3, 3, 2, 1], [4, 3, 3, 3, 2, 1, 1], [4, 3, 3, 3, 2, 1, 1], [4, 3, 3, 3, 2, 1, 1, 1],
+  [4, 3, 3, 3, 2, 1, 1, 1], [4, 3, 3, 3, 2, 1, 1, 1, 1], [4, 3, 3, 3, 3, 1, 1, 1, 1], [4, 3, 3, 3, 3, 2, 1, 1, 1], [4, 3, 3, 3, 3, 2, 2, 1, 1],
+];
+const FULL = new Set(['bardo', 'clerigo', 'druida', 'feiticeiro', 'mago']);
+function casterKind(name) {
+  const key = classKey(name);
+  if (FULL.has(key)) return 'full';
+  if (key === 'paladino' || key === 'patrulheiro') return 'half';
+  if (key === 'artifice') return 'artificer';
+  if (key === 'bruxo') return 'pact';
+  const p = plain(name);
+  if ((key === 'guerreiro' && /cavaleiro arcano|eldritch/.test(p)) || (key === 'ladino' && /trapaceiro arcano|arcane trickster/.test(p))) return 'third';
+  return null;
+}
+const PACT = (lv) => (lv >= 17 ? [4, 5] : lv >= 11 ? [3, 5] : lv >= 9 ? [2, 5] : lv >= 7 ? [2, 4] : lv >= 5 ? [2, 3] : lv >= 3 ? [2, 2] : lv >= 2 ? [2, 1] : [1, 1]);
+export function suggestSlots(c) {
+  const list = (c.classes && c.classes.length ? c.classes : [{ name: c.class, level: c.level }]);
+  const casters = list.map((k) => ({ ...k, kind: casterKind(k.name) })).filter((k) => k.kind && k.kind !== 'pact');
+  let lv = 0;
+  if (casters.length === 1) {
+    const k = casters[0];
+    lv = k.kind === 'full' ? k.level
+      : k.kind === 'half' ? (k.level >= 2 ? Math.ceil(k.level / 2) : 0)
+        : k.kind === 'artificer' ? Math.ceil(k.level / 2)
+          : (k.level >= 3 ? Math.ceil(k.level / 3) : 0);
+  } else {
+    for (const k of casters) {
+      lv += k.kind === 'full' ? k.level : k.kind === 'half' ? Math.floor(k.level / 2) : k.kind === 'artificer' ? Math.ceil(k.level / 2) : Math.floor(k.level / 3);
+    }
+  }
+  const warlock = list.find((k) => casterKind(k.name) === 'pact');
+  return {
+    casterLevel: lv,
+    slots: SLOT_TABLE[Math.min(20, lv)] || [],
+    pact: warlock ? { count: PACT(warlock.level)[0], circle: PACT(warlock.level)[1] } : null,
+    multi: casters.length > 1,
+  };
+}

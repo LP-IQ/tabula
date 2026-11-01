@@ -11,6 +11,7 @@ O que mudou em cada versão está em [novidades.md](novidades.md).
 [Ferramentas do mapa](#ferramentas-do-mapa) ·
 [Névoa de guerra](#-névoa-de-guerra-) ·
 [Ficha](#ficha) ·
+[Multiclasse](#multiclasse) ·
 [Equipamento e mochila](#equipamento-e-mochila) ·
 [Dados](#dados) ·
 [Iniciativa](#iniciativa) ·
@@ -139,6 +140,28 @@ A barra muda de cor com metade da vida e quando chega a 0.
   *sempre rolar* ou *sempre a média*. Na ficha de cada personagem, o mestre pode **↶ desfazer** a última rolagem de PV
   ou **desligar** o cálculo e voltar aos PV digitados à mão.
 
+### Multiclasse
+
+<img src="img/multiclasse.png" alt="Lista de classes do personagem: Paladino 2 e Mago 1, com o aviso de requisitos" width="380">
+
+1. Na ficha, clique **＋ Multiclasse** (logo abaixo do nome). Aparece a lista de classes, com a atual em primeiro.
+2. Escreva a nova classe (ou escolha da lista): o **dado de vida** dela se ajusta sozinho. Mude o **nível** de cada
+   classe ali; **＋ Outra classe** acrescenta mais uma e **✕** tira uma (os níveis e os PV dela saem junto).
+3. O cabeçalho passa a mostrar **"Paladino 2 / Mago 1"** e o **nível total** (que vale para o bônus de proficiência
+   e para o XP). Classe e nível do cabeçalho ficam só de leitura: quem manda é a lista.
+
+O que a ficha faz por você na multiclasse:
+- **PV**: os do 1º nível vêm da **primeira classe** (a marcada **1ª**). Cada nível novo de qualquer classe usa o dado
+  **daquela classe**: o quadro mostra "⬆ Mago 1: ganhe os PV" com **🎲 Rolar 1d6** ou a **média**.
+- **Dados de vida**: um monte por tipo de dado (paladino 5 / clérigo 5 = cinco d10 e cinco d8), cada um com o seu
+  botão **☕ Gastar 1**. O descanso longo devolve metade do total, começando pelos maiores.
+- **Requisitos**: se faltar o atributo 13 que a regra pede (por exemplo, Inteligência 13 para mago), aparece um aviso.
+  Ele não bloqueia nada, para o mestre poder liberar.
+- **Espaços de magia**: em *Magias*, a ficha sugere os espaços pela **tabela de conjurador multiclasse** (classes
+  completas somam o nível; paladino e patrulheiro, metade; cavaleiro arcano e trapaceiro arcano, um terço; artífice,
+  metade para cima). **Usar esses** aplica. O bruxo aparece à parte, com a Magia de Pacto.
+- A mesma sugestão de espaços funciona com uma classe só, pela tabela da própria classe.
+
 ### Condições, inspiração e testes contra a morte
 - Toque nos ícones para marcar as condições; elas aparecem no seu token.
 - **✨ Inspiração** quando o mestre der.
@@ -149,11 +172,13 @@ A barra muda de cor com metade da vida e quando chega a 0.
 ### Espaços de magia
 Dentro de **Magias**: **+ Espaços de magia** cria os do 1º círculo; **+ Espaço de 2º círculo** e assim por diante.
 Em cada círculo, **+** e **−** mudam quantos você tem; **toque nas bolinhas** para gastar e recuperar.
-O descanso longo recupera todos.
+O descanso longo recupera todos. Para conjuradores, a ficha sugere os espaços pela tabela da classe (ou da
+multiclasse): **Usar esses** aplica.
 
 ### Dados de vida e descanso curto
-Escolha o **dado** da sua classe (d6, d8, d10, d12). No descanso curto, **☕ Gastar 1** rola o dado + CON e a cura
-entra direto nos PV. Você tem tantos dados quanto o seu nível; o descanso longo devolve metade.
+O **dado** vem da classe (dá para trocar à mão, para classes inventadas). No descanso curto, **☕ Gastar 1** rola o
+dado + CON e a cura entra direto nos PV. Você tem tantos dados quanto o seu nível; o descanso longo devolve metade.
+Na multiclasse, cada tipo de dado tem o seu monte (veja [Multiclasse](#multiclasse)).
 
 ### Experiência e moedas
 Digite o **XP**; a barra mostra quanto falta para o próximo nível e aparece um aviso quando já dá para subir.
