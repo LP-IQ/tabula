@@ -210,3 +210,23 @@ export const CONDITION_ICON = {
 // Pontos de experiência por nível (Livro do Jogador)
 export const XP_LEVELS = [0, 300, 900, 2700, 6500, 14000, 23000, 34000, 48000, 64000, 85000, 100000, 120000, 140000,
   165000, 195000, 225000, 265000, 305000, 355000];
+
+// ------------------------------------------------------------------ classes e dado de vida (Livro do Jogador, cap. 3)
+// Igual a server/world.js
+export const CLASSES = [
+  ['Bárbaro', 12], ['Bardo', 8], ['Bruxo', 8], ['Clérigo', 8], ['Druida', 8], ['Feiticeiro', 6],
+  ['Guerreiro', 10], ['Ladino', 8], ['Mago', 6], ['Monge', 8], ['Paladino', 10], ['Patrulheiro', 10], ['Artífice', 8],
+];
+const CLASS_DIE = {
+  barbaro: 12, barbarian: 12,
+  guerreiro: 10, fighter: 10, paladino: 10, paladin: 10, patrulheiro: 10, ranger: 10,
+  bardo: 8, bard: 8, bruxo: 8, warlock: 8, clerigo: 8, cleric: 8, druida: 8, druid: 8,
+  ladino: 8, rogue: 8, monge: 8, monk: 8, artifice: 8, artificer: 8,
+  feiticeiro: 6, sorcerer: 6, mago: 6, wizard: 6,
+};
+export function classDie(text) {
+  const words = String(text || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().split(/[^a-z]+/);
+  for (const w of words) if (CLASS_DIE[w]) return CLASS_DIE[w];
+  return null;
+}
+export const dieAverage = (sides) => sides / 2 + 1;

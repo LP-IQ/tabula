@@ -969,3 +969,14 @@ label.mini input.dtype { width: 130px; }
 .pick-list { display: flex; flex-direction: column; gap: 4px; }
 .pick-row { display: flex; align-items: center; gap: 10px; width: 100%; padding: 6px; background: var(--panel); border: 1px solid var(--line-soft); border-radius: 8px; color: var(--text); cursor: pointer; text-align: left; }
 .pick-row:hover { border-color: var(--gold); }
+
+/* v5.3: PV pela classe */
+.hpclass { display: flex; flex-direction: column; gap: 6px; }
+.hpclass.off { flex-direction: row; align-items: center; gap: 8px; flex-wrap: wrap; padding: 2px 2px 0; }
+.hp-rule { align-items: center; }
+.hp-rule .tiny { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.level-gain {
+  display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; border-radius: 10px;
+  background: linear-gradient(160deg, #3a2f12, var(--panel)); border: 1px solid #e0b44c66;
+}
+.level-gain b { color: var(--gold); }

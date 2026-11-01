@@ -8,6 +8,29 @@ A campanha não é tocada. Quando sai uma versão nova, o mestre vê um aviso no
 
 ---
 
+## v5.3 — PV pela classe (01/11/2026)
+
+<img src="img/pv-nivel.png" alt="Quadro de subida de nível com os botões Rolar e Média" width="340" align="right">
+
+**A classe define o dado de vida.** Ao escolher a classe na ficha (há uma lista com as do Livro do Jogador), o dado de
+vida já vem certo: d12 para o bárbaro, d10 para o guerreiro, d6 para o mago…
+
+**PV que acompanham o nível.** Com **❤ PV pela classe** ligado, o 1º nível vale o máximo do dado + CON, e a cada nível
+novo aparece um quadro para **rolar o dado** ou **pegar a média**. A rolagem sai no chat para todos, e os PV máximos e
+atuais sobem sozinhos. Se a CON subir, os PV acompanham em todos os níveis. O mestre decide se a mesa deixa o jogador
+escolher, sempre rola ou sempre usa a média.
+
+**Experimente:**
+1. Escreva **Guerreiro** na classe do seu personagem: aparece "Dado de vida: d10".
+2. Clique **❤ PV pela classe (d10)**.
+3. Mude o **Nível** para 2 e clique **🎲 Rolar 1d10**.
+
+<br clear="right">
+
+Veja no manual: [Classe, dado de vida e PV por nível](ferramentas.md#classe-dado-de-vida-e-pv-por-nível)
+
+---
+
 ## v5.2 — Equipamento e ficha em janela (01/11/2026)
 
 <img src="img/equipamento.png" alt="Boneco de equipamento com espada, adaga, cota de malha e um anel" width="340" align="right">

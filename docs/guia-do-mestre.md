@@ -193,6 +193,12 @@ Na ficha de um jogador (aba Ficha ou janela), em *Equipamento e mochila*, **🎁
 mochila dele, e ele recebe um aviso. Use os modelos para armas e armaduras comuns e escreva a descrição dos
 itens mágicos. Para usar a arte do item, escolha a imagem ou cole com Ctrl+V; até lá, ele aparece com o desenho do tipo.
 
+### PV ao subir de nível
+Em **Mestre → Jogadores e personagens → Regras da mesa**, escolha se os PV de cada nível são escolhidos pelo jogador
+(rolar ou média), sempre rolados ou sempre a média. Vale para as fichas com **❤ PV pela classe** ligado; as rolagens
+são feitas pela mesa e aparecem no chat. Na ficha de um personagem você pode **↶ desfazer** a última rolagem ou
+**desligar** o cálculo.
+
 ### Aspecto mágico e anel
 Na ficha de cada personagem, logo abaixo dos PV, há dois quadros que só você edita: **Aspecto mágico**
 (com o mês de nascimento) e **Anel**. Escreva o efeito do nível 1 ao 4 e o efeito a partir do nível 5.

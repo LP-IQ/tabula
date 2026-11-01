@@ -120,6 +120,25 @@ Tudo **salva sozinho**: ao lado de "Achar no mapa" aparece **✓ Salvo**.
 Digite um número no campinho e clique **Dano** (gasta primeiro os PV temporários) ou **Cura**.
 A barra muda de cor com metade da vida e quando chega a 0.
 
+### Classe, dado de vida e PV por nível
+- No campo **Classe**, escolha da lista (ou digite: "Guerreiro (Campeão)" também serve). A ficha já define o
+  **dado de vida** da classe: d12 bárbaro; d10 guerreiro, paladino e patrulheiro; d8 bardo, bruxo, clérigo, druida,
+  ladino, monge e artífice; d6 feiticeiro e mago. Classe inventada: escolha o dado à mão em *Dados de vida*.
+- **❤ PV pela classe** (embaixo dos PV) liga o cálculo automático, como no Livro do Jogador:
+  no **1º nível**, o máximo do dado + CON; **a cada nível seguinte**, a rolagem do dado (ou a **média fixa**,
+  arredondada para cima: d6 4, d8 5, d10 6, d12 7) + CON. Cada nível dá pelo menos 1 PV.
+- **Ao subir de nível** (mude o campo **Nível**), aparece **⬆ Nº nível: ganhe os PV** com **🎲 Rolar** e **Média**.
+  A rolagem é feita pela mesa e aparece no chat para todos; os PV máximos e os atuais sobem juntos. Subiu vários
+  níveis de uma vez? O quadro aparece para cada um.
+
+  <img src="img/pv-nivel.png" alt="Quadro de subida de nível com os botões Rolar 1d10 + 2 e Média 6 + 2 = 8" width="380">
+- Com o cálculo ligado, os **PV máximos ficam dourados** e não se digitam: eles seguem o nível, o dado e a CON.
+  Se a CON subir, os PV sobem 1 por nível, como manda a regra.
+- **Bônus/nível**: PV extras por nível, como o do anão da colina (+1) ou do talento Robusto (+2).
+- 👑 O mestre escolhe a regra da mesa em **Mestre → Jogadores e personagens → Regras da mesa**: *o jogador escolhe*,
+  *sempre rolar* ou *sempre a média*. Na ficha de cada personagem, o mestre pode **↶ desfazer** a última rolagem de PV
+  ou **desligar** o cálculo e voltar aos PV digitados à mão.
+
 ### Condições, inspiração e testes contra a morte
 - Toque nos ícones para marcar as condições; elas aparecem no seu token.
 - **✨ Inspiração** quando o mestre der.

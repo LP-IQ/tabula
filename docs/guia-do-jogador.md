@@ -41,6 +41,9 @@ No celular, as abas ficam embaixo: **Mapa · Ficha · Dados · Iniciativa · Seg
 - **Espaços de magia** (dentro de *Magias*): crie os espaços de cada círculo com **+** e toque nas bolinhas para gastar.
 - **Dados de vida**: no descanso curto, **☕ Gastar 1** rola o dado + CON e cura na hora.
   No descanso longo o mestre recupera PV, espaços e metade dos dados de vida de todo mundo.
+- **Classe e PV**: escolha a classe da lista e o dado de vida se ajusta. Com **❤ PV pela classe** ligado, cada vez que
+  você sobe de nível aparece um quadro para rolar o dado (ou pegar a média) e ganhar os PV. Detalhes no
+  [manual](ferramentas.md#classe-dado-de-vida-e-pv-por-nível).
 - **XP e moedas**: em *Experiência e moedas*. Quando o XP passar do próximo nível, aparece um aviso.
 - **Aspecto mágico e anel**: se o mestre tiver definido, aparecem embaixo dos PV.
 - **⧉ Em janela** (ao lado de "Achar no mapa") abre a ficha numa janela por cima do mapa, que dá para

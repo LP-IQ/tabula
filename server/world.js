@@ -97,11 +97,56 @@ function characterDefaults() {
     ring: { name: '', base: '', upgraded: '' },
     // v5.2: equipamento e mochila (ver server/items.js)
     items: [], autoAc: true,
+    // v5.3: PV pela classe (rolagens de cada nível depois do 1º)
+    hpAuto: false, hpRolls: [], hpBonus: 0,
   };
+}
+
+// ------------------------------------------------------------ PV pela classe
+// Dado de vida de cada classe (Livro do Jogador, cap. 3). Aceita o nome em português ou em inglês,
+// com ou sem acento, e com a subclasse junto ("Guerreiro (Campeão)").
+const CLASS_DIE = {
+  barbaro: 12, barbarian: 12,
+  guerreiro: 10, fighter: 10, paladino: 10, paladin: 10, patrulheiro: 10, ranger: 10,
+  bardo: 8, bard: 8, bruxo: 8, warlock: 8, clerigo: 8, cleric: 8, druida: 8, druid: 8,
+  ladino: 8, rogue: 8, monge: 8, monk: 8, artifice: 8, artificer: 8,
+  feiticeiro: 6, sorcerer: 6, mago: 6, wizard: 6,
+};
+const norm = (s) => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+function classDie(text) {
+  for (const w of norm(text).split(/[^a-z]+/)) if (CLASS_DIE[w]) return CLASS_DIE[w];
+  return null;
+}
+const dieSides = (hitDie) => Number(String(hitDie || 'd8').slice(1)) || 8;
+// valor fixo por nível = média do dado arredondada para cima (d8 → 5)
+const dieAverage = (sides) => sides / 2 + 1;
+const conMod = (c) => Math.floor(((Number(c.attrs?.con) || 10) - 10) / 2);
+
+// PV máximos: 1º nível = máximo do dado + CON; cada nível seguinte = rolagem (ou média) + CON.
+// Cada nível dá pelo menos 1 PV. CON e o bônus por nível valem para todos os níveis (como no livro).
+function autoHpMax(c) {
+  const per = conMod(c) + (Number(c.hpBonus) || 0);
+  const level = Math.max(1, Number(c.level) || 1);
+  let max = Math.max(1, dieSides(c.hitDie) + per);
+  const rolls = (c.hpRolls || []).slice(0, level - 1);
+  for (const r of rolls) max += Math.max(1, r + per);
+  return max;
+}
+const hpPending = (c) => Math.max(0, Math.max(1, Number(c.level) || 1) - 1 - (c.hpRolls || []).length);
+
+// Recalcula os PV máximos; os PV atuais acompanham o que ganhar (e nunca passam do máximo).
+function applyAutoHp(c, prevMax) {
+  if (!c.hpAuto) return;
+  const max = autoHpMax(c);
+  const before = prevMax ?? c.hpMax;
+  c.hpMax = max;
+  if (max > before) c.hp = Math.min(max, c.hp + (max - before));
+  if (c.hp > max) c.hp = max;
 }
 
 module.exports = {
   defaultCalendar, normalizeCalendar, advance, describe,
   isCovered, opContains,
   XP_LEVELS, CONDITIONS, emptySlots, characterDefaults,
+  classDie, dieSides, dieAverage, conMod, autoHpMax, hpPending, applyAutoHp,
 };

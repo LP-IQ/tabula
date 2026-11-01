@@ -2,7 +2,7 @@
 import { app, emit, rollD20, doRoll, bus, setAdv } from './core.js';
 import { $, h, abilityMod, fmtMod, profBonus, debounce, chooseAndUpload, avatar, isEditingIn, toast, setKids, openModal } from './util.js';
 import { focusToken } from './map.js';
-import { CONDITIONS, CONDITION_ICON, CONDITION_LABEL, XP_LEVELS } from './rules.js';
+import { CONDITIONS, CONDITION_ICON, CONDITION_LABEL, XP_LEVELS, CLASSES, classDie, dieAverage } from './rules.js';
 import { equipmentBox, dollView } from './equipment.js';
 import { computeAc, weaponAttacks } from './itemdata.js';
 import { openWindow, getWindow, isMobile, activeWindow } from './windows.js';
@@ -127,6 +127,69 @@ export function createSheet(pane, opts = {}) {
   }
   function initTotal(c) { return abilityMod(c.attrs.dex) + (c.initBonus || 0); }
 
+  // Classe: sugere as do Livro do Jogador e já define o dado de vida
+  function classField(c) {
+    const el = h('input', { 'data-f': 'class', list: 'tabula-classes', placeholder: 'Classe', 'aria-label': 'Classe', autocomplete: 'off' });
+    el.addEventListener('change', async () => {
+      const before = app.char(c.id)?.hitDie;
+      const r = await patch(c, { class: el.value });
+      const die = classDie(el.value);
+      if (r && die && before !== 'd' + die) toast(`Dado de vida: d${die}`, 'ok');
+    });
+    return el;
+  }
+
+  // PV pela classe: liga o cálculo, mostra os níveis pendentes e rola (ou pega a média) para cada um
+  function hpClassBox(c) {
+    const sides = Number(String(c.hitDie || 'd8').slice(1)) || 8;
+    const con = abilityMod(c.attrs?.con);
+    const per = con + (Number(c.hpBonus) || 0);
+    const level = Math.max(1, Number(c.level) || 1);
+    const rolls = c.hpRolls || [];
+    const pending = Math.max(0, level - 1 - rolls.length);
+    const rule = app.state.rules?.hp || 'choose';
+    const known = classDie(c.class);
+    const sign = (n) => (n ? `${n > 0 ? ' + ' : ' − '}${Math.abs(n)}` : '');
+    if (!c.hpAuto) {
+      return h('div', { class: 'hpclass off' },
+        h('span', { class: 'muted small grow' }, known
+          ? `PV pela classe: ${sides} no 1º nível, depois d${sides} por nível (rolar ou média) + CON.`
+          : 'Escolha a classe para os PV seguirem o dado de vida dela.'),
+        h('button', {
+          class: 'btn sm',
+          onclick: async () => {
+            const ok = confirm(`Calcular os PV pela classe?\n\n1º nível: ${sides}${sign(per)}. A cada nível seguinte: 1d${sides} (ou ${dieAverage(sides)})${sign(per)}.\n\nOs PV máximos digitados (${c.hpMax}) passam a ser calculados. Se o personagem já tem nível acima de 1, você ganha os PV de cada nível agora.`);
+            if (ok) await emit('hp:auto', { charId: c.id, on: true });
+          },
+        }, `❤ PV pela classe (d${sides})`));
+    }
+    const nextLevel = rolls.length + 2;
+    const canRoll = rule !== 'avg' || app.isGM;
+    const canAvg = rule !== 'roll' || app.isGM;
+    const history = [`1º ${sides}`, ...rolls.slice(0, level - 1).map((r, i) => `${i + 2}º ${r}`)].join(' · ');
+    return h('div', { class: 'hpclass' + (pending ? ' pending' : '') },
+      pending ? h('div', { class: 'level-gain' },
+        h('b', {}, `⬆ ${nextLevel}º nível: ganhe os PV`),
+        pending > 1 ? h('span', { class: 'muted small' }, ` (faltam ${pending} níveis)`) : null,
+        h('div', { class: 'row gap wrap' },
+          canRoll ? h('button', {
+            class: 'btn sm primary',
+            onclick: async () => { const r = await emit('hp:level', { charId: c.id, mode: 'roll' }); if (r) toast(`+${r.gain} PV`, 'ok'); },
+          }, `🎲 Rolar 1d${sides}${sign(per)}`) : null,
+          canAvg ? h('button', {
+            class: 'btn sm' + (canRoll ? '' : ' primary'),
+            onclick: async () => { const r = await emit('hp:level', { charId: c.id, mode: 'avg' }); if (r) toast(`+${r.gain} PV`, 'ok'); },
+          }, `Média: ${dieAverage(sides)}${sign(per)} = ${Math.max(1, dieAverage(sides) + per)}`) : null),
+        rule !== 'choose' && !app.isGM ? h('span', { class: 'muted tiny' }, rule === 'roll' ? 'Nesta mesa os PV são rolados.' : 'Nesta mesa os PV são a média fixa.') : null) : null,
+      h('div', { class: 'row gap wrap hp-rule' },
+        h('span', { class: 'small' }, `❤ PV pela classe · d${sides} · CON ${fmtMod(con)}`),
+        h('span', { class: 'muted tiny grow', title: 'O que cada nível rendeu no dado (sem a CON)' }, history),
+        h('label', { class: 'mini', title: 'PV extras por nível: anão da colina +1, talento Robusto +2, feiticeiro dracônico +1…' }, 'Bônus/nível',
+          h('input', { type: 'number', class: 'num', min: '-5', max: '10', value: String(c.hpBonus || 0), onchange: (e) => patch(c, { hpBonus: Number(e.target.value) }) })),
+        app.isGM && rolls.length ? h('button', { class: 'btn ghost sm', title: 'Desfazer a última rolagem de PV (só o mestre)', onclick: () => confirm('Desfazer a última rolagem de PV deste personagem?') && emit('hp:undo', { charId: c.id }) }, '↶') : null,
+        app.isGM ? h('button', { class: 'btn ghost sm', title: 'Voltar aos PV digitados à mão (só o mestre)', onclick: () => confirm('Desligar os PV pela classe? Os PV máximos voltam a ser digitados à mão (as rolagens ficam guardadas).') && emit('hp:auto', { charId: c.id, on: false }) }, 'desligar') : null));
+  }
+
   // --------------------------------------------------------------- construção
   function build(c) {
     builtFor = c.id;
@@ -170,7 +233,7 @@ export function createSheet(pane, opts = {}) {
           field(c, 'name', { class: 'title-input', label: 'Nome' }),
           h('div', { class: 'row gap wrap' },
             field(c, 'race', { placeholder: 'Raça', label: 'Raça' }),
-            field(c, 'class', { placeholder: 'Classe', label: 'Classe' }),
+            classField(c),
             h('label', { class: 'mini' }, 'Nível', field(c, 'level', { type: 'number', class: 'num', label: 'Nível' }))),
           h('div', { class: 'row gap wrap sheet-meta' },
             h('button', {
@@ -203,6 +266,7 @@ export function createSheet(pane, opts = {}) {
           h('button', { class: 'btn sm danger', onclick: () => applyHp('dmg') }, 'Dano'),
           h('button', { class: 'btn sm ok', onclick: () => applyHp('heal') }, 'Cura'))),
 
+      h('div', { class: 'sx', dataset: { sx: 'hpclass' } }),
       h('div', { class: 'sx', dataset: { sx: 'status' } }),
       h('div', { class: 'sx', dataset: { sx: 'aspect' } }),
 
@@ -457,6 +521,7 @@ export function createSheet(pane, opts = {}) {
   }
 
   function renderExtras(c) {
+    redraw('hpclass', JSON.stringify([c.hpAuto, c.hitDie, c.level, c.hpRolls, c.hpBonus, c.attrs?.con, c.class, c.hpMax, app.state.rules, app.isGM]), () => hpClassBox(c));
     redraw('equip', JSON.stringify([c.items, c.attrs, c.autoAc, c.ac, c.level, c.ownerId, app.isGM,
       app.state.characters.map((x) => [x.id, x.name])]), () => equipmentBox(c, { patch }));
     redraw('status', JSON.stringify([c.conditions, c.inspiration, c.deathSaves, c.hp <= 0, c.name]), () => statusBox(c));
@@ -491,6 +556,12 @@ export function createSheet(pane, opts = {}) {
       const r = c.hpMax ? Math.max(0, Math.min(1, c.hp / c.hpMax)) : 0;
       bar.style.width = r * 100 + '%';
       bar.dataset.level = r <= 0 ? 'down' : r <= 0.5 ? 'low' : 'ok';
+    }
+    const maxEl = pane.querySelector('[data-f="hpMax"]');
+    if (maxEl) {
+      maxEl.readOnly = !!c.hpAuto;
+      maxEl.classList.toggle('auto', !!c.hpAuto);
+      maxEl.title = c.hpAuto ? 'Calculado pela classe e pelas rolagens de cada nível' : 'PV máximos';
     }
     const acEl = pane.querySelector('[data-f="ac"]');
     if (acEl) {
@@ -533,6 +604,9 @@ export function createSheet(pane, opts = {}) {
   bus.addEventListener('adv', syncAdv);
   return { render, open: openSheet, paste, get id() { return builtFor; }, pane };
 }
+
+// lista de classes para o campo "Classe" (uma só, usada por todas as fichas abertas)
+document.body.append(h('datalist', { id: 'tabula-classes' }, CLASSES.map(([n]) => h('option', { value: n }))));
 
 // Fichas que esta pessoa pode editar: o mestre, todas; o jogador, as dele
 function available() {

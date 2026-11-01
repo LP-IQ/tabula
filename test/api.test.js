@@ -293,6 +293,36 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   check(sp.ok && it(pot.id).qty === 1 && it(sp.id).qty === 1, 'separar um item de uma pilha');
   check(!(await call(p, 'item:save', { charId: cT.id, item: { name: 'x', img: 'javascript:alert(1)' } })).ok, 'imagem de item inválida é recusada');
 
+  // ---------- v5.3: PV pela classe
+  const tk = () => p.last.characters.find((c) => c.id === cT.id);
+  await call(p, 'character:update', { id: cT.id, patch: { class: 'Guerreiro (Campeão)', level: 1, attrs: { con: 14, dex: 16 } } });
+  await wait(30);
+  check(tk().hitDie === 'd10', 'escolher a classe define o dado de vida (Guerreiro → d10)');
+  const on = await call(p, 'hp:auto', { charId: cT.id, on: true });
+  await wait(30);
+  check(on.ok && tk().hpMax === 12, 'PV pela classe no 1º nível: máximo do dado + CON (10 + 2)');
+  check(!(await call(p, 'hp:level', { charId: cT.id, mode: 'roll' })).ok, 'sem nível novo, não há PV para rolar');
+  await call(p, 'character:update', { id: cT.id, patch: { level: 3, hpMax: 999 } });
+  await wait(30);
+  check(tk().hpMax === 12, 'subir de nível deixa os PV pendentes; o jogador não digita o máximo');
+  const avg = await call(p, 'hp:level', { charId: cT.id, mode: 'avg' });
+  check(avg.ok && avg.gain === 8 && avg.pending === 1, 'pegar a média: d10 → 6 + 2 = +8 PV');
+  const rl = await call(p, 'hp:level', { charId: cT.id, mode: 'roll' });
+  await wait(30);
+  check(rl.ok && rl.value >= 1 && rl.value <= 10 && tk().hpMax === 20 + rl.value + 2 && rl.pending === 0, 'rolar o dado do nível 3 (servidor rola, vai para o chat)');
+  const hpBefore = tk().hpMax;
+  await call(p, 'character:update', { id: cT.id, patch: { attrs: { con: 16, dex: 16 } } });
+  await wait(30);
+  check(tk().hpMax === hpBefore + 3, 'CON +1 no modificador dá +1 PV por nível (retroativo)');
+  await call(gm, 'rules:set', { hp: 'roll' });
+  await call(p, 'character:update', { id: cT.id, patch: { level: 4 } });
+  const forced = await call(p, 'hp:level', { charId: cT.id, mode: 'avg' });
+  check(!forced.ok && /rolados/.test(forced.error) && gm.last.rules.hp === 'roll', 'regra da mesa "sempre rolar" bloqueia a média');
+  check(!(await call(p, 'hp:auto', { charId: cT.id, on: false })).ok, 'só o mestre desliga os PV pela classe');
+  check((await call(gm, 'hp:undo', { charId: cT.id })).ok, 'mestre desfaz a última rolagem de PV');
+  check(!(await call(p, 'hp:undo', { charId: cT.id })).ok, 'jogador não desfaz rolagem de PV');
+  await call(gm, 'rules:set', { hp: 'choose' });
+
   a.close();
   gm.close(); p.close();
   server.close();

@@ -10,6 +10,17 @@ let built = false;
 const parts = {};
 const keys = {};
 
+// Regras da casa que valem para a mesa toda
+function rulesBox(state) {
+  const hp = state.rules?.hp || 'choose';
+  return h('div', { class: 'stack' },
+    h('label', { class: 'mini' }, 'PV ao subir de nível',
+      h('select', { 'aria-label': 'PV ao subir de nível', onchange: (e) => emit('rules:set', { hp: e.target.value }) },
+        [['choose', 'o jogador escolhe: rolar ou média'], ['roll', 'sempre rolar o dado'], ['avg', 'sempre a média fixa']]
+          .map(([v, l]) => h('option', { value: v, selected: v === hp }, l)))),
+    h('p', { class: 'muted small' }, 'Vale para as fichas com "PV pela classe" ligado. As rolagens são feitas pela mesa e aparecem no chat. Você (mestre) pode desfazer a última rolagem de um personagem na ficha dele.'));
+}
+
 function section(title, body, open = true) {
   return h('details', { class: 'block', open }, h('summary', {}, title), body);
 }
@@ -384,7 +395,8 @@ export function renderGM(state) {
         npcForm(), slot('npcs'))),
       section('Jogadores e personagens', h('div', { class: 'stack' },
         h('h4', {}, 'Usuários'), slot('users'), userForm(),
-        h('h4', {}, 'Personagens'), slot('chars'))),
+        h('h4', {}, 'Personagens'), slot('chars'),
+        h('h4', {}, 'Regras da mesa'), slot('rules'))),
       backupSection(),
     );
   }
@@ -396,5 +408,6 @@ export function renderGM(state) {
     state.characters.map((c) => [c.level, c.ownerId]), state.users.map((u) => u.role)], () => encounterBox() || h('span'));
   put('npcs', sc?.tokens.filter((t) => !t.characterId).map((t) => [t.id, t.name, t.img, t.hidden, t.hp, t.hpMax]), () => tokenList(state));
   put('users', state.users, () => userList(state));
+  put('rules', [state.rules], () => rulesBox(state));
   put('chars', [state.characters.map((c) => [c.id, c.name, c.img, c.ownerId]), state.users.map((u) => [u.id, u.name, u.role, u.color])], () => charList(state));
 }

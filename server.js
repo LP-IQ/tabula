@@ -119,6 +119,7 @@ const CHAR_FIELDS = {
   inspiration: (v) => !!v,
   deathSaves: (v) => ({ s: int(v?.s, 0, 3), f: int(v?.f, 0, 3) }),
   autoAc: (v) => !!v,
+  hpBonus: (v) => int(v, -5, 10),
   // definidos pelo mestre (o jogador só vê)
   aspect: (v) => ({ month: str(v?.month, 40), name: str(v?.name, 80), base: str(v?.base, 2000), upgraded: str(v?.upgraded, 2000) }),
   ring: (v) => ({ name: str(v?.name, 80), base: str(v?.base, 2000), upgraded: str(v?.upgraded, 2000) }),
@@ -135,6 +136,7 @@ function migrate() {
     for (const t of s.tokens) if (!t.conditions) t.conditions = [];
   }
   d.calendar = world.normalizeCalendar(d.calendar);
+  if (!d.rules) d.rules = { hp: 'choose' };
   for (const h of d.handouts) if (h.queuedFor === undefined) { h.queuedFor = null; h.order = 0; }
 }
 migrate();
@@ -229,6 +231,7 @@ function viewFor(u) {
     compendium,
     monsters: gm ? d.monsters : [],
     calendar: d.calendar,
+    rules: d.rules || { hp: 'choose' },
     update: gm && latestVersion && newer(latestVersion, pkg.version) ? { current: pkg.version, latest: latestVersion, script: UPDATE_SCRIPT } : null,
   };
 }
@@ -473,8 +476,10 @@ const handlers = {
     const c = findChar(p.id);
     const gm = user.role === 'gm';
     if (!gm && c.ownerId !== user.id) throw new Error('Esse personagem não é seu');
-    const patch = p.patch || {};
+    const patch = { ...(p.patch || {}) };
     if ('ownerId' in patch) requireGM(user);
+    if (c.hpAuto) delete patch.hpMax;          // com PV pela classe, o máximo é calculado
+    const prevMax = c.hpMax;
     if (!gm && Object.keys(patch).some((k) => GM_ONLY_CHAR.has(k))) throw new Error('O aspecto e o anel são definidos pelo mestre');
     for (const [k, v] of Object.entries(patch)) {
       if (k === 'ownerId') {
@@ -484,7 +489,70 @@ const handlers = {
         c[k] = CHAR_FIELDS[k](v);
       }
     }
+    // escolher a classe já define o dado de vida (se o dado não veio junto na mesma alteração)
+    if ('class' in patch && !('hitDie' in patch)) {
+      const die = world.classDie(c.class);
+      if (die) c.hitDie = 'd' + die;
+    }
+    world.applyAutoHp(c, prevMax);
     itemsLib.applyAutoAc(c);
+    return { hitDie: c.hitDie };
+  },
+
+  // ---------- PV pela classe
+  'hp:auto'(user, p) {
+    const c = myChar(user, p.charId);
+    if (!p.on) {
+      requireGM(user);   // só o mestre volta para os PV digitados à mão
+      c.hpAuto = false;
+      return {};
+    }
+    const prevMax = c.hpMax;
+    c.hpAuto = true;
+    if (!Array.isArray(c.hpRolls)) c.hpRolls = [];
+    world.applyAutoHp(c, prevMax);
+    return { pending: world.hpPending(c) };
+  },
+  'hp:level'(user, p) {
+    const c = myChar(user, p.charId);
+    if (!c.hpAuto) throw new Error('Ligue antes os PV pela classe');
+    if (!world.hpPending(c)) throw new Error('Não há nível novo para ganhar PV');
+    const rule = D().rules?.hp || 'choose';
+    const mode = p.mode === 'avg' ? 'avg' : 'roll';
+    if (user.role !== 'gm' && rule !== 'choose' && rule !== mode) {
+      throw new Error(rule === 'roll' ? 'Nesta mesa os PV de cada nível são rolados' : 'Nesta mesa os PV de cada nível são a média fixa');
+    }
+    const sides = world.dieSides(c.hitDie);
+    const level = c.hpRolls.length + 2;
+    const per = world.conMod(c) + (Number(c.hpBonus) || 0);
+    let value;
+    if (mode === 'roll') {
+      // rola o dado já com a CON (e o bônus por nível), para o chat mostrar o total ganho
+      const r = roll(`1d${sides}${per ? (per > 0 ? '+' : '') + per : ''}`);
+      value = r.total - per;
+      pushChat(chatBase(user, { type: 'roll', label: `${c.name} — PV do ${level}º nível`, roll: r }));
+    } else {
+      value = world.dieAverage(sides);
+    }
+    const prevMax = c.hpMax;
+    c.hpRolls.push(value);
+    world.applyAutoHp(c, prevMax);
+    const gain = c.hpMax - prevMax;
+    pushChat(chatBase(user, { type: 'system', text: `⬆ ${c.name}, ${level}º nível: +${gain} PV (${mode === 'roll' ? `rolou ${value}` : `média ${value}`}${per ? ` ${per > 0 ? '+' : '−'} ${Math.abs(per)}` : ''}). PV máximos: ${c.hpMax}.` }));
+    return { value, gain, hpMax: c.hpMax, pending: world.hpPending(c) };
+  },
+  'hp:undo'(user, p) {
+    requireGM(user);
+    const c = myChar(user, p.charId);
+    if (!c.hpRolls?.length) throw new Error('Não há rolagem de PV para desfazer');
+    const prevMax = c.hpMax;
+    c.hpRolls.pop();
+    world.applyAutoHp(c, prevMax);
+    return { hpMax: c.hpMax };
+  },
+  'rules:set'(user, p) {
+    requireGM(user);
+    D().rules = { ...(D().rules || {}), hp: ['choose', 'roll', 'avg'].includes(p.hp) ? p.hp : 'choose' };
   },
 
   // ---------- itens e equipamento (dono do personagem ou mestre)

@@ -1,5 +1,16 @@
 # Histórico de versões
 
+## v5.3 — 01/11/2026
+**Novidades**
+- **A classe define o dado de vida**: o campo Classe sugere as classes do Livro do Jogador e, ao escolher (também em
+  inglês ou com a subclasse junto), a ficha ajusta o dado de vida.
+- **PV pela classe** (opcional, por personagem): 1º nível = máximo do dado + CON; cada nível seguinte = rolagem do dado
+  ou média fixa + CON, no mínimo 1. Ao subir de nível, a ficha mostra o quadro para ganhar os PV de cada nível novo.
+  A rolagem é feita pelo servidor e aparece no chat. Os PV máximos passam a ser calculados (mudar a CON ajusta todos os
+  níveis) e os atuais sobem junto. Campo de bônus de PV por nível (anão da colina, Robusto).
+- **Regras da mesa** (mestre): PV ao subir de nível pelo jogador, sempre rolados ou sempre a média. O mestre pode
+  desfazer a última rolagem de PV de um personagem ou desligar o cálculo.
+
 ## v5.2.1 — 01/11/2026
 - Documentação nova: **[manual das ferramentas](docs/ferramentas.md)** (cada ferramenta passo a passo) e
   **[novidades](docs/novidades.md)** (o que chegou em cada versão e como experimentar). A página do projeto
