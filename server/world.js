@@ -95,6 +95,8 @@ function characterDefaults() {
     coins: { pc: 0, pp: 0, pe: 0, po: 0, pl: 0 }, xp: 0, inspiration: false, deathSaves: { s: 0, f: 0 },
     aspect: { month: '', name: '', base: '', upgraded: '' },
     ring: { name: '', base: '', upgraded: '' },
+    // v5.2: equipamento e mochila (ver server/items.js)
+    items: [], autoAc: true,
   };
 }
 

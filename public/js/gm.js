@@ -2,7 +2,7 @@
 import { app, emit } from './core.js';
 import { $, h, chooseAndUpload, pickFile, uploadImage, avatar, isEditingIn, toast, setKids } from './util.js';
 import { fit, mapSize, flashWhenReady, freeSpots } from './map.js';
-import { openSheet } from './sheet.js';
+import { openSheet, openSheetWindow } from './sheet.js';
 import { encounterBox } from './bestiary.js';
 
 const pane = $('#pane-gm');
@@ -253,6 +253,7 @@ function charList(state) {
         class: 'btn sm', title: `Abrir a ficha de ${c.name}`,
         onclick: () => { openSheet(c.id); document.body.dispatchEvent(new CustomEvent('open-tab', { detail: 'sheet' })); },
       }, 'Ficha'),
+      h('button', { class: 'btn ghost sm desk-only', title: `Abrir a ficha de ${c.name} numa janela`, onclick: () => openSheetWindow(c.id) }, '⧉'),
       h('button', { class: 'btn ghost sm', title: 'Apagar personagem', onclick: () => confirm(`Apagar ${c.name}? (a ficha some)`) && emit('character:delete', { id: c.id }) }, '✕')))),
     h('form', {
       class: 'row gap',

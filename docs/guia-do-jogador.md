@@ -41,6 +41,26 @@ No celular, as abas ficam embaixo: **Mapa · Ficha · Dados · Iniciativa · Seg
   No descanso longo o mestre recupera PV, espaços e metade dos dados de vida de todo mundo.
 - **XP e moedas**: em *Experiência e moedas*. Quando o XP passar do próximo nível, aparece um aviso.
 - **Aspecto mágico e anel**: se o mestre tiver definido, aparecem embaixo dos PV.
+- **⧉ Em janela** (ao lado de "Achar no mapa") abre a ficha numa janela por cima do mapa, que dá para
+  arrastar pelo título e redimensionar pelo canto. Dois cliques no seu token fazem o mesmo.
+
+## Equipamento e mochila
+
+<img src="img/equipamento.png" alt="Boneco de equipamento com espada, adaga, cota de malha e anel, e a mochila embaixo" width="360">
+
+- **+ Item** cria um item. Comece por um **modelo** (as armas e armaduras do Livro do Jogador) ou preencha
+  à mão: tipo, raridade, peso, dano, CA… A imagem é um desenho do tipo do item; troque pela arte que quiser
+  em **Imagem…** ou colando com **Ctrl+V**.
+- **Toque num item** para equipar, guardar, sintonizar, editar, separar um de uma pilha ou **passar para**
+  outro personagem. No computador, também dá para **arrastar** entre a mochila e os espaços do boneco.
+- **Duas mãos**: a arma ocupa as duas mãos (a esquerda fica bloqueada). Arma **versátil**, como a espada longa,
+  pode ser usada com uma ou duas mãos.
+- **Sintonia**: no máximo 3 itens sintonizados. Item que exige sintonia só dá o bônus mágico sintonizado.
+- **CA automática**: com armadura, escudo ou um item que dá CA equipado, a CA da ficha se calcula sozinha
+  (fica dourada). Se a sua classe calcula diferente (bárbaro, monge…), desmarque "automática" e digite.
+- **Ataques**: as armas equipadas aparecem em *Ataques* com o bônus e o dano já calculados.
+- **Carga**: o peso de tudo, contra a sua capacidade (7,5 × Força, em kg).
+- **O grupo**: os retratos no topo da ficha abrem o equipamento dos colegas (só o que está equipado).
 
 ## Dados
 

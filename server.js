@@ -9,6 +9,7 @@ const { Server } = require('socket.io');
 const store = require('./server/store');
 const { roll } = require('./server/dice');
 const world = require('./server/world');
+const itemsLib = require('./server/items');
 const pkg = require('./package.json');
 
 const PORT = Number(process.env.PORT) || 3000;
@@ -117,6 +118,7 @@ const CHAR_FIELDS = {
   xp: (v) => int(v, 0, 9999999),
   inspiration: (v) => !!v,
   deathSaves: (v) => ({ s: int(v?.s, 0, 3), f: int(v?.f, 0, 3) }),
+  autoAc: (v) => !!v,
   // definidos pelo mestre (o jogador só vê)
   aspect: (v) => ({ month: str(v?.month, 40), name: str(v?.name, 80), base: str(v?.base, 2000), upgraded: str(v?.upgraded, 2000) }),
   ring: (v) => ({ name: str(v?.name, 80), base: str(v?.base, 2000), upgraded: str(v?.upgraded, 2000) }),
@@ -183,6 +185,7 @@ function viewFor(u) {
   const characters = d.characters.map((c) => (gm || c.ownerId === u.id ? c : {
     id: c.id, name: c.name, img: c.img, ownerId: c.ownerId, class: c.class, race: c.race, level: c.level,
     hp: c.hp, hpMax: c.hpMax, hpTemp: c.hpTemp, conditions: c.conditions,
+    equip: itemsLib.publicEquipment(c),
   }));
 
   const act = activeScene();
@@ -364,6 +367,25 @@ function chatBase(user, extra) {
 function sortInitiative() {
   D().initiative.entries.sort((a, b) => b.value - a.value || (b.tiebreak || 0) - (a.tiebreak || 0));
 }
+// avisa o dono de um personagem que um item chegou na mochila dele (se não foi ele mesmo que pôs)
+function notifyItem(actor, c, name, fromName) {
+  if (!c.ownerId || c.ownerId === actor.id) return;
+  eachSocket((s, u) => {
+    if (u.id === c.ownerId) s.emit('item:new', { char: c.name, name, from: fromName || (actor.role === 'gm' ? 'O mestre' : actor.name) });
+  });
+}
+function myChar(user, id) {
+  const c = findChar(id);
+  if (user.role !== 'gm' && c.ownerId !== user.id) throw new Error('Esse personagem não é seu');
+  if (!Array.isArray(c.items)) c.items = [];
+  return c;
+}
+function findItem(c, id) {
+  const it = c.items.find((x) => x.id === id);
+  if (!it) throw new Error('Item não encontrado');
+  return it;
+}
+
 function notifyHandout(h, prevRecipients) {
   const before = new Set(prevRecipients);
   eachSocket((s, u) => {
@@ -462,6 +484,87 @@ const handlers = {
         c[k] = CHAR_FIELDS[k](v);
       }
     }
+    itemsLib.applyAutoAc(c);
+  },
+
+  // ---------- itens e equipamento (dono do personagem ou mestre)
+  'item:save'(user, p) {
+    const c = myChar(user, p.charId);
+    const raw = p.item || {};
+    let it;
+    if (raw.id) {
+      const i = c.items.findIndex((x) => x.id === raw.id);
+      if (i < 0) throw new Error('Item não encontrado');
+      it = itemsLib.normalizeItem(raw, c.items[i], imgUrl);
+      c.items[i] = it;
+    } else {
+      if (c.items.length >= itemsLib.MAX_ITEMS) throw new Error('A mochila está cheia (máximo de 200 itens)');
+      it = itemsLib.normalizeItem(raw, null, imgUrl);
+      it.id = uid();
+      c.items.push(it);
+      notifyItem(user, c, it.name);
+    }
+    if (it.slot) {
+      try { itemsLib.equip(c.items, it, it.slot, it.grip); } catch { it.slot = null; }
+    }
+    itemsLib.applyAutoAc(c);
+    return { id: it.id };
+  },
+  'item:delete'(user, p) {
+    const c = myChar(user, p.charId);
+    c.items = c.items.filter((x) => x.id !== p.itemId);
+    itemsLib.applyAutoAc(c);
+  },
+  'item:equip'(user, p) {
+    const c = myChar(user, p.charId);
+    const it = findItem(c, p.itemId);
+    itemsLib.equip(c.items, it, p.slot ?? null, p.grip);
+    itemsLib.applyAutoAc(c);
+  },
+  'item:attune'(user, p) {
+    const c = myChar(user, p.charId);
+    const it = findItem(c, p.itemId);
+    if (p.on) {
+      if (!it.attune) throw new Error('Esse item não precisa de sintonização');
+      const n = c.items.filter((x) => x.attuned && x !== it).length;
+      if (n >= itemsLib.MAX_ATTUNED) throw new Error(`Já há ${itemsLib.MAX_ATTUNED} itens sintonizados. Desfaça a sintonia de um antes.`);
+      it.attuned = true;
+    } else {
+      it.attuned = false;
+    }
+    itemsLib.applyAutoAc(c);
+  },
+  'item:split'(user, p) {
+    const c = myChar(user, p.charId);
+    const it = findItem(c, p.itemId);
+    if (it.qty < 2) throw new Error('Só há um');
+    if (c.items.length >= itemsLib.MAX_ITEMS) throw new Error('A mochila está cheia');
+    it.qty -= 1;
+    const copy = { ...it, id: uid(), qty: 1, slot: null, attuned: false };
+    c.items.splice(c.items.indexOf(it) + 1, 0, copy);
+    return { id: copy.id };
+  },
+  'item:give'(user, p) {
+    const from = myChar(user, p.charId);
+    const it = findItem(from, p.itemId);
+    const to = findChar(p.toCharId);
+    if (to === from) throw new Error('Escolha outro personagem');
+    if (to.items.length >= itemsLib.MAX_ITEMS) throw new Error(`A mochila de ${to.name} está cheia`);
+    const qty = int(p.qty, 1, it.qty, it.qty);
+    let moved;
+    if (qty < it.qty) {
+      it.qty -= qty;
+      moved = { ...it, id: uid(), qty };
+    } else {
+      from.items = from.items.filter((x) => x !== it);
+      moved = it;
+    }
+    moved.slot = null;
+    moved.attuned = false;
+    to.items.push(moved);
+    itemsLib.applyAutoAc(from);
+    notifyItem(user, to, qty > 1 ? `${moved.name} (×${qty})` : moved.name, from.name);
+    return { name: moved.name, to: to.name };
   },
   'character:delete'(user, p) {
     requireGM(user);

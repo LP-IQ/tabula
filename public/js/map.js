@@ -348,6 +348,9 @@ function renderPanel(state) {
         ? h('b', {}, info.name, h('span', { class: 'muted' }, ' · personagem'))
         : h('input', { value: t.name, 'aria-label': 'Nome do token', onchange: (e) => upd({ name: e.target.value }) }),
       h('button', { class: 'btn ghost sm', title: 'Fechar', onclick: () => select(null) }, '✕')),
+    t.characterId ? h('div', { class: 'row gap tp-monster' },
+      h('span', { class: 'grow small muted' }, `CA ${info.c?.ac ?? '—'} · PV ${info.hp ?? '?'}/${info.hpMax ?? '?'}`),
+      h('button', { class: 'btn sm', onclick: () => document.body.dispatchEvent(new CustomEvent('open-char', { detail: t.characterId })) }, '📜 Ficha')) : null,
     monster ? h('div', { class: 'row gap tp-monster' },
       h('span', { class: 'grow small muted' }, `${monster.name} · ND ${monster.cr} · CA ${monster.ac}`),
       h('button', {
@@ -552,6 +555,19 @@ function endDrag() {
   commitMove(d.t, s.x, s.y, d.el);
 }
 
+// dois toques (ou clique duplo) num token de personagem abrem a ficha dele numa janela
+let lastTokenTap = { id: null, t: 0 };
+function tokenTap(t) {
+  const now = performance.now();
+  if (lastTokenTap.id === t.id && now - lastTokenTap.t < 350) {
+    lastTokenTap = { id: null, t: 0 };
+    if (t.characterId) document.body.dispatchEvent(new CustomEvent('open-char', { detail: t.characterId }));
+    else if (app.isGM && t.monsterId) document.body.dispatchEvent(new CustomEvent('open-statblock', { detail: { monsterId: t.monsterId, who: t.name } }));
+    return;
+  }
+  lastTokenTap = { id: t.id, t: now };
+}
+
 function pointerEnd(e, cancelled) {
   if (!pointers.has(e.pointerId)) return;
   pointers.delete(e.pointerId);
@@ -561,11 +577,19 @@ function pointerEnd(e, cancelled) {
     return;
   }
   if (toolActive) { toolActive = false; if (cancelled) toolHooks.cancel(); else toolHooks.up(e, toMap(e.clientX, e.clientY)); return; }
-  if (drag) { endDrag(); return; }
+  if (drag) {
+    const tapped = !drag.moved && !cancelled ? drag.t : null;
+    endDrag();
+    if (tapped) tokenTap(tapped);
+    return;
+  }
   if (pan) {
     const wasTap = !pan.moved && !cancelled;
     pan = null;
     if (!wasTap) return;
+    const tokEl = e.target.closest?.('.token');
+    const tok = tokEl && scene.tokens.find((x) => x.id === tokEl.dataset.id);
+    if (tok) { tokenTap(tok); return; }
     const now = performance.now();
     if (now - lastTap.t < 320 && Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < 30) {
       lastTap.t = 0;

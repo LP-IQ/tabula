@@ -10,6 +10,7 @@ server.js            HTTP (login, upload, backup) + Socket.IO (tempo real) + reg
 server/store.js      campaign.json: leitura, gravação atômica, pontos de backup, restauração
 server/dice.js       rolador de dados (rola no servidor, com crypto.randomInt)
 server/world.js      calendário do mundo, névoa (isCovered), condições, padrões novos da ficha
+server/items.js      itens: tipos e espaços, validação, equipar (duas mãos/versátil), sintonia, CA automática
 public/index.html    esqueleto da página
 public/style.css     visual (cores em :root, no topo)
 public/js/
@@ -19,7 +20,10 @@ public/js/
   map.js             mapa, grade, tokens, zoom/arrasto/pinça, ping, faixa de iniciativa, condições no token
   tools.js           ferramentas do mapa: régua, áreas de magia, desenho, borracha, névoa
   calendar.js        relógio do mundo no topo, janela do calendário, aviso de versão nova
-  sheet.js           ficha 5e e seletor de fichas
+  sheet.js           ficha 5e (createSheet: a da aba e as das janelas) e o seletor de fichas
+  equipment.js       boneco de equipamento, mochila, editor e menu do item
+  itemdata.js        tipos de item, raridades, modelos do Livro do Jogador, ícones SVG, CA e ataques pelo equipamento
+  windows.js         janelas flutuantes (arrastar, redimensionar, lembrar posição)
   chat.js            dados e mensagens
   initiative.js      rastreador de iniciativa
   handouts.js        segredos e fila de memórias
@@ -51,6 +55,10 @@ tools/srd/converter.py     converte os monstros do 5e-database para o formato da
   esconder aplicados em ordem sobre o mapa coberto. O cliente desenha a lista num `<canvas>`; o servidor usa
   `world.isCovered()` para não mandar aos jogadores os tokens de NPC cujo centro está na névoa.
 - **Desenhos** ficam em `scene.drawings[]` (`kind`, `pts` como lista plana `[x1, y1, x2, y2…]`, `userId`, cor).
+- **Itens** ficam em `character.items[]` e mudam só por eventos próprios (`item:save`, `item:equip`,
+  `item:attune`, `item:give`, `item:split`, `item:delete`). O servidor resolve os conflitos de espaço e recalcula a
+  CA (`autoAc`). Os outros jogadores recebem só `equip` (o que está equipado, sem detalhes nem a mochila).
+  A tabela de tipos/espaços existe em `server/items.js` e em `public/js/itemdata.js`: mantenha as duas iguais.
 - **Calendário** em `calendar` (meses, ano, dia, minutos); `world.advance()` cuida da virada de dia, mês e ano.
 - Campanhas antigas ganham os campos novos em `migrate()` ao abrir.
 
@@ -82,7 +90,7 @@ npm test
 
 Sobe um servidor temporário e confere permissões (quem move o quê, quem vê o quê), segredos,
 diário, compêndio, rolagens, iniciativa, backups, bestiário, névoa, desenhos, condições, fila de memórias,
-calendário e descansos.
+calendário, descansos e itens (espaços, duas mãos, sintonia, CA, dar e passar).
 
 ## Lançar uma versão nova
 

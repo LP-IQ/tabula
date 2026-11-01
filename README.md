@@ -16,6 +16,8 @@ Página do projeto: **<https://lp-iq.github.io/tabula/>**
 | 📏 **Régua e áreas** | Régua em metros e áreas de magia (esfera, cone, linha, cubo), desenho livre e setas, que todos veem |
 | ⬤ **Tokens** | Redondos, com a foto do personagem. Cada jogador move só o seu; o mestre move todos, cria monstros, oculta e revela |
 | 📜 **Ficha 5e** | Atributos, resistências, perícias, PV com dano/cura, ataques, magias, inventário. Clicar num número rola o dado |
+| 🎒 **Equipamento** | Boneco com os espaços do corpo (cabeça, mãos, anéis, armadura…), mochila, armas de duas mãos e versáteis, sintonia (3 itens), carga e **CA e ataques calculados pelo equipamento**. Cada item tem um desenho do tipo dele, trocável pela arte final |
+| ⧉ **Ficha em janela** | A ficha abre numa janela por cima do mapa (dois cliques no token); o mestre pode abrir várias lado a lado |
 | 🔮 **Mais na ficha** | Condições (aparecem no token), inspiração, testes contra a morte, espaços de magia, dados de vida, XP e moedas, aspecto mágico e anel |
 | 🎲 **Dados** | Rolados no servidor: `1d20+5`, `2d6+1d4`, vantagem/desvantagem, rolagem secreta. Cada rolagem aparece num pop-up para todos |
 | ⚔ **Iniciativa** | Ordem de turnos visível no topo do mapa para todos |

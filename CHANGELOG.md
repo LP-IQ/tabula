@@ -1,5 +1,28 @@
 # Histórico de versões
 
+## v5.2 — 01/11/2026
+**Novidades**
+- **Equipamento e mochila** na ficha (substitui o inventário em texto, que continua como "Anotações do inventário"):
+  - boneco com os espaços cabeça, pescoço, capa, armadura, mão direita, mão esquerda, luvas, dois anéis, cinto e calçado;
+  - armas de **duas mãos** ocupam as duas; armas **versáteis** perguntam se é com uma ou duas mãos; pôr um escudo
+    na mão esquerda faz a versátil voltar a uma mão;
+  - cada item tem um **desenho do tipo** (espada, arco, cajado, elmo, anel…) e a borda na cor da **raridade**.
+    Para usar a arte final, escolha a imagem no item ou cole com Ctrl+V;
+  - **modelos** com as armas e armaduras do Livro do Jogador, para criar um item com um clique;
+  - **sintonização** (no máximo 3 itens) e **carga** (7,5 × Força, em kg);
+  - **CA automática** pela armadura, escudo e itens como o Anel de Proteção (dá para desligar e digitar);
+  - as **armas equipadas viram ataques** na ficha, com bônus e dano calculados (acuidade, distância, versátil,
+    segunda arma como ação bônus sem o modificador no dano);
+  - arrastar entre a mochila e os espaços (no computador) ou tocar no item (no celular);
+  - **dar item** (mestre) e **passar para…** (jogadores trocam itens); quem recebe é avisado.
+- **Ficha em janela**: o botão "⧉ Em janela" (ou dois cliques no token) abre a ficha por cima do mapa, com
+  arrastar e redimensionar. O mestre pode abrir várias. A ficha de outro jogador abre só para olhar o retrato,
+  a vida, as condições e o equipamento (sem a mochila).
+- O jogador vê os retratos do grupo na própria ficha para abrir o equipamento dos colegas.
+
+**Correções**
+- Editar o nome e os efeitos do aspecto mágico muito rápido podia apagar um dos campos.
+
 ## v5.1 — 27/10/2026
 **Novidades**
 - **Linux e Mac**: atalhos `instalar.sh`, `iniciar.sh`, `online.sh`, `atualizar.sh` e `redefinir-senha.sh`,

@@ -231,6 +231,68 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const rr = await call(p, 'roll', { formula: '1d8+2' });
   check(rr.ok && rr.total >= 3 && rr.total <= 10, 'rolagem devolve o total (para gastar dado de vida)');
 
+  // ---------- v5.2: itens e equipamento
+  let gift = null;
+  p.on('item:new', (x) => { gift = x; });
+  const th0 = () => p.last.characters.find((c) => c.id === cT.id);
+  await call(p, 'character:update', { id: cT.id, patch: { ac: 13 } });
+  const sw = await call(p, 'item:save', { charId: cT.id, item: { name: 'Espada longa', kind: 'espada', dmg: '1d8', dmg2: '1d10', hands: 'versatile', weight: 1.5 } });
+  const sh = await call(p, 'item:save', { charId: cT.id, item: { name: 'Escudo', kind: 'escudo', acBase: 2, weight: 3 } });
+  const ar = await call(p, 'item:save', { charId: cT.id, item: { name: 'Cota de malha', kind: 'armadura', armorType: 'pesada', acBase: 16, weight: 27.5 } });
+  check(sw.ok && sh.ok && ar.ok && th0().items.length === 3, 'jogador cria itens na própria mochila');
+  check(th0().ac === 13, 'sem nada equipado, vale a CA digitada');
+  check(!(await call(p, 'item:save', { charId: cB.id, item: { name: 'roubo' } })).ok, 'jogador NÃO mexe na mochila de outro');
+  check(!(await call(p, 'item:equip', { charId: cT.id, itemId: sh.id, slot: 'head' })).ok, 'item só vai no espaço certo (escudo na cabeça, não)');
+  await call(p, 'item:equip', { charId: cT.id, itemId: ar.id, slot: 'body' });
+  await wait(30);
+  check(th0().ac === 16, 'cota de malha (pesada) dá CA 16 sem somar Destreza');
+  await call(p, 'item:equip', { charId: cT.id, itemId: sw.id, slot: 'main', grip: 'two' });
+  await call(p, 'item:equip', { charId: cT.id, itemId: sh.id, slot: 'off' });
+  await wait(30);
+  let it = (id) => th0().items.find((x) => x.id === id);
+  check(it(sh.id).slot === 'off' && it(sw.id).slot === 'main' && it(sw.id).grip === 'one' && th0().ac === 18,
+    'escudo na mão esquerda faz a espada versátil voltar a uma mão; CA 18');
+  await call(p, 'item:equip', { charId: cT.id, itemId: sw.id, slot: 'main', grip: 'two' });
+  await wait(30);
+  check(it(sh.id).slot === null && th0().ac === 16, 'empunhar com as duas mãos guarda o escudo');
+  const gs = await call(p, 'item:save', { charId: cT.id, item: { name: 'Espada grande', kind: 'espada', dmg: '2d6', hands: 'two' } });
+  check(!(await call(p, 'item:equip', { charId: cT.id, itemId: gs.id, slot: 'off' })).ok, 'arma de duas mãos não vai na mão esquerda');
+  await call(p, 'item:equip', { charId: cT.id, itemId: ar.id, slot: null });
+  await call(p, 'item:save', { charId: cT.id, item: { name: 'Couro batido', kind: 'armadura', armorType: 'leve', acBase: 12 } }).then((r) => call(p, 'item:equip', { charId: cT.id, itemId: r.id, slot: 'body' }));
+  await wait(30);
+  check(th0().ac === 15, 'armadura leve soma a Destreza (12 + 3)');
+  await call(p, 'character:update', { id: cT.id, patch: { autoAc: false, ac: 14 } });
+  await wait(30);
+  check(th0().ac === 14, 'com a CA automática desligada vale a digitada');
+  await call(p, 'character:update', { id: cT.id, patch: { autoAc: true } });
+  // sintonia
+  const rings = [];
+  for (const n of ['Anel A', 'Anel B', 'Amuleto C', 'Capa D']) rings.push(await call(p, 'item:save', { charId: cT.id, item: { name: n, kind: 'anel', attune: true, acBonus: 1 } }));
+  for (const r of rings.slice(0, 3)) await call(p, 'item:attune', { charId: cT.id, itemId: r.id, on: true });
+  const fourth = await call(p, 'item:attune', { charId: cT.id, itemId: rings[3].id, on: true });
+  check(!fourth.ok && /3 itens/.test(fourth.error), 'no máximo 3 itens sintonizados');
+  await call(p, 'item:equip', { charId: cT.id, itemId: rings[0].id, slot: 'ring1' });
+  await call(p, 'item:equip', { charId: cT.id, itemId: rings[3].id, slot: 'ring2' });
+  await wait(30);
+  check(th0().ac === 16, 'anel de proteção sintonizado soma +1; o não sintonizado não soma');
+  // o que os outros veem
+  const seen = a.last.characters.find((c) => c.id === cT.id);
+  check(Array.isArray(seen.equip) && seen.equip.length === 4 && seen.items === undefined && seen.equip.every((x) => x.desc === undefined),
+    'os outros jogadores veem só o equipamento (sem a mochila)');
+  // dar e passar
+  const pot = await call(gm, 'item:save', { charId: cT.id, item: { name: 'Poção de cura', kind: 'pocao', qty: 3 } });
+  await wait(50);
+  check(pot.ok && gift && gift.name === 'Poção de cura' && gift.from === 'O mestre', 'mestre dá um item e o jogador é avisado');
+  const give = await call(p, 'item:give', { charId: cT.id, itemId: pot.id, toCharId: cB.id, qty: 1 });
+  await wait(30);
+  const bao = gm.last.characters.find((c) => c.id === cB.id);
+  check(give.ok && it(pot.id).qty === 2 && bao.items.some((x) => x.name === 'Poção de cura' && x.qty === 1), 'jogador passa 1 poção para outro personagem');
+  check(!(await call(p, 'item:give', { charId: cB.id, itemId: bao.items[0].id, toCharId: cT.id })).ok, 'jogador NÃO tira item da mochila de outro');
+  const sp = await call(p, 'item:split', { charId: cT.id, itemId: pot.id });
+  await wait(30);
+  check(sp.ok && it(pot.id).qty === 1 && it(sp.id).qty === 1, 'separar um item de uma pilha');
+  check(!(await call(p, 'item:save', { charId: cT.id, item: { name: 'x', img: 'javascript:alert(1)' } })).ok, 'imagem de item inválida é recusada');
+
   a.close();
   gm.close(); p.close();
   server.close();

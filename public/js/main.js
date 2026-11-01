@@ -2,7 +2,7 @@
 import { app } from './core.js';
 import { $, h, toast, avatar, setKids, uploadImage, topPasteTarget } from './util.js';
 import { renderMap, onTokenMoved, showPing, fit } from './map.js';
-import { renderSheet, pasteToSheet } from './sheet.js';
+import { renderSheet, pasteToSheet, renderSheetWindows, openSheetWindow, pasteToWindow, sheetWindowActive } from './sheet.js';
 import { initChat, setHistory, addMessage, updateChatLabels, scrollChatToEnd } from './chat.js';
 import { renderInitiative } from './initiative.js';
 import { renderHandouts, markAllSeen, unseenCount } from './handouts.js';
@@ -89,6 +89,7 @@ mobile.addEventListener('change', () => { layoutTabs(); setTimeout(fit, 50); });
 document.body.addEventListener('show-map', () => { if (mobile.matches) selectTab('map'); });
 document.body.addEventListener('open-tab', (e) => selectTab(e.detail));
 document.body.addEventListener('open-statblock', (e) => openStatBlock(e.detail.monsterId, e.detail.who));
+document.body.addEventListener('open-char', (e) => openSheetWindow(e.detail));
 
 // ------------------------------------------------------- colar imagem (Ctrl+V)
 document.addEventListener('paste', async (e) => {
@@ -96,12 +97,14 @@ document.addEventListener('paste', async (e) => {
   const file = [...(e.clipboardData?.files || [])].find((f) => /^image\/(png|jpeg|webp|gif)$/.test(f.type));
   if (!file) return;                       // texto colado segue normal
   const target = topPasteTarget();
+  const inWindow = !target && sheetWindowActive();
   const tab = activeTab();
-  if (!target && tab !== 'sheet' && tab !== 'bestiary') return;
+  if (!target && !inWindow && tab !== 'sheet' && tab !== 'bestiary') return;
   e.preventDefault();
   let url;
   try { toast('Enviando imagem…'); url = await uploadImage(file); } catch (err) { return toast(err.message, 'error'); }
   if (target) return target(url);
+  if (inWindow && pasteToWindow(url)) return;
   const ok = tab === 'sheet' ? pasteToSheet(url) : app.isGM && pasteToBestiary(url);
   if (!ok) toast(tab === 'sheet' ? 'Abra uma ficha para colar a imagem' : 'Abra uma das suas fichas do bestiário para colar a imagem', 'error');
 });
@@ -131,6 +134,7 @@ function renderAll() {
   renderMap(s);
   if (s.me.role !== 'viewer') {
     renderSheet(s);
+    renderSheetWindows(s);
     renderInitiative(s);
     renderHandouts(s, activeTab() === 'handouts');
     renderGM(s);
@@ -208,6 +212,9 @@ function connect(token) {
         h('button', { class: 'btn', onclick: () => location.reload() }, 'Tentar reconectar'))));
   });
   socket.on('connect', () => document.getElementById('closed-overlay')?.remove());
+  socket.on('item:new', (x) => {
+    toast(`🎁 ${x.from} deu a ${x.char}: ${x.name}`, 'secret', 6000);
+  });
   socket.on('handout:new', (x) => {
     toast(`✉ Novo segredo: ${x.title}`, 'secret', 6000);
     queueRender();

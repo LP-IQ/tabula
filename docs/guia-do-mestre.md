@@ -179,6 +179,18 @@ A data do mundo fica no topo da tela, para todos. Clique nela para:
 - **Definir a data** e trocar os **meses do mundo** (um por linha, `Nome | dias`, `| festival` para dias
   festivos). O padrão é o calendário de Harptos, com a era *DR*.
 
+### Fichas em janela
+**⧉ Em janela** na ficha, **⧉** na lista de personagens (aba Mestre), **📜 Ficha** no painel do token ou
+**dois cliques no token** abrem a ficha numa janela por cima do mapa. Dá para abrir a de cada jogador e
+deixar lado a lado; a posição e o tamanho de cada uma ficam lembrados. No celular, abre a aba Ficha.
+
+<img src="img/ficha-janela.png" alt="Ficha do Tharkino numa janela flutuante por cima do mapa" width="640">
+
+### Dar itens
+Na ficha de um jogador (aba Ficha ou janela), em *Equipamento e mochila*, **🎁 Dar item** cria o item direto na
+mochila dele, e ele recebe um aviso. Use os modelos para armas e armaduras comuns e escreva a descrição dos
+itens mágicos. Para usar a arte do item, escolha a imagem ou cole com Ctrl+V; até lá, ele aparece com o desenho do tipo.
+
 ### Aspecto mágico e anel
 Na ficha de cada personagem, logo abaixo dos PV, há dois quadros que só você edita: **Aspecto mágico**
 (com o mês de nascimento) e **Anel**. Escreva o efeito do nível 1 ao 4 e o efeito a partir do nível 5.
