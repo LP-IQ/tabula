@@ -1,5 +1,7 @@
 # Guia do mestre
 
+> Este guia é o resumo. O passo a passo de cada ferramenta está no **[manual](ferramentas.md)**, e o que mudou em cada versão, em **[novidades](novidades.md)**.
+
 Tudo que é exclusivo do mestre fica na aba **👑 Mestre**, além das ferramentas de edição nas outras abas.
 
 ## Antes da primeira sessão

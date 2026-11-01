@@ -1,5 +1,7 @@
 # Guia do jogador
 
+> Este guia é o resumo. O passo a passo de cada ferramenta está no **[manual](ferramentas.md)**, e o que mudou em cada versão, em **[novidades](novidades.md)**.
+
 Bem-vindo à mesa! Não precisa instalar nada: só o navegador (PC ou celular).
 
 ## Entrar

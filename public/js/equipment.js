@@ -149,7 +149,7 @@ export function itemEditor(c, it0, preset) {
   const weaponBox = h('fieldset', { class: 'item-fs' }, h('legend', {}, 'Arma'),
     h('div', { class: 'row gap wrap' },
       h('label', { class: 'mini' }, 'Dano', inp('dmg', { placeholder: '1d8', class: 'dice' })),
-      h('label', { class: 'mini' }, 'Tipo', inp('dmgType', { list: 'dmg-types', placeholder: 'cortante' })),
+      h('label', { class: 'mini' }, 'Tipo de dano', inp('dmgType', { list: 'dmg-types', placeholder: 'cortante', class: 'dtype' })),
       h('label', { class: 'mini' }, 'Mãos', f.hands),
       h('label', { class: 'mini v2' }, 'Dano com duas mãos', inp('dmg2', { placeholder: '1d10', class: 'dice' }))),
     h('div', { class: 'row gap wrap' },

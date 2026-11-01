@@ -52,6 +52,8 @@ O passo a passo completo, incluindo o jogo online e a resolução de problemas, 
 
 ## Documentação
 
+- **[Manual das ferramentas](docs/ferramentas.md)**: como usar cada parte da mesa, passo a passo (mapa, névoa, régua, ficha, equipamento, dados, segredos, bestiário…)
+- **[Novidades](docs/novidades.md)**: o que chegou em cada versão e como experimentar
 - **[Instalação e uso no Windows](docs/instalacao.md)**: instalar, jogar online e presencial, atualizar de versão, problemas comuns
 - **[Instalação e uso no Linux e no Mac](docs/instalacao-linux.md)**: o mesmo, com os atalhos `.sh`
 - **[Guia do mestre](docs/guia-do-mestre.md)**: preparar a mesa, cenas e grade, tokens, segredos, compêndio, backups

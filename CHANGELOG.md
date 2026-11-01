@@ -1,5 +1,11 @@
 # Histórico de versões
 
+## v5.2.1 — 01/11/2026
+- Documentação nova: **[manual das ferramentas](docs/ferramentas.md)** (cada ferramenta passo a passo) e
+  **[novidades](docs/novidades.md)** (o que chegou em cada versão e como experimentar). A página do projeto
+  ganhou a seção de novidades e o link para o manual.
+- No editor de item, o campo "Tipo de dano" ficou mais largo (o texto aparecia cortado).
+
 ## v5.2 — 01/11/2026
 **Novidades**
 - **Equipamento e mochila** na ficha (substitui o inventário em texto, que continua como "Anotações do inventário"):
