@@ -31,6 +31,10 @@ public/js/
   journal.js         diário do grupo
   compendium.js      compêndio (abas: páginas do mestre, magias, itens)
   library.js         Biblioteca: navegador de magias e itens do SRD, cartão da magia, "pôr na ficha/mochila"
+  map3d.js           Vista 3D (three.js): tabuleiro, miniaturas .glb ou de papelão, câmera, arrasto — só carrega ao ligar
+  model-ui.js        controles da miniatura 3D (enviar .glb, tamanho, giro) usados na ficha, no token e no bestiário
+public/vendor/three/ three.js 0.170 (MIT) e os complementos usados (OrbitControls, GLTFLoader, Draco, Meshopt)
+public/modelos/      miniatura de exemplo (gerada por tools/gerar-miniatura-exemplo.py)
   gm.js              painel do mestre (cenas, tokens, usuários, backups)
   bestiary.js        bestiário: bloco de estatísticas, editor, biblioteca SRD, ajuste de ND, colocar no mapa
   rules.js           regras: tabela por ND, XP, dificuldade de encontro, ajuste de ND, classes, multiclasse,
@@ -78,6 +82,17 @@ tools/srd/traducoes/       textos traduzidos: magias-0…7.json (nome, material,
   PV ≈ 15·ND + 15 até o ND 20; dano/rodada ≈ 4,5·ND + 5,5).
 - Para atualizar a biblioteca: `python3 tools/srd/converter.py 5e-SRD-Monsters.json public/data/srd-monstros.json`
   (o arquivo de entrada vem de `src/2014/en/` do repositório 5e-bits/5e-database).
+
+## Vista 3D
+
+- `map.js` cria a vista sob demanda (`import('./map3d.js')`); um *import map* em `index.html` aponta `three` para
+  `public/vendor/three`. A vista recebe do `map.js` o estado da cena, as funções de permissão (`canMove`), encaixe
+  na grade (`snap`), seleção e o canvas da névoa (reaproveitado como textura). Nada novo vai para o servidor além
+  dos campos `model`, `modelScale` e `modelTurn` (personagem, token e ficha do bestiário).
+- 1 unidade da cena = 1 quadrado da grade. O chão é um canvas com o mapa, a grade e os desenhos (SVG da camada 2D).
+  Desenha só quando algo muda; animações de fundo a 30 quadros/s; no celular, resolução e sombra menores.
+- Os modelos `.glb` chegam por `/api/upload` (a assinatura "glTF" é conferida) e ficam em `uploads/`. Aceitos:
+  `/uploads/<id>.glb`, `/modelos/<nome>.glb` e links `https://….glb`.
 
 ## Biblioteca (magias e itens)
 

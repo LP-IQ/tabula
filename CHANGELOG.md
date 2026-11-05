@@ -1,5 +1,18 @@
 # Histórico de versões
 
+## v5.6 — 04/11/2026
+**Novidades**
+- **Vista 3D do mapa** (botão **3D**, cada um liga para si): o mapa vira o chão de um tabuleiro e os tokens viram
+  miniaturas, com luz e sombra. Câmera livre (arrastar, girar, aproximar, vista de cima), mover a própria miniatura,
+  dois cliques para a ficha e para sinalizar, névoa e desenhos no chão, anel do turno da iniciativa, miniatura que
+  tomba com 0 PV, tokens ocultos transparentes para o mestre.
+- **Miniaturas 3D (.glb)** para personagens (na ficha), tokens e fichas do bestiário, com tamanho e giro. Animações
+  *idle* e *walk* tocam sozinhas. Sem modelo, o token aparece como miniatura de papelão em pé com a imagem dele.
+- Um **aventureiro de exemplo** vem junto (`public/modelos/`, gerado por `tools/gerar-miniatura-exemplo.py`).
+- O envio de arquivos aceita modelos `.glb` (até 40 MB), com conferência do conteúdo do arquivo.
+- three.js 0.170 (MIT) vem dentro da mesa (`public/vendor/three`): funciona sem internet e só é baixado quando
+  alguém liga a vista 3D.
+
 ## v5.5 — 01/11/2026
 **Novidades**
 - **Biblioteca no compêndio** (abas **✨ Magias** e **🎒 Itens**), com o conteúdo do SRD 5.1 (CC-BY-4.0) em português:

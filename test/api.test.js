@@ -381,6 +381,42 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const sbk = tchar().spellbook;
   check(sbk.length === 3 && sbk[0].prep === false && sbk[1].prep === true && sbk[2].name === "Magia" && sbk[2].level === 9, 'magias na ficha: validadas (nome, círculo 0–9, preparada)');
 
+  // ---------- v5.6: Vista 3D (modelos .glb)
+  const upGlb = async (buf, name) => {
+    const fd = new FormData();
+    fd.append('file', new Blob([buf], { type: 'application/octet-stream' }), name);
+    const r = await fetch(URL + '/api/upload', { method: 'POST', headers: { 'x-token': setup.body.token }, body: fd });
+    return { status: r.status, body: await r.json() };
+  };
+  const realGlb = fs.readFileSync(path.join(__dirname, '..', 'public', 'modelos', 'miniatura-exemplo.glb'));
+  const goodUp = await upGlb(realGlb, 'heroi.glb');
+  const badUp = await upGlb(Buffer.from('isto nao e um modelo'), 'falso.glb');
+  check(goodUp.status === 200 && /^\/uploads\/[a-f0-9]+\.glb$/.test(goodUp.body.url) && badUp.status === 400,
+    'envio de modelo .glb: arquivo de verdade aceito, arquivo falso com extensão .glb recusado');
+  const served = await fetch(URL + goodUp.body.url);
+  check(served.ok && (await served.arrayBuffer()).byteLength === realGlb.length, 'o modelo enviado é servido de volta');
+  await call(p, 'character:update', { id: cT.id, patch: { model: goodUp.body.url, modelScale: 9, modelTurn: 100 } });
+  await wait(30);
+  check(tchar().model === goodUp.body.url && tchar().modelScale === 5 && tchar().modelTurn === 105, 'jogador põe a miniatura no personagem (tamanho e giro validados)');
+  check(!(await call(p, 'character:update', { id: cT.id, patch: { model: 'javascript:alert(1)' } })).ok
+    && !(await call(p, 'character:update', { id: cT.id, patch: { model: '/uploads/../server.js' } })).ok, 'modelo com endereço estranho é recusado');
+  const colega = p.last.characters.find((c) => c.id === cB.id);
+  await call(gm, 'character:update', { id: cB.id, patch: { model: '/modelos/miniatura-exemplo.glb' } });
+  await wait(40);
+  check(p.last.characters.find((c) => c.id === cB.id).model === '/modelos/miniatura-exemplo.glb' && colega && !('items' in colega),
+    'o colega vê a miniatura do outro personagem (e continua sem ver a mochila dele)');
+  const monG = await call(gm, 'monster:create', { name: 'Orc 3D', hp: 15, model: '/modelos/miniatura-exemplo.glb', modelScale: 1.5 });
+  const t3 = await call(gm, 'token:create', { sceneId: sc.id, monsterId: monG.id, x: 0, y: 140 });
+  await wait(30);
+  const t3s = () => gm.last.scene.tokens.find((t) => t.id === t3.id);
+  check(t3s().model === '/modelos/miniatura-exemplo.glb' && t3s().modelScale === 1.5, 'token criado da ficha do bestiário leva o modelo 3D');
+  await call(gm, 'monster:update', { id: monG.id, patch: { model: goodUp.body.url } });
+  await wait(30);
+  check(t3s().model === goodUp.body.url, 'trocar o modelo na ficha troca nos tokens dela');
+  await call(gm, 'token:update', { sceneId: sc.id, id: t3.id, patch: { model: '', modelTurn: -45 } });
+  await wait(30);
+  check(t3s().model === '' && t3s().modelTurn === 315, 'mestre tira o modelo de um token só');
+
   const rules = await import('../public/js/rules.js');
   const L = (c) => rules.spellLists(c).map((l) => `${l.key}:${l.max}${l.cantrips ? '+t' : ''}`).join(' ');
   check(L({ class: 'Mago', level: 5 }) === 'mago:3+t' && L({ class: 'Paladino', level: 1 }) === 'paladino:0' && L({ class: 'Paladino', level: 9 }) === 'paladino:3',

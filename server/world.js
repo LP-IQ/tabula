@@ -103,6 +103,8 @@ function characterDefaults() {
     classes: [], hdUsedBy: {},
     // v5.5: magias escolhidas na Biblioteca do compêndio
     spellbook: [],
+    // v5.6: Vista 3D
+    model: '', modelScale: 1, modelTurn: 0,
   };
 }
 

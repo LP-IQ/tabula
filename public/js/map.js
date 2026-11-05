@@ -1,7 +1,8 @@
 // Mapa: imagem de fundo, grade, tokens redondos, zoom/arrasto, sinalização (ping).
 import { app, emit, doRoll, rollD20 } from './core.js';
-import { $, h, initials, isEditingIn, chooseAndUpload, setKids } from './util.js';
+import { $, h, initials, isEditingIn, chooseAndUpload, setKids, toast } from './util.js';
 import { CONDITIONS, CONDITION_ICON, CONDITION_LABEL } from './rules.js';
+import { modelControls } from './model-ui.js';
 
 const vp = $('#map-viewport');
 const layer = $('#map-layer');
@@ -167,6 +168,7 @@ export function renderMap(state) {
     renderPanel(state);
     renderInitStrip(state);
     toolHooks?.render(state);
+    v3?.render(state);
     return;
   }
   layer.hidden = false;
@@ -199,6 +201,7 @@ export function renderMap(state) {
   renderPanel(state);
   renderInitStrip(state);
   toolHooks?.render(state);
+  v3?.render(state);
 }
 
 function clearTokens() {
@@ -388,6 +391,7 @@ function renderPanel(state) {
       h('select', { onchange: (e) => upd({ monsterId: e.target.value || null }) },
         h('option', { value: '' }, '— sem ficha —'),
         monsters.slice().sort((a, b) => a.name.localeCompare(b.name, 'pt-BR')).map((m) => h('option', { value: m.id, selected: m.id === t.monsterId }, `${m.name} (ND ${m.cr})`)))) : null,
+    npc ? modelControls(t, (p) => upd(p), { compact: true }) : null,
     h('div', { class: 'row gap wrap' },
       h('button', { class: 'btn sm', onclick: () => upd({ hidden: !t.hidden }) }, t.hidden ? '👁 Revelar' : '🙈 Ocultar'),
       npc ? h('button', {
@@ -430,6 +434,7 @@ export function onTokenMoved(m) {
   if (!t) return;
   t.x = m.x;
   t.y = m.y;
+  v3?.moved(m);
   if (drag && drag.id === m.id) return;
   const el = els.get(m.id);
   if (el) { el.style.left = m.x + 'px'; el.style.top = m.y + 'px'; }
@@ -441,6 +446,7 @@ export function showPing(p) {
     h('i'), h('i'), h('span', { class: 'ping-label' }, p.name));
   fx.append(el);
   setTimeout(() => el.remove(), 2200);
+  v3?.ping(p);
 }
 
 // ------------------------------------------------------- interação local
@@ -626,9 +632,66 @@ vp.addEventListener('keydown', (e) => {
   commitMove(t, nx, ny, el);
 });
 
-$('#zoom-in').addEventListener('click', () => { const r = vp.getBoundingClientRect(); zoomAt(1.25, r.left + r.width / 2, r.top + r.height / 2); });
-$('#zoom-out').addEventListener('click', () => { const r = vp.getBoundingClientRect(); zoomAt(0.8, r.left + r.width / 2, r.top + r.height / 2); });
-$('#zoom-fit').addEventListener('click', fit);
+$('#zoom-in').addEventListener('click', () => { if (v3) return v3.zoom(1.25); const r = vp.getBoundingClientRect(); zoomAt(1.25, r.left + r.width / 2, r.top + r.height / 2); });
+$('#zoom-out').addEventListener('click', () => { if (v3) return v3.zoom(0.8); const r = vp.getBoundingClientRect(); zoomAt(0.8, r.left + r.width / 2, r.top + r.height / 2); });
+$('#zoom-fit').addEventListener('click', () => (v3 ? v3.fit() : fit()));
+
+// ------------------------------------------------------------------ Vista 3D
+// O mapa vira o chão de uma cena 3D; cada token vira uma miniatura (o modelo .glb, ou a imagem em pé numa base).
+// Cada pessoa liga ou desliga para si; o código 3D só é baixado quando alguém liga.
+let v3 = null;
+let v3Loading = false;
+const btn3d = $('#view-3d');
+const api3d = {
+  getScene: () => scene,
+  tokenInfo: (t) => tokenInfo(t),
+  canMove,
+  snap: (x, y, size) => snap(x, y, size),
+  select: (id) => select(id),
+  selectedId: () => selectedId,
+  tap: (t) => tokenTap(t),
+  mapImg: () => (img.complete && img.naturalWidth && !img.hidden ? img : null),
+  mapSize,
+  fogCanvas: () => $('#map-fog'),
+  drawSvg: () => $('#map-draw'),
+  async move(t, x, y, final) {
+    if (!final) { app.socket.emit('token:move', { sceneId: scene.id, id: t.id, x, y }, () => {}); return true; }
+    const el = els.get(t.id);
+    if (el) { el.style.left = x + 'px'; el.style.top = y + 'px'; }
+    const res = await emit('token:move', { sceneId: scene.id, id: t.id, x, y });
+    if (res) { t.x = x; t.y = y; } else if (el) { el.style.left = t.x + 'px'; el.style.top = t.y + 'px'; }
+    return !!res;
+  },
+  ping: (p) => app.socket.emit('ping', p, () => {}),
+};
+async function set3d(on) {
+  if (on === !!v3 || v3Loading) return;
+  try { localStorage.setItem('tabula.view3d', on ? '1' : '0'); } catch { /* sem armazenamento */ }
+  btn3d.classList.toggle('on', on);
+  btn3d.setAttribute('aria-pressed', String(on));
+  document.querySelector('#pane-map').classList.toggle('is-3d', on);
+  if (!on) { v3.stop(); v3 = null; return; }
+  v3Loading = true;
+  btn3d.disabled = true;
+  try {
+    const m = await import('./map3d.js');
+    v3 = m.start(document.querySelector('#map3d'), api3d);
+    document.querySelector('#map3d')._v3 = v3;
+    if (app.state) v3.render(app.state);
+  } catch (e) {
+    console.error(e);
+    document.querySelector('#pane-map').classList.remove('is-3d');
+    btn3d.classList.remove('on');
+    const msg = /webgl/i.test(String(e?.message)) ? 'Este navegador não tem WebGL (3D) ligado' : 'Não deu para abrir a Vista 3D';
+    toast(msg, 'error');
+  } finally {
+    v3Loading = false;
+    btn3d.disabled = false;
+  }
+}
+btn3d.addEventListener('click', () => set3d(!v3));
+$('#view-top').addEventListener('click', (e) => { if (v3) e.currentTarget.setAttribute('aria-pressed', String(v3.toggleTop())); });
+try { if (localStorage.getItem('tabula.view3d') === '1') queueMicrotask(() => set3d(true)); } catch { /* sem armazenamento */ }
 
 // Centraliza no token do jogador (usado pelo botão da ficha)
 export function focusToken(characterId) {

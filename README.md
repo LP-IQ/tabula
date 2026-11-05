@@ -12,6 +12,7 @@ Página do projeto: **<https://lp-iq.github.io/tabula/>**
 | | |
 |---|---|
 | 🗺 **Mapa** | Imagem de fundo enviada pelo mestre, grade ajustável, zoom e arrasto (mouse, trackpad ou dedos) |
+| 🧊 **Vista 3D** | O mapa vira um tabuleiro em 3D: miniaturas com sombra (modelos .glb ou a imagem do token em pé), câmera livre, névoa no chão, cada um liga para si |
 | 🌫 **Névoa de guerra** | O mestre revela e esconde partes do mapa; monstros na névoa nem chegam aos jogadores |
 | 📏 **Régua e áreas** | Régua em metros e áreas de magia (esfera, cone, linha, cubo), desenho livre e setas, que todos veem |
 | ⬤ **Tokens** | Redondos, com a foto do personagem. Cada jogador move só o seu; o mestre move todos, cria monstros, oculta e revela |
@@ -77,3 +78,4 @@ Código sob licença MIT. A biblioteca de monstros, magias e itens (`public/data
 [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/legalcode).
 Dados estruturados do projeto [5e-bits/5e-database](https://github.com/5e-bits/5e-database) (MIT).
 A tradução das magias e do equipamento para o português é da Tábula e segue a mesma licença CC-BY-4.0.
+A Vista 3D usa o [three.js](https://threejs.org) 0.170 (licença MIT), incluído em `public/vendor/three`.

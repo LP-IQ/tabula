@@ -8,6 +8,29 @@ A campanha não é tocada. Quando sai uma versão nova, o mestre vê um aviso no
 
 ---
 
+## v5.6 — Vista 3D (04/11/2026)
+
+<img src="img/vista-3d.png" alt="Mapa em 3D com miniaturas" width="360" align="right">
+
+**O mapa virou tabuleiro.** O botão **3D**, no canto do mapa, mostra a cena em três dimensões: o mapa é o chão, cada
+token é uma miniatura com sombra, e a câmera gira e aproxima como você quiser. Cada um liga para si — a TV da sala em
+3D, o mestre em 2D, por exemplo.
+
+Quem tiver um **modelo 3D** (arquivo `.glb`) põe na ficha, em *Miniatura 3D*; o mestre põe nos tokens e nas fichas
+do bestiário. Sem modelo, o token aparece como **miniatura de papelão**, em pé, com a imagem dele. As miniaturas andam
+até onde você solta, tombam com 0 PV e ganham um anel dourado no turno delas.
+
+**Experimente:**
+1. Na ficha, abra **Miniatura 3D** e clique **Usar o exemplo**.
+2. Clique **3D** no canto do mapa.
+3. Arraste a sua miniatura; gire a câmera com o botão direito (ou dois dedos no celular); **⊙** alterna para a vista de cima.
+
+<br clear="right">
+
+Veja no manual: [Vista 3D](ferramentas.md#vista-3d)
+
+---
+
 ## v5.5 — Biblioteca: magias e itens (01/11/2026)
 
 <img src="img/biblioteca-magias.png" alt="Aba Magias do compêndio mostrando as magias que o personagem conjura" width="340" align="right">

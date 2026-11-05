@@ -7,6 +7,7 @@ import { equipmentBox, dollView } from './equipment.js';
 import { computeAc, weaponAttacks } from './itemdata.js';
 import { openWindow, getWindow, isMobile, activeWindow } from './windows.js';
 import { openSpellPicker, openSpellById } from './library.js';
+import { modelControls } from './model-ui.js';
 
 export const ATTRS = [
   ['str', 'FOR', 'Força'], ['dex', 'DES', 'Destreza'], ['con', 'CON', 'Constituição'],
@@ -396,6 +397,7 @@ export function createSheet(pane, opts = {}) {
         h('div', { class: 'sx', dataset: { sx: 'equip' } }),
         h('details', { class: 'sub' }, h('summary', {}, 'Anotações do inventário'),
           field(c, 'inventory', { multiline: true, rows: 4, label: 'Anotações do inventário', placeholder: 'O que não couber como item: dívidas, coisas guardadas na estalagem…' }))),
+      h('details', { class: 'block' }, h('summary', {}, 'Miniatura 3D'), h('div', { class: 'sx', dataset: { sx: 'model' } })),
       h('details', { class: 'block' }, h('summary', {}, 'Anotações'), field(c, 'notes', { multiline: true, rows: 6, label: 'Anotações' })),
       h('label', { class: 'mini muted' }, 'Bônus extra de iniciativa', field(c, 'initBonus', { type: 'number', class: 'num', label: 'Bônus extra de iniciativa' })),
     );
@@ -653,6 +655,10 @@ export function createSheet(pane, opts = {}) {
     redraw('aspect', JSON.stringify([c.aspect, c.ring, c.level, app.isGM]), () => aspectBox(c));
     redraw('slots', JSON.stringify([c.slots, c.classes, c.class, c.level]), () => slotsBox(c));
     redraw('book', JSON.stringify(c.spellbook || []), () => bookBox(c));
+    redraw('model', JSON.stringify([c.model, c.modelScale, c.modelTurn]), () => h('div', { class: 'stack' },
+      modelControls(c, (p) => patch(c, p)),
+      h('p', { class: 'muted small' }, 'Aparece no lugar do token quando alguém liga a ', h('b', {}, '🧊 Vista 3D'), ' do mapa. ',
+        'Use um arquivo .glb (glTF binário): dá para baixar modelos prontos (no Sketchfab, por exemplo) ou exportar do Blender.')));
     redraw('hd', JSON.stringify([c.level, c.hdUsed, c.hdUsedBy, c.hitDie, c.classes, c.attrs?.con]), () => hdBox(c));
     redraw('xp', JSON.stringify([c.xp, c.level, c.coins]), () => xpBox(c));
   }

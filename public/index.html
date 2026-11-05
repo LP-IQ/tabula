@@ -75,12 +75,15 @@
           </div>
           <div id="map-empty" class="map-empty" hidden></div>
         </div>
+        <div id="map3d" class="map3d" hidden></div>
         <div class="map-hud top-left"><span id="scene-name" class="chip"></span></div>
         <div id="init-strip" class="init-strip" hidden></div>
         <div class="map-hud top-right">
           <button class="btn icon" id="zoom-in" title="Aproximar">+</button>
           <button class="btn icon" id="zoom-out" title="Afastar">−</button>
           <button class="btn icon" id="zoom-fit" title="Ajustar à tela">⤢</button>
+          <button class="btn icon only-3d" id="view-top" title="Vista de cima / inclinada" aria-pressed="false">⊙</button>
+          <button class="btn icon view3d-btn" id="view-3d" title="Vista 3D: miniaturas em cima do mapa" aria-pressed="false">3D</button>
         </div>
         <div id="map-tools" class="map-tools" role="toolbar" aria-label="Ferramentas do mapa"></div>
         <div id="fog-tools" class="fog-tools" hidden></div>
@@ -105,6 +108,7 @@
 
   <div id="toasts" class="toasts" aria-live="polite"></div>
 
+  <script type="importmap">{ "imports": { "three": "/vendor/three/three.module.min.js", "three/addons/": "/vendor/three/addons/" } }</script>
   <script src="/socket.io/socket.io.js"></script>
   <script type="module" src="/js/main.js"></script>
 </body>

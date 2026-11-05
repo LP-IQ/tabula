@@ -1,5 +1,6 @@
 // Bestiário do mestre: fichas de NPCs e monstros, biblioteca do SRD, ajuste de ND e colocação no mapa.
 import { app, emit, doRoll, rollD20, bus, setPrivate } from './core.js';
+import { modelControls } from './model-ui.js';
 import { $, h, setKids, avatar, abilityMod, fmtMod, chooseAndUpload, uploadImage, openModal, toast, localRoll, isEditingIn, pushPasteTarget } from './util.js';
 import { CRS, crValue, xpFor, rescale, encounter, LEVELS, SIZE_SQUARES, avgDice } from './rules.js';
 import { freeSpots, flashWhenReady } from './map.js';
@@ -199,6 +200,7 @@ function editor(m0, onSaved) {
   h('div', { class: 'row gap' }, h('span', {}, 'Imagem (vira o token)'), imgPrev,
     h('button', { type: 'button', class: 'btn sm', onclick: async () => { const u = await chooseAndUpload(); if (u) { m.img = u; showImg(); } } }, 'Escolher…'),
     h('span', { class: 'muted tiny' }, 'ou Ctrl+V para colar')),
+  modelControls(m, (p) => Object.assign(m, p)),
   h('div', { class: 'row gap' }, h('span', { class: 'grow' }), h('button', { class: 'btn primary', type: 'submit' }, m0?.id ? 'Salvar ficha' : 'Criar ficha')));
   return form;
 }

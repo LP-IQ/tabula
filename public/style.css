@@ -1042,3 +1042,28 @@ label.mini input.dtype { width: 130px; }
 .lib-table { max-width: 100%; }
 .lib-table table { min-width: 100%; }
 #pane-compendium > *, .lib, .lib > *, .lib-list, .lib-list > * { min-width: 0; }
+
+/* ----------------------------------------------------------- Vista 3D */
+.map3d { position: absolute; inset: 0; z-index: 1; background: #0e0d12; touch-action: none; }
+.map3d canvas { display: block; width: 100%; height: 100%; outline: none; touch-action: none; }
+.map3d.empty { pointer-events: none; background: transparent; }
+.map3d.empty canvas, .map3d.empty .map3d-hint { display: none; }
+.map-pane.is-3d .map-viewport { visibility: hidden; }
+.map-pane.is-3d .map-empty { visibility: visible; }
+.map-pane.is-3d .map-tools, .map-pane.is-3d .fog-tools, .map-pane.is-3d .map-hint { display: none !important; }
+.map-pane .map-hud, .map-pane .init-strip, .map-pane .token-panel { z-index: 3; }
+.map3d-hint {
+  position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); pointer-events: none;
+  font-size: .78rem; color: var(--muted); background: rgba(14, 12, 20, .7); padding: 4px 10px; border-radius: 999px;
+  max-width: calc(100% - 24px); text-align: center; animation: hint-fade 1s 7s forwards;
+}
+@keyframes hint-fade { to { opacity: 0; } }
+.view3d-btn { font-weight: 800; font-size: .8rem; letter-spacing: .02em; }
+.view3d-btn.on { background: var(--gold); color: #1a1408; border-color: var(--gold); }
+.model-ctl { display: flex; flex-direction: column; gap: 6px; }
+.model-ctl .model-label { font-weight: 600; }
+.model-ctl.compact { border-top: 1px solid var(--line-soft); padding-top: 6px; }
+.model-ctl select { width: auto; }
+body.viewer .map3d-hint { display: none; }
+.map-pane:not(.is-3d) .only-3d { display: none; }
+#view-top[aria-pressed=true] { color: var(--gold); border-color: var(--gold); }

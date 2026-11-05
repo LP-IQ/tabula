@@ -10,6 +10,7 @@ O que mudou em cada versão está em [novidades.md](novidades.md).
 [Mapa](#mapa) ·
 [Ferramentas do mapa](#ferramentas-do-mapa) ·
 [Névoa de guerra](#-névoa-de-guerra-) ·
+[Vista 3D](#vista-3d) ·
 [Ficha](#ficha) ·
 [Multiclasse](#multiclasse) ·
 [Equipamento e mochila](#equipamento-e-mochila) ·
@@ -46,6 +47,53 @@ O que mudou em cada versão está em [novidades.md](novidades.md).
 ### Condições nos tokens
 As condições (envenenado 🤢, caído ⤵, amedrontado 😱, concentração 🔮…) aparecem como ícones no token,
 para todos. O jogador marca na própria ficha; 👑 o mestre marca clicando no token e escolhendo no painel.
+
+---
+
+## Vista 3D
+
+<img src="img/vista-3d.png" alt="Mapa em 3D com uma miniatura de aventureiro e tokens em pé sobre bases coloridas" width="360" align="right">
+
+O botão **3D** (abaixo do ⤢, no canto do mapa) transforma o mapa num tabuleiro: o mapa da cena vira o chão e cada
+token vira uma **miniatura**. Cada pessoa liga ou desliga para si (a escolha fica guardada no navegador); dá para o
+mestre jogar em 2D e a TV mostrar em 3D, por exemplo.
+
+| Para… | No computador | No celular |
+|---|---|---|
+| Andar pelo tabuleiro | arraste o fundo | arraste com um dedo |
+| Girar a câmera | arraste com o **botão direito** | gire com **dois dedos** |
+| Aproximar e afastar | rodinha do mouse, **+** e **−** | pinça com dois dedos |
+| Vista de cima ⇄ inclinada | botão **⊙** | botão **⊙** |
+| Ver o mapa inteiro | botão **⤢** | botão **⤢** |
+| Mover o seu token | arraste a miniatura (ela anda até lá e encaixa na grade) | arraste a miniatura |
+| Abrir a ficha | **dois cliques** na miniatura | dois toques |
+| Sinalizar um ponto | **dois cliques** no chão | dois toques no chão |
+
+**Como cada token aparece:**
+- **Com modelo 3D** (arquivo `.glb`): a miniatura de verdade, com sombra, virada para onde anda. Se o modelo tiver
+  animações chamadas *idle* (parado) e *walk* (andando), elas tocam sozinhas.
+- **Sem modelo**: a imagem do token **em pé**, como uma miniatura de papelão, sempre virada para a câmera, numa base da
+  cor do jogador. Ela dá um pulinho enquanto anda.
+- Base **vermelha escura**: o monstro está com metade da vida ou menos. Com **0 PV** a miniatura **tomba**.
+- Anel **dourado pulsando**: é o turno dele na iniciativa. Anel **branco**: token selecionado.
+- 👑 Tokens ocultos aparecem **transparentes** para o mestre (os jogadores não os veem).
+- A **névoa de guerra** cobre o chão (para o mestre, meio transparente), e os desenhos salvos aparecem no chão.
+
+**Pôr um modelo 3D:**
+- **Personagem**: na ficha, em **Miniatura 3D**, clique **Enviar .glb…**. **Usar o exemplo** põe um aventureiro
+  simples que vem com a Tábula, só para experimentar.
+- 👑 **NPC ou monstro**: clique no token e use **🧊 Miniatura 3D** no painel; ou ponha o modelo na **ficha do
+  bestiário**, e todos os tokens dessa ficha passam a usá-lo.
+- **Tamanho** ajusta a altura (modelos vêm em escalas diferentes) e **↺ ↻** viram a miniatura de 45 em 45 graus,
+  para quando ela anda "de costas".
+- Onde arranjar modelos: arquivos **.glb** (glTF binário) — há muitos gratuitos no Sketchfab (veja a licença de cada
+  um), e o Blender exporta qualquer modelo para .glb. Modelos para impressão 3D (.stl) vêm sem cor e precisam ser
+  convertidos antes. Limite de 40 MB por arquivo; modelos leves (até uns 5 MB) carregam mais rápido nos celulares.
+
+**Ferramentas:** régua, desenho e névoa continuam na vista 2D — desligue o 3D para usá-las (o que você fizer aparece
+no 3D na hora). Num celular mais simples, a vista 3D gasta mais bateria; o 2D continua leve como sempre.
+
+<br clear="right">
 
 ---
 

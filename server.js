@@ -3,6 +3,7 @@
 const express = require('express');
 const http = require('http');
 const path = require('path');
+const fs = require('fs');
 const crypto = require('crypto');
 const multer = require('multer');
 const { Server } = require('socket.io');
@@ -39,6 +40,16 @@ const imgUrl = (v) => {
   if (/^https:\/\/[^\s"'<>]{1,1000}$/.test(s)) return s;
   throw new Error('Imagem inválida');
 };
+// Modelo 3D (Vista 3D): .glb enviado para a mesa, ou um link https para um .glb
+const modelUrl = (v) => {
+  const s = String(v ?? '');
+  if (s === '') return '';
+  if (/^\/uploads\/[a-f0-9]+\.glb$/.test(s) || /^\/modelos\/[a-z0-9-]+\.glb$/.test(s)) return s;
+  if (/^https:\/\/[^\s"'<>]{1,1000}\.glb(\?[^\s"'<>]*)?$/i.test(s)) return s;
+  throw new Error('Modelo 3D inválido (use um arquivo .glb)');
+};
+const modelScale = (v) => Math.round(num(v, 0.2, 5, 1) * 100) / 100;
+const modelTurn = (v) => ((Math.round(num(v, -720, 720, 0) / 15) * 15) % 360 + 360) % 360;
 const abilityMod = (score) => Math.floor((score - 10) / 2);
 
 function hashPw(pw) {
@@ -88,6 +99,10 @@ function newCharacter(name, ownerId) {
 const CHAR_FIELDS = {
   name: (v) => str(v, 80).trim() || 'Sem nome',
   img: imgUrl,
+  // Vista 3D: miniatura do personagem (.glb), tamanho e para onde ela olha
+  model: modelUrl,
+  modelScale,
+  modelTurn,
   class: (v) => str(v, 80),
   race: (v) => str(v, 80),
   background: (v) => str(v, 80),
@@ -143,7 +158,10 @@ function migrate() {
   for (const s of d.scenes) {
     if (!s.fog) s.fog = { enabled: false, ops: [] };
     if (!s.drawings) s.drawings = [];
-    for (const t of s.tokens) if (!t.conditions) t.conditions = [];
+    for (const t of s.tokens) {
+      if (!t.conditions) t.conditions = [];
+      if (t.model === undefined) Object.assign(t, { model: '', modelScale: 1, modelTurn: 0 });
+    }
   }
   d.calendar = world.normalizeCalendar(d.calendar);
   if (!d.rules) d.rules = { hp: 'choose' };
@@ -198,6 +216,7 @@ function viewFor(u) {
     id: c.id, name: c.name, img: c.img, ownerId: c.ownerId, class: c.class, race: c.race, level: c.level,
     hp: c.hp, hpMax: c.hpMax, hpTemp: c.hpTemp, conditions: c.conditions,
     equip: itemsLib.publicEquipment(c),
+    model: c.model, modelScale: c.modelScale, modelTurn: c.modelTurn,
   }));
 
   const act = activeScene();
@@ -311,21 +330,39 @@ app.post('/api/logout', auth, (req, res) => {
 });
 
 const EXT = { 'image/png': '.png', 'image/jpeg': '.jpg', 'image/webp': '.webp', 'image/gif': '.gif' };
+// Modelos 3D (.glb): o navegador costuma mandar como "application/octet-stream", então vale a extensão
+const isGlb = (file) => /\.glb$/i.test(file.originalname || '')
+  && ['model/gltf-binary', 'application/octet-stream', ''].includes(file.mimetype || '');
+const fileExt = (file) => EXT[file.mimetype] || (isGlb(file) ? '.glb' : null);
 const upload = multer({
   storage: multer.diskStorage({
     destination: store.UPLOADS,
-    filename: (req, file, cb) => cb(null, uid() + uid() + EXT[file.mimetype]),
+    filename: (req, file, cb) => cb(null, uid() + uid() + fileExt(file)),
   }),
-  limits: { fileSize: 25 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => cb(null, !!EXT[file.mimetype]),
+  limits: { fileSize: 40 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => cb(null, !!fileExt(file)),
 });
 app.post('/api/upload', auth, (req, res) => {
   upload.single('file')(req, res, (err) => {
     if (err) {
-      const msg = err.code === 'LIMIT_FILE_SIZE' ? 'Imagem grande demais (máx. 25 MB)' : err.message;
+      const msg = err.code === 'LIMIT_FILE_SIZE' ? 'Arquivo grande demais (máx. 40 MB)' : err.message;
       return res.status(400).json({ error: msg });
     }
-    if (!req.file) return res.status(400).json({ error: 'Envie uma imagem PNG, JPG, WEBP ou GIF' });
+    if (!req.file) return res.status(400).json({ error: 'Envie uma imagem PNG, JPG, WEBP ou GIF (ou um modelo 3D .glb)' });
+    if (req.file.filename.endsWith('.glb')) {
+      // confere a assinatura do arquivo ("glTF" nos 4 primeiros bytes)
+      let head = Buffer.alloc(0);
+      try {
+        const fd = fs.openSync(req.file.path, 'r');
+        head = Buffer.alloc(4);
+        fs.readSync(fd, head, 0, 4, 0);
+        fs.closeSync(fd);
+      } catch { /* trata como inválido */ }
+      if (head.toString('latin1') !== 'glTF') {
+        fs.rm(req.file.path, () => {});
+        return res.status(400).json({ error: 'Esse arquivo não é um modelo .glb válido' });
+      }
+    }
     res.json({ url: '/uploads/' + req.file.filename });
   });
 });
@@ -738,6 +775,8 @@ const handlers = {
     const t = {
       id: uid(), characterId, monsterId: monster ? monster.id : null,
       name: str(p.name, 80).trim() || monster?.name || 'Token', img: imgUrl(p.img ?? monster?.img ?? ''),
+      model: modelUrl(p.model ?? monster?.model ?? ''), modelScale: modelScale(p.modelScale ?? monster?.modelScale ?? 1),
+      modelTurn: modelTurn(p.modelTurn ?? monster?.modelTurn ?? 0),
       x: num(p.x, -1e5, 1e5), y: num(p.y, -1e5, 1e5), size: num(p.size, 0.5, 10, 1),
       hidden: !!p.hidden, conditions: [],
       hp: int(p.hp ?? monster?.hp, -999, 9999), hpMax: int(p.hpMax ?? p.hp ?? monster?.hp, 0, 9999),
@@ -757,6 +796,7 @@ const handlers = {
       const t = {
         id: uid(), characterId: null, monsterId: monster.id,
         name: str(q.name, 80).trim() || monster.name, img: monster.img || '',
+        model: monster.model || '', modelScale: monster.modelScale || 1, modelTurn: monster.modelTurn || 0,
         x: num(q.x, -1e5, 1e5), y: num(q.y, -1e5, 1e5), size: num(q.size, 0.5, 10, 1),
         hidden: !!p.hidden, conditions: [],
         hp: int(q.hp ?? monster.hp, -999, 9999), hpMax: int(q.hp ?? monster.hp, 0, 9999),
@@ -772,6 +812,9 @@ const handlers = {
     const f = p.patch || {};
     if (f.name !== undefined) t.name = str(f.name, 80).trim() || t.name;
     if (f.img !== undefined) t.img = imgUrl(f.img);
+    if (f.model !== undefined) t.model = modelUrl(f.model);
+    if (f.modelScale !== undefined) t.modelScale = modelScale(f.modelScale);
+    if (f.modelTurn !== undefined) t.modelTurn = modelTurn(f.modelTurn);
     if (f.size !== undefined) t.size = num(f.size, 0.5, 10, 1);
     if (f.hidden !== undefined) t.hidden = !!f.hidden;
     if (f.hp !== undefined) t.hp = int(f.hp, -999, 9999);
@@ -1166,9 +1209,19 @@ const handlers = {
     requireGM(user);
     const m = findMonster(p.id);
     const oldImg = m.img;
+    const old3d = [m.model || '', m.modelScale || 1, m.modelTurn || 0];
     Object.assign(m, monsterFields(p.patch || {}, m), { updatedAt: Date.now() });
     if (m.img !== oldImg) {
       for (const s of D().scenes) for (const t of s.tokens) if (t.monsterId === m.id && (!t.img || t.img === oldImg)) t.img = m.img;
+    }
+    // o modelo 3D da ficha vale para os tokens dela que ainda usam o modelo antigo
+    if (m.model !== old3d[0] || m.modelScale !== old3d[1] || m.modelTurn !== old3d[2]) {
+      for (const s of D().scenes) {
+        for (const t of s.tokens) {
+          if (t.monsterId !== m.id || (t.model || '') !== old3d[0]) continue;
+          Object.assign(t, { model: m.model, modelScale: m.modelScale, modelTurn: m.modelTurn });
+        }
+      }
     }
   },
   'monster:delete'(user, p) {
@@ -1228,6 +1281,9 @@ function monsterFields(f, base) {
   return {
     name: pick('name', (v) => str(v, 80).trim() || 'Sem nome', 'Sem nome'),
     img: pick('img', imgUrl, ''),
+    model: pick('model', modelUrl, ''),
+    modelScale: pick('modelScale', modelScale, 1),
+    modelTurn: pick('modelTurn', modelTurn, 0),
     size: pick('size', (v) => (SIZES.includes(v) ? v : 'Médio'), 'Médio'),
     type: pick('type', text(80), ''),
     alignment: pick('alignment', text(80), ''),
