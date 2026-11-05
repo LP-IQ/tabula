@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Novidades — Tábula</title>
+<meta name="description" content="O que chegou em cada versão da Tábula, e como experimentar.">
+<meta property="og:title" content="Novidades — Tábula">
+<meta property="og:description" content="O que chegou em cada versão da Tábula, e como experimentar.">
+<meta property="og:image" content="https://lp-iq.github.io/tabula/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2 29 9.5v13L16 30 3 22.5v-13z' fill='%23c9a13b'/%3E%3Cpath d='M16 7 25 22H7z' fill='%23131f3e'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="livro.css">
+</head>
+<body>
+<a class="skip" href="#texto">Pular para o texto</a>
+<header class="bar"><div class="wrap"><a class="brand" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 29 9.5v13L16 30 3 22.5v-13z" fill="#c9a13b"/><path d="M16 7 25 22H7z" fill="#131f3e"/></svg>Tábula</a><nav aria-label="Páginas"><a href="index.html">Início</a><a href="manual.html">Manual</a><a href="guias.html" class=wide>Guias</a><a href="instalar.html">Instalar</a><a href="novidades.html" aria-current=page>Novidades</a><a class="wide" href="https://github.com/LP-IQ/tabula">GitHub</a></nav></div></header>
+<div class="cover book-head"><div class="wrap">
+  <h1>Novidades</h1>
+  <div class="lede"><p>O que chegou em cada versão, e como experimentar. A lista técnica completa está no
+<a href="https://github.com/LP-IQ/tabula/blob/main/CHANGELOG.md">histórico de versões</a>; o passo a passo de cada ferramenta, no <a href="manual.html">manual</a>.</p>
+<p><strong>Para atualizar:</strong> feche a mesa e rode <code>atualizar.bat</code> (Windows) ou <code>./atualizar.sh</code> (Linux e Mac).
+A campanha não é tocada. Quando sai uma versão nova, o mestre vê um aviso no topo da mesa.</p></div>
+</div></div>
+<div class="book wrap">
+  <details class="toc" open>
+    <summary>Sumário</summary>
+    <div class="toc-scroll"><label class="toc-q"><span>Procurar</span><input id="toc-q" type="search" placeholder="névoa, multiclasse, dados…" autocomplete="off"></label><p id="toc-empty" class="toc-empty" hidden>Nada com essa palavra.</p><ol class="toc-list"><li data-id="v56--vista-3d-04112026"><a href="#v56--vista-3d-04112026"><span class="toc-n">·</span><span class="toc-t">v5.6 — Vista 3D (04/11/2026)</span></a></li><li data-id="v55--biblioteca-magias-e-itens-01112026"><a href="#v55--biblioteca-magias-e-itens-01112026"><span class="toc-n">·</span><span class="toc-t">v5.5 — Biblioteca: magias e itens (01/11/2026)</span></a></li><li data-id="v54--multiclasse-01112026"><a href="#v54--multiclasse-01112026"><span class="toc-n">·</span><span class="toc-t">v5.4 — Multiclasse (01/11/2026)</span></a></li><li data-id="v53--pv-pela-classe-01112026"><a href="#v53--pv-pela-classe-01112026"><span class="toc-n">·</span><span class="toc-t">v5.3 — PV pela classe (01/11/2026)</span></a></li><li data-id="v52--equipamento-e-ficha-em-janela-01112026"><a href="#v52--equipamento-e-ficha-em-janela-01112026"><span class="toc-n">·</span><span class="toc-t">v5.2 — Equipamento e ficha em janela (01/11/2026)</span></a></li><li data-id="v51--linux-e-mac-27102026"><a href="#v51--linux-e-mac-27102026"><span class="toc-n">·</span><span class="toc-t">v5.1 — Linux e Mac (27/10/2026)</span></a></li><li data-id="v5--névoa-régua-e-uma-ficha-mais-completa-27102026"><a href="#v5--névoa-régua-e-uma-ficha-mais-completa-27102026"><span class="toc-n">·</span><span class="toc-t">v5 — Névoa, régua e uma ficha mais completa (27/10/2026)</span></a></li><li data-id="versões-anteriores"><a href="#versões-anteriores"><span class="toc-n">·</span><span class="toc-t">Versões anteriores</span></a></li></ol></div>
+  </details>
+  <main class="page deckle" id="texto">
+    <h2 id="v56--vista-3d-04112026">v5.6 — Vista 3D (04/11/2026)</h2>
+<p class="dropcap"><img src="img/vista-3d.png" alt="Mapa em 3D com miniaturas" width="360" align="right" class="side" loading="lazy"></p>
+<p><strong>O mapa virou tabuleiro.</strong> O botão <strong>3D</strong>, no canto do mapa, mostra a cena em três dimensões: o mapa é o chão, cada
+token é uma miniatura com sombra, e a câmera gira e aproxima como você quiser. Cada um liga para si — a TV da sala em
+3D, o mestre em 2D, por exemplo.</p>
+<p>Quem tiver um <strong>modelo 3D</strong> (arquivo <code>.glb</code>) põe na ficha, em <em>Miniatura 3D</em>; o mestre põe nos tokens e nas fichas
+do bestiário. Sem modelo, o token aparece como <strong>miniatura de papelão</strong>, em pé, com a imagem dele. As miniaturas andam
+até onde você solta, tombam com 0 PV e ganham um anel dourado no turno delas.</p>
+<p><strong>Experimente:</strong>
+1. Na ficha, abra <strong>Miniatura 3D</strong> e clique <strong>Usar o exemplo</strong>.
+2. Clique <strong>3D</strong> no canto do mapa.
+3. Arraste a sua miniatura; gire a câmera com o botão direito (ou dois dedos no celular); <strong>⊙</strong> alterna para a vista de cima.</p>
+<p><br clear="right"></p>
+<p>Veja no manual: <a href="manual.html#vista-3d">Vista 3D</a></p>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="v55--biblioteca-magias-e-itens-01112026">v5.5 — Biblioteca: magias e itens (01/11/2026)</h2>
+<p class="dropcap"><img src="img/biblioteca-magias.png" alt="Aba Magias do compêndio mostrando as magias que o personagem conjura" width="340" align="right" class="side" loading="lazy"></p>
+<p><strong>O compêndio virou biblioteca.</strong> Além das páginas do mestre, o <strong>📚 Compêndio</strong> ganhou duas abas com o conteúdo aberto
+do D&amp;D 5e (o SRD), em português:</p>
+<ul>
+<li><strong>✨ Magias</strong> — as 319 magias do SRD, com os nomes do Livro do Jogador. Com o personagem escolhido, a lista mostra
+  <strong>só o que ele pode conjurar</strong>, pelas classes e níveis da ficha — multiclasse incluída. Toque na magia para ver o
+  cartão e <strong>＋ Adicionar à ficha</strong>: ela aparece em <em>Magias</em>, separada por círculo, com a marca de <strong>preparada</strong>.</li>
+<li><strong>🎒 Itens</strong> — armas, armaduras, equipamento, ferramentas, pacotes e montarias, com preço e peso. <strong>＋ Pôr na
+  mochila</strong> cria o item pronto: a espada já ataca com o dano certo, a armadura já entra na CA.</li>
+<li><strong>✨ Itens mágicos</strong> — só o mestre vê. Escolha o item, a base (para <em>Arma +1</em>, <em>Língua flamejante</em>…) e <strong>🎁 Dar a…</strong>.</li>
+</ul>
+<p>A lore do seu mundo continua na aba <strong>📄 Páginas</strong>, que é do mestre.</p>
+<p><strong>Experimente:</strong>
+1. Abra <strong>📚 Compêndio → ✨ Magias</strong>: a lista já vem filtrada pelas classes da sua ficha.
+2. Toque numa magia e clique <strong>＋ Adicionar à ficha</strong>; depois veja em <strong>Ficha → Magias</strong>.
+3. Em <strong>🎒 Itens → Pacotes</strong>, ponha um <em>Pacote de explorador</em> na mochila.</p>
+<p><br clear="right"></p>
+<p>Veja no manual: <a href="manual.html#biblioteca-magias-e-itens">Biblioteca: magias e itens</a> · <a href="manual.html#magias-da-ficha">Magias da ficha</a></p>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="v54--multiclasse-01112026">v5.4 — Multiclasse (01/11/2026)</h2>
+<p class="dropcap"><img src="img/multiclasse.png" alt="Lista de classes: Paladino 2 e Mago 1" width="340" align="right" class="side" loading="lazy"></p>
+<p><strong>Mais de uma classe por personagem.</strong> <strong>＋ Multiclasse</strong> abre a lista de classes: cada uma com o nível e o dado de vida.
+O cabeçalho mostra "Paladino 2 / Mago 1" e o nível total, que vale para a proficiência e o XP.</p>
+<p>A ficha segue as regras do capítulo 6 do Livro do Jogador: os PV de cada nível novo usam o dado <strong>da classe que subiu</strong>,
+os dados de vida ficam em montes separados por tipo, os requisitos de atributo 13 aparecem como aviso, e os espaços de
+magia são sugeridos pela tabela de conjurador multiclasse (com o bruxo à parte).</p>
+<p><strong>Experimente:</strong>
+1. Clique <strong>＋ Multiclasse</strong> e escreva <strong>Mago</strong> na linha nova.
+2. Veja o quadro "⬆ Mago 1: ganhe os PV" e role o d6.
+3. Abra <em>Magias</em> e clique <strong>Usar esses</strong> na sugestão de espaços.</p>
+<p><br clear="right"></p>
+<p>Veja no manual: <a href="manual.html#multiclasse">Multiclasse</a></p>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="v53--pv-pela-classe-01112026">v5.3 — PV pela classe (01/11/2026)</h2>
+<p class="dropcap"><img src="img/pv-nivel.png" alt="Quadro de subida de nível com os botões Rolar e Média" width="340" align="right" class="side" loading="lazy"></p>
+<p><strong>A classe define o dado de vida.</strong> Ao escolher a classe na ficha (há uma lista com as do Livro do Jogador), o dado de
+vida já vem certo: d12 para o bárbaro, d10 para o guerreiro, d6 para o mago…</p>
+<p><strong>PV que acompanham o nível.</strong> Com <strong>❤ PV pela classe</strong> ligado, o 1º nível vale o máximo do dado + CON, e a cada nível
+novo aparece um quadro para <strong>rolar o dado</strong> ou <strong>pegar a média</strong>. A rolagem sai no chat para todos, e os PV máximos e
+atuais sobem sozinhos. Se a CON subir, os PV acompanham em todos os níveis. O mestre decide se a mesa deixa o jogador
+escolher, sempre rola ou sempre usa a média.</p>
+<p><strong>Experimente:</strong>
+1. Escreva <strong>Guerreiro</strong> na classe do seu personagem: aparece "Dado de vida: d10".
+2. Clique <strong>❤ PV pela classe (d10)</strong>.
+3. Mude o <strong>Nível</strong> para 2 e clique <strong>🎲 Rolar 1d10</strong>.</p>
+<p><br clear="right"></p>
+<p>Veja no manual: <a href="manual.html#classe-dado-de-vida-e-pv-por-nível">Classe, dado de vida e PV por nível</a></p>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="v52--equipamento-e-ficha-em-janela-01112026">v5.2 — Equipamento e ficha em janela (01/11/2026)</h2>
+<p class="dropcap"><img src="img/equipamento.png" alt="Boneco de equipamento com espada, adaga, cota de malha e um anel" width="340" align="right" class="side" loading="lazy"></p>
+<p><strong>Equipamento e mochila.</strong> A ficha ganhou um boneco com os espaços do corpo (cabeça, pescoço, capa, armadura,
+as duas mãos, luvas, dois anéis, cinto e calçado) e uma mochila. Cada item tem um desenho do tipo dele e a borda na
+cor da raridade, e a arte final entra quando você quiser, escolhendo a imagem ou colando com Ctrl+V.</p>
+<p>A ficha cuida das regras: arma de duas mãos ocupa as duas, arma versátil pergunta como você vai usar,
+no máximo 3 itens sintonizados, CA calculada pela armadura e pelo escudo, ataques das armas equipadas com bônus e
+dano já prontos, e a carga contra 7,5 × Força.</p>
+<p><strong>Ficha em janela.</strong> Dois cliques no token (ou <strong>⧉ Em janela</strong>) abrem a ficha por cima do mapa. O mestre pode deixar
+a de cada jogador aberta lado a lado. A ficha de um colega abre só para olhar o equipamento.</p>
+<p><strong>Experimente:</strong>
+1. Na sua ficha, em <strong>Equipamento e mochila</strong>, clique <strong>+ Item</strong> e escolha o modelo <strong>Espada longa</strong>.
+2. Toque na espada e escolha <strong>Equipar com as duas mãos</strong>. Veja o ataque aparecer em <strong>Ataques</strong> com o d10.
+3. Crie um <strong>Escudo</strong> e arraste para a mão esquerda: a espada volta para uma mão e a CA passa a contar o escudo (+2).
+4. 👑 Na ficha de um jogador, <strong>🎁 Dar item</strong>: ele recebe um aviso na hora.
+5. Dê dois cliques no seu token.</p>
+<p><br clear="right"></p>
+<p>Veja no manual: <a href="manual.html#equipamento-e-mochila">Equipamento e mochila</a> ·
+<a href="manual.html#ficha-em-janela">Ficha em janela</a></p>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="v51--linux-e-mac-27102026">v5.1 — Linux e Mac (27/10/2026)</h2>
+<p class="dropcap">A mesa roda também no <strong>Linux</strong> e no <strong>Mac</strong>, com os atalhos <code>instalar.sh</code>, <code>iniciar.sh</code>, <code>online.sh</code>,
+<code>atualizar.sh</code> e <code>redefinir-senha.sh</code>. O <code>online.sh</code> baixa sozinho o programa do link e mostra o endereço para os
+jogadores num terminal só; Ctrl + C fecha tudo e salva a campanha.</p>
+<p>O <code>atualizar.bat</code> passou a atualizar só quando a versão do GitHub é mais nova.</p>
+<p>Veja: <a href="instalar.html#linux">Instalação no Linux e no Mac</a></p>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="v5--névoa-régua-e-uma-ficha-mais-completa-27102026">v5 — Névoa, régua e uma ficha mais completa (27/10/2026)</h2>
+<p class="dropcap"><img alt="Para o jogador, só a sala onde o grupo está aparece" src="img/nevoa-jogador.png" /></p>
+<p><strong>No mapa:</strong> névoa de guerra (o mestre revela aos poucos; monstros na névoa nem chegam aos jogadores), régua em metros
+que todos veem ao vivo, áreas de magia (esfera, cone, linha, cubo), desenho livre, setas e borracha, e as condições
+aparecem como ícones nos tokens.</p>
+<p><strong>Na ficha:</strong> condições, inspiração, testes contra a morte com rolagem automática, espaços de magia, dados de vida para o
+descanso curto, XP com aviso de subir de nível, moedas, e o <strong>aspecto mágico</strong> e o <strong>anel</strong>, que só o mestre escreve.</p>
+<p><strong>Para o mestre:</strong> calendário do mundo no topo da tela (Harptos, com meses editáveis), descanso curto e longo para o
+grupo, <strong>fila de memórias</strong> nos segredos para devolver as memórias uma de cada vez, imagens em lote no bestiário, e o
+<code>atualizar.bat</code>.</p>
+<p><strong>Experimente:</strong>
+1. 👑 Clique em <strong>🌫</strong>, marque <strong>Ligada</strong> e arraste <strong>◯ Revelar</strong> em volta do grupo.
+2. Use <strong>📏</strong> para medir até a porta e <strong>◯</strong> para ver quem a bola de fogo pega.
+3. 👑 Clique na data no topo e faça um <strong>🌙 Descanso longo</strong>.
+4. 👑 Crie um segredo com <em>Pôr na fila de memórias de…</em> e libere com <strong>Liberar próxima</strong>.</p>
+<p>Veja no manual: <a href="manual.html#ferramentas-do-mapa">Ferramentas do mapa</a> ·
+<a href="manual.html#-névoa-de-guerra-">Névoa</a> · <a href="manual.html#calendário-e-descansos-">Calendário</a> ·
+<a href="manual.html#segredos-e-fila-de-memórias">Segredos</a></p>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="versões-anteriores">Versões anteriores</h2>
+<ul>
+<li><strong>v4.1 (15/10/2026):</strong> a biblioteca de monstros abre de novo (o arquivo ficava fora do pacote).</li>
+<li><strong>v4 (15/10/2026):</strong> cartões das rolagens na tela, <strong>bestiário</strong> com 334 monstros do SRD, <strong>ajuste de ND</strong>,
+  medidor de <strong>dificuldade do encontro</strong> e painel do token de monstro com ataques roláveis.</li>
+<li><strong>v3 (14/10/2026):</strong> a grade passa a ser definida por quadrados na largura do mapa (token "invisível" em mapas
+  grandes), tokens novos piscam para você achar, e a documentação.</li>
+<li><strong>v2:</strong> pontos de backup, restaurar a campanha e <strong>Salvar e encerrar a sessão</strong>.</li>
+<li><strong>v1:</strong> diário do grupo, compêndio do mestre e o seletor de fichas.</li>
+<li><strong>v0:</strong> a primeira mesa: mapa com grade, tokens redondos, ficha, dados, iniciativa e segredos.</li>
+</ul>
+  </main>
+</div>
+<footer class="colophon"><div class="wrap">
+  <div><a class="brand" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 29 9.5v13L16 30 3 22.5v-13z" fill="#c9a13b"/><path d="M16 7 25 22H7z" fill="#131f3e"/></svg>Tábula</a>
+    <p>Mesa virtual feita para uma campanha de D&amp;D 5e, de código aberto. Os textos deste site também estão na pasta
+    <code>docs</code> do <a href="https://github.com/LP-IQ/tabula">repositório</a>.</p></div>
+  <div><p>Monstros, magias e itens vêm do System Reference Document 5.1 da Wizards of the Coast, licença
+    <a href="https://creativecommons.org/licenses/by/4.0/legalcode">CC-BY-4.0</a>; a tradução é da Tábula. A vista 3D usa o
+    <a href="https://threejs.org">three.js</a> (MIT). A Tábula não é afiliada à Wizards of the Coast.</p></div>
+</div></footer>
+<script>
+(() => {
+  // marca no sumário o capítulo que está na tela e abre as seções dele
+  const links = new Map([...document.querySelectorAll('.toc-list > li')].map((li) => [li.dataset.id, li]));
+  const heads = [...document.querySelectorAll('.page h2[id]')];
+  let current = null;
+  const spy = () => {
+    let best = heads[0];
+    for (const h of heads) if (h.getBoundingClientRect().top < 140) best = h;
+    const li = best && links.get(best.id);
+    if (li && li !== current) {
+      current?.classList.remove('on');
+      li.classList.add('on');
+      current = li;
+      const toc = document.querySelector('.toc-scroll');
+      if (toc && matchMedia('(min-width: 961px)').matches) {
+        const r = li.getBoundingClientRect(), t = toc.getBoundingClientRect();
+        if (r.top < t.top || r.bottom > t.bottom) toc.scrollTop += r.top - t.top - 80;
+      }
+    }
+  };
+  addEventListener('scroll', spy, { passive: true });
+  spy();
+  // procurar: deixa no sumário só os capítulos com a palavra (no título ou no texto)
+  const q = document.getElementById('toc-q');
+  if (q) {
+    const text = new Map(heads.map((h) => {
+      let s = h.textContent, el = h.nextElementSibling;
+      while (el && el.tagName !== 'H2' && !el.matches('svg.fleuron')) { s += ' ' + el.textContent; el = el.nextElementSibling; }
+      return [h.id, s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()];
+    }));
+    const empty = document.getElementById('toc-empty');
+    q.addEventListener('input', () => {
+      const w = q.value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+      let shown = 0;
+      for (const [id, li] of links) {
+        const ok = !w || text.get(id)?.includes(w);
+        li.hidden = !ok;
+        shown += ok;
+      }
+      for (const p of document.querySelectorAll('.toc-part')) p.hidden = !!w;
+      empty.hidden = shown > 0;
+    });
+  }
+  // no celular, escolher um capítulo fecha o sumário
+  const box = document.querySelector('.toc');
+  if (box && matchMedia('(max-width: 960px)').matches) box.open = false;   // no celular começa fechado
+  box?.addEventListener('click', (e) => { if (e.target.closest('a') && box.open !== undefined && matchMedia('(max-width: 960px)').matches) box.open = false; });
+})();
+</script>
+</body>
+</html>

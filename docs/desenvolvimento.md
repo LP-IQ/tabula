@@ -40,6 +40,7 @@ public/modelos/      miniatura de exemplo (gerada por tools/gerar-miniatura-exem
   rules.js           regras: tabela por ND, XP, dificuldade de encontro, ajuste de ND, classes, multiclasse,
                      espaços de magia e listas/círculos de magia por classe (spellLists, spellAccess)
 docs/index.html      página do projeto (GitHub Pages, servida da pasta docs/)
+docs/*.html          manual, guias, instalar e novidades do site (gerados por tools/gerar-site.py a partir dos .md)
 public/data/srd-monstros.json   334 monstros do SRD 5.1 já convertidos (gerado por tools/srd/converter.py)
 public/data/srd-magias.json     319 magias do SRD 5.1 em português (gerado por tools/srd/converter_magias.py)
 public/data/srd-itens.json      equipamento e itens mágicos do SRD 5.1 (gerado por tools/srd/converter_itens.py)
@@ -144,5 +145,17 @@ calendário, descansos e itens (espaços, duas mãos, sintonia, CA, dar e passar
 
 ## Página do projeto
 
-`docs/index.html` é uma página só, sem dependências além das fontes do Google. Para publicar:
-**Settings → Pages → Build and deployment → Deploy from a branch → `main` / `/docs`**. As imagens ficam em `docs/img/`.
+O site é a pasta `docs/`, publicada pelo GitHub Pages:
+**Settings → Pages → Build and deployment → Deploy from a branch → `main` / `/docs`**.
+
+- `index.html` é a capa, escrita à mão; `demo-mapa.js` e `demo-3d.js` são as duas demonstrações (o 3D usa a cópia
+  do three.js em `docs/vendor/three`).
+- `manual.html`, `guias.html`, `instalar.html` e `novidades.html` **são gerados** a partir dos `.md` da mesma pasta.
+  Depois de mexer num `.md`, rode `python3 tools/gerar-site.py` (precisa do `pip install markdown`). O script também
+  preenche na capa o sumário do manual, as últimas versões e o rodapé (entre os comentários `<!-- gerado:… -->`).
+  Links entre os `.md` viram links entre as páginas; links para fora de `docs/` apontam para o GitHub.
+- Listas dentro de listas no `.md` precisam de **4 espaços** de recuo (o GitHub aceita menos; o gerador não).
+- `site.css` tem as cores, as fontes e as peças comuns (capa de lápis, página de velino, moldura dourada);
+  `livro.css`, o sumário lateral das páginas de leitura.
+- As fontes ficam em `docs/fonts/` (Grenze Gotisch e Alegreya, licença OFL, arquivos junto): o site não carrega
+  nada de fora. As imagens ficam em `docs/img/`.

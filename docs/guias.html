@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guias da mesa — Tábula</title>
+<meta name="description" content="O resumo para o mestre e para os jogadores: o que fazer antes, durante e depois da sessão.">
+<meta property="og:title" content="Guias da mesa — Tábula">
+<meta property="og:description" content="O resumo para o mestre e para os jogadores: o que fazer antes, durante e depois da sessão.">
+<meta property="og:image" content="https://lp-iq.github.io/tabula/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2 29 9.5v13L16 30 3 22.5v-13z' fill='%23c9a13b'/%3E%3Cpath d='M16 7 25 22H7z' fill='%23131f3e'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="livro.css">
+</head>
+<body>
+<a class="skip" href="#texto">Pular para o texto</a>
+<header class="bar"><div class="wrap"><a class="brand" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 29 9.5v13L16 30 3 22.5v-13z" fill="#c9a13b"/><path d="M16 7 25 22H7z" fill="#131f3e"/></svg>Tábula</a><nav aria-label="Páginas"><a href="index.html">Início</a><a href="manual.html">Manual</a><a href="guias.html" aria-current=page class=wide>Guias</a><a href="instalar.html">Instalar</a><a href="novidades.html">Novidades</a><a class="wide" href="https://github.com/LP-IQ/tabula">GitHub</a></nav></div></header>
+<div class="cover book-head"><div class="wrap">
+  <h1>Guias da mesa</h1>
+  <div class="lede"><p>Dois resumos curtos: um para quem conduz a mesa, outro para quem joga. O passo a passo completo de cada ferramenta está no <a href="manual.html">manual</a>.</p></div>
+</div></div>
+<div class="book wrap">
+  <details class="toc" open>
+    <summary>Sumário</summary>
+    <div class="toc-scroll"><label class="toc-q"><span>Procurar</span><input id="toc-q" type="search" placeholder="névoa, multiclasse, dados…" autocomplete="off"></label><p id="toc-empty" class="toc-empty" hidden>Nada com essa palavra.</p><p class="toc-part"><a href="#mestre">Guia do mestre</a></p>
+<ol class="toc-list"><li data-id="mestre-antes-da-primeira-sessão"><a href="#mestre-antes-da-primeira-sessão"><span class="toc-n">I</span><span class="toc-t">Antes da primeira sessão</span></a><ol class="toc-sub"><li><a href="#mestre-criar-os-jogadores">Criar os jogadores</a></li><li><a href="#mestre-criar-uma-cena-mapa">Criar uma cena (mapa)</a></li><li><a href="#mestre-acertar-a-grade">Acertar a grade</a></li></ol></li><li data-id="mestre-tokens"><a href="#mestre-tokens"><span class="toc-n">II</span><span class="toc-t">Tokens</span></a></li><li data-id="mestre-ferramentas-do-mapa"><a href="#mestre-ferramentas-do-mapa"><span class="toc-n">III</span><span class="toc-t">Ferramentas do mapa</span></a><ol class="toc-sub"><li><a href="#mestre-névoa-de-guerra">Névoa de guerra</a></li></ol></li><li data-id="mestre-bestiário-fichas-de-npcs-e-monstros"><a href="#mestre-bestiário-fichas-de-npcs-e-monstros"><span class="toc-n">IV</span><span class="toc-t">Bestiário (fichas de NPCs e monstros)</span></a><ol class="toc-sub"><li><a href="#mestre-pegar-um-monstro-pronto">Pegar um monstro pronto</a></li><li><a href="#mestre-criar-uma-ficha-do-zero">Criar uma ficha do zero</a></li><li><a href="#mestre-colocar-no-mapa">Colocar no mapa</a></li><li><a href="#mestre-ajustar-o-nd-deixar-mais-forte-ou-mais-fraco">Ajustar o ND (deixar mais forte ou mais fraco)</a></li><li><a href="#mestre-dificuldade-do-encontro">Dificuldade do encontro</a></li><li><a href="#mestre-imagens-de-muitas-fichas-de-uma-vez">Imagens de muitas fichas de uma vez</a></li><li><a href="#mestre-token-de-npc-no-mapa">Token de NPC no mapa</a></li></ol></li><li data-id="mestre-durante-o-jogo"><a href="#mestre-durante-o-jogo"><span class="toc-n">V</span><span class="toc-t">Durante o jogo</span></a><ol class="toc-sub"><li><a href="#mestre-iniciativa">Iniciativa</a></li><li><a href="#mestre-segredos">Segredos</a></li><li><a href="#mestre-calendário-e-descansos">Calendário e descansos</a></li><li><a href="#mestre-fichas-em-janela">Fichas em janela</a></li><li><a href="#mestre-dar-itens">Dar itens</a></li><li><a href="#mestre-pv-ao-subir-de-nível">PV ao subir de nível</a></li><li><a href="#mestre-aspecto-mágico-e-anel">Aspecto mágico e anel</a></li><li><a href="#mestre-diário-do-grupo">Diário do grupo</a></li><li><a href="#mestre-compêndio">Compêndio</a></li></ol></li><li data-id="mestre-backups"><a href="#mestre-backups"><span class="toc-n">VI</span><span class="toc-t">Backups</span></a></li></ol>
+<p class="toc-part"><a href="#jogador">Guia do jogador</a></p>
+<ol class="toc-list"><li data-id="jogador-entrar"><a href="#jogador-entrar"><span class="toc-n">I</span><span class="toc-t">Entrar</span></a></li><li data-id="jogador-mapa"><a href="#jogador-mapa"><span class="toc-n">II</span><span class="toc-t">Mapa</span></a></li><li data-id="jogador-ficha"><a href="#jogador-ficha"><span class="toc-n">III</span><span class="toc-t">Ficha</span></a></li><li data-id="jogador-equipamento-e-mochila"><a href="#jogador-equipamento-e-mochila"><span class="toc-n">IV</span><span class="toc-t">Equipamento e mochila</span></a></li><li data-id="jogador-dados"><a href="#jogador-dados"><span class="toc-n">V</span><span class="toc-t">Dados</span></a></li><li data-id="jogador-iniciativa"><a href="#jogador-iniciativa"><span class="toc-n">VI</span><span class="toc-t">Iniciativa</span></a></li><li data-id="jogador-segredos"><a href="#jogador-segredos"><span class="toc-n">VII</span><span class="toc-t">Segredos</span></a></li><li data-id="jogador-diário-do-grupo"><a href="#jogador-diário-do-grupo"><span class="toc-n">VIII</span><span class="toc-t">Diário do grupo</span></a></li><li data-id="jogador-compêndio"><a href="#jogador-compêndio"><span class="toc-n">IX</span><span class="toc-t">Compêndio</span></a></li></ol></div>
+  </details>
+  <main class="page deckle" id="texto">
+    <h1 class="part" id="mestre">Guia do mestre</h1><div class="part-lede"><blockquote>
+<p>Este guia é o resumo. O passo a passo de cada ferramenta está no <strong><a href="manual.html">manual</a></strong>, e o que mudou em cada versão, em <strong><a href="novidades.html">novidades</a></strong>.</p>
+</blockquote>
+<p>Tudo que é exclusivo do mestre fica na aba <strong>👑 Mestre</strong>, além das ferramentas de edição nas outras abas.</p></div><h2 id="mestre-antes-da-primeira-sessão"><span class="chap-n" aria-hidden="true">Capítulo I</span>Antes da primeira sessão</h2>
+<h3 id="mestre-criar-os-jogadores">Criar os jogadores</h3>
+<p><strong>Mestre → Jogadores e personagens → Usuários</strong></p>
+<ol>
+<li>Preencha <strong>nome</strong> e <strong>senha</strong> do jogador.</li>
+<li>Deixe <strong>"Já criar personagem"</strong> marcado e escreva o nome do personagem: a ficha já nasce vinculada a ele.</li>
+<li>Mande o link da mesa, o nome e a senha para cada jogador (a senha, de preferência, no privado).</li>
+</ol>
+<p>Papéis possíveis:
+- <strong>Jogador</strong>: vê e edita só o próprio personagem, move só o próprio token.
+- <strong>Telão (só assiste)</strong>: vê só o mapa e a iniciativa, sem nenhuma aba. Para uma TV no presencial.</p>
+<p>Para trocar a senha de alguém, use o 🔑 ao lado do nome. Para trocar o dono de um personagem, use o
+menu ao lado dele em <strong>Personagens</strong>.</p>
+<h3 id="mestre-criar-uma-cena-mapa">Criar uma cena (mapa)</h3>
+<p><strong>Mestre → Cenas (mapas)</strong></p>
+<ol>
+<li>Dê um nome à cena.</li>
+<li>Em <strong>Quadrados na largura do mapa</strong>, conte quantos quadrados o desenho tem de uma borda à outra, na horizontal. Isso faz o token ter o tamanho de um quadrado.</li>
+<li>Clique em <strong>Escolher imagem e criar</strong> (PNG, JPG, WEBP ou GIF, até 25 MB).</li>
+</ol>
+<p>A primeira cena já vai ao ar. Para trocar o que os jogadores veem, clique em <strong>Mostrar</strong> em outra cena.</p>
+<h3 id="mestre-acertar-a-grade">Acertar a grade</h3>
+<p><strong>Mestre → Cena ativa (grade)</strong></p>
+<ul>
+<li><strong>Quadrados na largura</strong>: o jeito mais fácil; a mesa calcula o tamanho do quadrado.</li>
+<li><strong>Quadrado (px)</strong>: ajuste fino.</li>
+<li><strong>Desloc. X / Y</strong>: empurra a grade até as linhas coincidirem com as do desenho.</li>
+<li><strong>Mostrar grade</strong> e <strong>Encaixar tokens na grade</strong> podem ser desligados para mapas sem grade.</li>
+</ul>
+<blockquote>
+<p>Se um token parecer minúsculo ou "não aparecer", quase sempre é a grade com o tamanho errado.</p>
+</blockquote>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="mestre-tokens"><span class="chap-n" aria-hidden="true">Capítulo II</span>Tokens</h2>
+<p class="dropcap"><strong>Mestre → Tokens</strong></p>
+<ul>
+<li><strong>Personagens</strong>: <strong>Colocar no mapa</strong> / <strong>Tirar do mapa</strong>. A foto do token é a foto da ficha.</li>
+<li><strong>NPCs e monstros</strong>: nome, PV, tamanho e imagem (opcional). Se o nome terminar em número
+  (<code>Goblin 1</code>), o próximo já vem como <code>Goblin 2</code>.</li>
+<li>Marque <strong>Oculto</strong> para preparar uma emboscada: o token fica semitransparente para você e invisível para os jogadores.</li>
+</ul>
+<p>O token novo aparece <strong>no centro da tela</strong>, num quadrado livre, e pisca para você achar.</p>
+<p><strong>Clicar num token</strong> abre um painel no canto do mapa: nome, tamanho, PV do NPC, imagem,
+ocultar/revelar e remover. Com o token selecionado, as <strong>setas do teclado</strong> andam um quadrado.</p>
+<p>Os jogadores veem a barra de vida dos personagens, mas não a dos monstros: só um <strong>aro vermelho</strong>
+quando o monstro está com metade da vida ou menos, e o token <strong>cinza com ✖</strong> quando ele cai.</p>
+<p><strong>Condições</strong>: no painel do token, clique nos ícones (envenenado 🤢, caído ⤵, amedrontado 😱,
+concentração 🔮…). Elas aparecem no token para todos. Num personagem, a condição vai também para a ficha dele.</p>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="mestre-ferramentas-do-mapa"><span class="chap-n" aria-hidden="true">Capítulo III</span>Ferramentas do mapa</h2>
+<p class="dropcap">A barra à esquerda do mapa (todos têm, menos a névoa):</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>✋</td>
+<td>Mover e selecionar (Esc volta para ela)</td>
+</tr>
+<tr>
+<td>📏</td>
+<td>Régua: arraste para medir. Diagonal conta como um quadrado (1,5 m). Todos veem a régua de quem está medindo</td>
+</tr>
+<tr>
+<td>◯ ◣ ━ ▢</td>
+<td>Áreas de magia: esfera (arraste do centro até a borda), cone, linha e cubo. A medida aparece escrita</td>
+</tr>
+<tr>
+<td>✏ ➜</td>
+<td>Desenho livre e seta</td>
+</tr>
+<tr>
+<td>🧽</td>
+<td>Borracha: toque num desenho. Cada jogador apaga os seus; você apaga qualquer um</td>
+</tr>
+<tr>
+<td>🗑</td>
+<td>Limpar: você apaga todos os desenhos da cena; o jogador, só os dele</td>
+</tr>
+</tbody>
+</table></div>
+<p>Atalhos: <strong>R</strong> régua, <strong>C</strong> círculo, <strong>D</strong> desenho, <strong>Esc</strong> mover.</p>
+<h3 id="mestre-névoa-de-guerra">Névoa de guerra</h3>
+<p><img alt="Mapa com névoa: só a sala onde o grupo está aparece para o jogador" src="img/nevoa-jogador.png" /></p>
+<ol>
+<li>Clique em <strong>🌫</strong> e marque <strong>Ligada</strong>: o mapa inteiro fica coberto para os jogadores.</li>
+<li>Escolha <strong>▭ Revelar</strong> ou <strong>◯ Revelar</strong> e arraste no mapa sobre o que o grupo está vendo.</li>
+<li><strong>▭ Esconder</strong> cobre de novo; <strong>↶</strong> desfaz o último; <strong>Cobrir tudo</strong> e <strong>Revelar tudo</strong> fazem o óbvio.</li>
+</ol>
+<p>Para você a névoa é translúcida, para continuar vendo o mapa. Para os jogadores ela é escura, e os
+<strong>monstros que estão na névoa nem são enviados</strong> para o navegador deles (não dá para "espiar").
+Os personagens dos jogadores aparecem sempre.</p>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="mestre-bestiário-fichas-de-npcs-e-monstros"><span class="chap-n" aria-hidden="true">Capítulo IV</span>Bestiário (fichas de NPCs e monstros)</h2>
+<p class="dropcap">Aba <strong>🐉 Bestiário</strong>, só sua. As fichas ficam salvas na campanha.</p>
+<p><img alt="Token de monstro com ficha, ataques roláveis e o pop-up da rolagem" src="img/bestiario-token.png" /></p>
+<h3 id="mestre-pegar-um-monstro-pronto">Pegar um monstro pronto</h3>
+<ol>
+<li><strong>Biblioteca SRD</strong> → busque (em português ou inglês) ou filtre por ND.</li>
+<li>Abra o monstro e escolha <strong>Colocar no mapa</strong> (ele é copiado para <em>Minhas fichas</em> automaticamente)
+   ou <strong>Copiar para minhas fichas</strong> para editar antes.</li>
+</ol>
+<p>Os 334 monstros do SRD 5.1 têm os nomes dos mais comuns e o texto dos ataques em português;
+habilidades especiais estão em inglês. Você pode editar qualquer cópia.</p>
+<h3 id="mestre-criar-uma-ficha-do-zero">Criar uma ficha do zero</h3>
+<p><strong>+ Nova ficha</strong> → nome, ND, tamanho, CA, PV, atributos e ações. Preencha <strong>Atq</strong> (bônus de ataque) e
+<strong>Dano</strong> (ex.: <code>1d8+3</code>) para o ataque ganhar botões de rolar. A imagem da ficha vira o token.</p>
+<h3 id="mestre-colocar-no-mapa">Colocar no mapa</h3>
+<p>Na ficha: <strong>⬤ Colocar no mapa</strong> → quantos, PV (média ou rolar para cada um) e se ficam ocultos.
+A janela já mostra como fica a <strong>dificuldade do encontro</strong> com eles. Os tokens recebem números
+(<code>Goblin 1</code>, <code>Goblin 2</code>…) e o tamanho certo (Grande = 2×2, Enorme = 3×3…).</p>
+<h3 id="mestre-ajustar-o-nd-deixar-mais-forte-ou-mais-fraco">Ajustar o ND (deixar mais forte ou mais fraco)</h3>
+<p>Na ficha: <strong>⇅ Ajustar ND</strong> → escolha o novo ND e veja a comparação lado a lado. <strong>Salvar como nova
+ficha</strong> cria uma variante (<code>Goblin (ND 3)</code>) sem mexer no original.</p>
+<p><img src="img/ajuste-nd.png" alt="Ajuste de ND de um goblin para ND 3" width="520" class="wide" loading="lazy"></p>
+<ul>
+<li><strong>CA, bônus de ataque e CD</strong> mudam conforme a tabela <em>Estatísticas de Monstro por Nível de Desafio</em> do Livro do Mestre.</li>
+<li><strong>PV e dano</strong> crescem na proporção do que os monstros oficiais daquele ND costumam ter. A tabela
+  do livro é bem mais alta que os monstros reais nos ND baixos (um goblin ND 1/4 "deveria" ter ~42 PV),
+  então usar ela direto deixaria tudo uma esponja de dano.</li>
+<li>Se um monstro de um ataque só fica muito mais forte, ele ganha <strong>Ataques Múltiplos</strong> em vez de um golpe gigante.</li>
+<li>Habilidades especiais não mudam. Confira a ficha e ajuste à mão o que quiser.</li>
+</ul>
+<blockquote>
+<p>Dica de equilíbrio: em vez de subir muito o ND de um monstro, costuma ser mais divertido subir um
+pouco e colocar mais criaturas. Fique de olho no medidor de dificuldade.</p>
+</blockquote>
+<h3 id="mestre-dificuldade-do-encontro">Dificuldade do encontro</h3>
+<p>Em <strong>Mestre → Tokens</strong> (e ao colocar monstros) aparece <strong>Fácil / Médio / Difícil / Mortal</strong>, calculado
+como no capítulo 3 do Livro do Mestre: limites de XP pelo nível de cada personagem dos jogadores,
+XP dos monstros vivos na cena e o multiplicador pela quantidade de monstros. Tokens sem ficha não entram na conta.</p>
+<h3 id="mestre-imagens-de-muitas-fichas-de-uma-vez">Imagens de muitas fichas de uma vez</h3>
+<p><strong>🖼 Imagens em lote</strong> → escolha várias imagens. O <strong>nome do arquivo</strong> diz de qual monstro é:
+<code>goblin.png</code>, <code>Lobo.jpg</code>, <code>Dragão Vermelho Adulto.webp</code> ou o código do SRD (<code>adult-red-dragon.png</code>).
+Antes de aplicar, a janela mostra quem recebe cada imagem e quais arquivos não acharam ficha.
+Se o monstro só existe na Biblioteca SRD, ele vira uma ficha sua, já com a imagem.</p>
+<p>Para uma ficha só: abra a ficha (ou o editor) e <strong>cole a imagem com Ctrl+V</strong>. Os tokens daquela ficha
+que já estão no mapa trocam de imagem junto.</p>
+<h3 id="mestre-token-de-npc-no-mapa">Token de NPC no mapa</h3>
+<p>Clique no token: o painel mostra a ficha (<strong>📜 Ficha</strong>), os ataques com botões de rolar, PV com
+<strong>Dano/Cura</strong>, tamanho, a ficha vinculada (dá para vincular um token antigo a uma ficha), ocultar e remover.
+Para rolar sem os jogadores verem, marque <strong>Rolar oculto</strong> na ficha (ou <em>Rolagem oculta</em> na aba Dados).</p>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="mestre-durante-o-jogo"><span class="chap-n" aria-hidden="true">Capítulo V</span>Durante o jogo</h2>
+<ul>
+<li><strong>Sinalizar</strong>: dois cliques no mapa mostram um círculo para todos.</li>
+<li><strong>Rolagem oculta</strong>: na aba Dados, marque "Rolagem oculta". Só você vê o resultado.</li>
+<li><strong>Pop-up das rolagens</strong>: toda rolagem aparece num cartão ao lado do painel, para todos. Desligue em <em>Dados → Rolagens na tela</em> se incomodar.</li>
+<li><strong>Fichas</strong>: na aba Ficha, a fileira de retratos no topo troca de personagem. Tudo salva sozinho ("✓ Salvo").</li>
+</ul>
+<h3 id="mestre-iniciativa">Iniciativa</h3>
+<ol>
+<li>Peça aos jogadores para clicarem em <strong>Rolar minha iniciativa</strong>.</li>
+<li>Clique em <strong>+ Todos os tokens da cena</strong>: rola para quem ainda não está na lista (monstros ocultos ficam ocultos).</li>
+<li><strong>⚔ Começar combate</strong>, depois <strong>Próximo ▶</strong> a cada turno. O jogador da vez também pode passar o turno.</li>
+<li>O valor de cada um pode ser editado direto na lista. <strong>Encerrar</strong> limpa tudo.</li>
+</ol>
+<h3 id="mestre-segredos">Segredos</h3>
+<p>Para memórias, pistas, cartas, mapas do tesouro…</p>
+<ol>
+<li>Aba <strong>✉ Segredos</strong> → título, texto, imagem → <strong>Criar segredo</strong>.</li>
+<li>Escolha quem vê: <strong>Todos</strong> ou jogadores específicos. Quem recebe é avisado na hora; os outros não veem nada.</li>
+</ol>
+<p><strong>Fila de memórias</strong>: para ir devolvendo as memórias de um personagem aos poucos. Ao criar o segredo,
+escolha <em>Pôr na fila de memórias de…</em> (ou, num segredo já criado, <em>Pôr na fila de…</em>). Na caixa
+<strong>🧠 Fila de memórias</strong> você reordena com ↑ ↓ e, na hora certa, clica <strong>Liberar próxima</strong>: só a primeira
+da fila chega ao jogador. <strong>Liberar a próxima de cada um</strong> faz isso para todos de uma vez.</p>
+<h3 id="mestre-calendário-e-descansos">Calendário e descansos</h3>
+<p>A data do mundo fica no topo da tela, para todos. Clique nela para:</p>
+<p><img src="img/calendario.png" alt="Janela do calendário do mundo com os botões de passar o tempo e de descanso" width="640" class="wide" loading="lazy"></p>
+<ul>
+<li><strong>Passar o tempo</strong>: +10 min, +1 hora, +8 horas, +1 dia, +1 semana (dez dias, como em Faerûn).</li>
+<li><strong>☕ Descanso curto</strong>: passa 1 hora e avisa no chat; cada jogador gasta os próprios dados de vida na ficha.</li>
+<li><strong>🌙 Descanso longo</strong>: passa 8 horas e, para os personagens dos jogadores, enche os PV, recupera os
+  espaços de magia, devolve metade dos dados de vida e zera os testes contra a morte.</li>
+<li><strong>Definir a data</strong> e trocar os <strong>meses do mundo</strong> (um por linha, <code>Nome | dias</code>, <code>| festival</code> para dias
+  festivos). O padrão é o calendário de Harptos, com a era <em>DR</em>.</li>
+</ul>
+<h3 id="mestre-fichas-em-janela">Fichas em janela</h3>
+<p><strong>⧉ Em janela</strong> na ficha, <strong>⧉</strong> na lista de personagens (aba Mestre), <strong>📜 Ficha</strong> no painel do token ou
+<strong>dois cliques no token</strong> abrem a ficha numa janela por cima do mapa. Dá para abrir a de cada jogador e
+deixar lado a lado; a posição e o tamanho de cada uma ficam lembrados. No celular, abre a aba Ficha.</p>
+<p><img src="img/ficha-janela.png" alt="Ficha do Tharkino numa janela flutuante por cima do mapa" width="640" class="wide" loading="lazy"></p>
+<h3 id="mestre-dar-itens">Dar itens</h3>
+<p>Na ficha de um jogador (aba Ficha ou janela), em <em>Equipamento e mochila</em>, <strong>🎁 Dar item</strong> cria o item direto na
+mochila dele, e ele recebe um aviso. Use os modelos para armas e armaduras comuns e escreva a descrição dos
+itens mágicos. Para usar a arte do item, escolha a imagem ou cole com Ctrl+V; até lá, ele aparece com o desenho do tipo.</p>
+<h3 id="mestre-pv-ao-subir-de-nível">PV ao subir de nível</h3>
+<p>Em <strong>Mestre → Jogadores e personagens → Regras da mesa</strong>, escolha se os PV de cada nível são escolhidos pelo jogador
+(rolar ou média), sempre rolados ou sempre a média. Vale para as fichas com <strong>❤ PV pela classe</strong> ligado; as rolagens
+são feitas pela mesa e aparecem no chat. Na ficha de um personagem você pode <strong>↶ desfazer</strong> a última rolagem ou
+<strong>desligar</strong> o cálculo.</p>
+<h3 id="mestre-aspecto-mágico-e-anel">Aspecto mágico e anel</h3>
+<p>Na ficha de cada personagem, logo abaixo dos PV, há dois quadros que só você edita: <strong>Aspecto mágico</strong>
+(com o mês de nascimento) e <strong>Anel</strong>. Escreva o efeito do nível 1 ao 4 e o efeito a partir do nível 5.
+O jogador vê o quadro na ficha dele; quando o personagem chega ao nível 5, a versão melhorada aparece no lugar.</p>
+<h3 id="mestre-diário-do-grupo">Diário do grupo</h3>
+<p>Todos escrevem. Cada jogador edita e apaga só o que escreveu; o mestre pode apagar qualquer entrada.</p>
+<h3 id="mestre-compêndio">Compêndio</h3>
+<p>Material de consulta: regras da casa, tabelas de XP, preços, locais, NPCs, anotações da aventura.</p>
+<ul>
+<li>Cada página tem <strong>título, categoria, texto e imagens</strong> (tire um print de uma tabela e adicione como imagem).</li>
+<li><strong>🔒 Só eu (mestre)</strong>: suas anotações. <strong>👁 Todos os jogadores</strong>: material liberado.</li>
+<li>Dá para liberar ou esconder uma página depois, com um botão.</li>
+</ul>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="mestre-backups"><span class="chap-n" aria-hidden="true">Capítulo VI</span>Backups</h2>
+<p class="dropcap"><strong>Mestre → Sessão e backups</strong></p>
+<p>A campanha salva sozinha a cada alteração. Além disso, a mesa guarda <strong>pontos de backup</strong>:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Quando</th>
+<th>Nome na lista</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ao abrir a mesa</td>
+<td>Abertura da mesa</td>
+</tr>
+<tr>
+<td>A cada 30 min de jogo (se algo mudou)</td>
+<td>Automático</td>
+</tr>
+<tr>
+<td>Ao fechar a janela preta</td>
+<td>Mesa fechada</td>
+</tr>
+<tr>
+<td>Ao clicar em "Salvar e encerrar a sessão"</td>
+<td>Fim da sessão</td>
+</tr>
+<tr>
+<td>Quando você pede</td>
+<td>o nome que você deu</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li><strong>Restaurar</strong> volta a campanha para aquele ponto. Antes, a mesa guarda o estado atual como
+  "Antes de restaurar", então dá para desfazer.</li>
+<li><strong>📂 Carregar arquivo…</strong> abre um backup baixado (por exemplo, de outro computador).</li>
+<li><strong>⬇ Baixar</strong> salva a campanha num arquivo <code>.json</code>.</li>
+</ul>
+<p>Ficam guardados os 30 backups automáticos mais recentes e os 100 mais recentes dos outros tipos.</p><h1 class="part" id="jogador">Guia do jogador</h1><div class="part-lede"><blockquote>
+<p>Este guia é o resumo. O passo a passo de cada ferramenta está no <strong><a href="manual.html">manual</a></strong>, e o que mudou em cada versão, em <strong><a href="novidades.html">novidades</a></strong>.</p>
+</blockquote>
+<p>Bem-vindo à mesa! Não precisa instalar nada: só o navegador (PC ou celular).</p></div><h2 id="jogador-entrar"><span class="chap-n" aria-hidden="true">Capítulo I</span>Entrar</h2>
+<ol>
+<li>Abra o link que o mestre mandou. <strong>Ele muda a cada sessão.</strong></li>
+<li>Escolha seu nome na lista e digite a senha que o mestre te passou.</li>
+</ol>
+<p>No celular, as abas ficam embaixo: <strong>Mapa · Ficha · Dados · Iniciativa · Segredos · Diário · Compêndio</strong>.</p>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="jogador-mapa"><span class="chap-n" aria-hidden="true">Capítulo II</span>Mapa</h2>
+<ul>
+<li><strong>Arraste o seu token</strong> para andar. Ele encaixa na grade. Você só move o seu.</li>
+<li><strong>Arrastar o fundo</strong> move a visão; <strong>rodinha do mouse</strong> ou <strong>pinça com dois dedos</strong> dá zoom; ⤢ ajusta à tela.</li>
+<li><strong>Dois cliques ou dois toques</strong> no mapa mostram um sinal para todo mundo ("olha aqui!").</li>
+<li>Na Ficha, <strong>◎ Achar no mapa</strong> centraliza no seu token.</li>
+<li><strong>Ferramentas</strong> (barra à esquerda do mapa): 📏 régua para medir a distância (cada quadrado é 1,5 m;
+  todos veem enquanto você mede), ◯ ◣ ━ ▢ áreas de magia (esfera, cone, linha, cubo), ✏ desenho livre,
+  ➜ seta, 🧽 borracha para apagar os seus desenhos. Volte para ✋ para andar com o token.</li>
+<li>Partes escuras do mapa são <strong>névoa</strong>: o mestre revela quando vocês chegarem lá.</li>
+<li>O <strong>relógio no topo</strong> mostra o dia e a hora no mundo do jogo.</li>
+</ul>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="jogador-ficha"><span class="chap-n" aria-hidden="true">Capítulo III</span>Ficha</h2>
+<p class="dropcap"><img src="img/ficha-v5.png" alt="Ficha do jogador com condições, aspecto mágico e pontos de vida" width="640" class="wide" loading="lazy"></p>
+<ul>
+<li>Tudo salva sozinho: aparece <strong>"✓ Salvo"</strong> ao lado de "Achar no mapa".</li>
+<li><strong>Clique no retrato</strong> para trocar a foto. Ela também vira o seu token.</li>
+<li><strong>Clique num número</strong> para rolar: atributos, resistências (o quadradinho marca proficiência),
+  perícias (○ sem proficiência, ● proficiente, ◉ especialista), iniciativa, ataques e dano.</li>
+<li><strong>Vantagem/Desvantagem</strong>: escolha antes de clicar. Vale para a próxima rolagem de d20 e depois volta ao normal.</li>
+<li><strong>PV</strong>: digite um número e clique em <strong>Dano</strong> (gasta primeiro os PV temporários) ou <strong>Cura</strong>.</li>
+<li><strong>Imagem nova</strong>: além de clicar no retrato, dá para copiar uma imagem e apertar <strong>Ctrl+V</strong> com a ficha aberta.</li>
+<li><strong>Condições</strong>: toque nos ícones (envenenado, caído, amedrontado…). Elas aparecem no seu token.
+  Marque <strong>✨ Inspiração</strong> quando o mestre der.</li>
+<li><strong>Testes contra a morte</strong>: com 0 PV aparece o quadro ☠. <strong>🎲 Rolar</strong> faz o teste e marca sozinho
+  (20 natural volta com 1 PV; 1 natural conta duas falhas).</li>
+<li><strong>Espaços de magia</strong> (dentro de <em>Magias</em>): crie os espaços de cada círculo com <strong>+</strong> e toque nas bolinhas para gastar.</li>
+<li><strong>Dados de vida</strong>: no descanso curto, <strong>☕ Gastar 1</strong> rola o dado + CON e cura na hora.
+  No descanso longo o mestre recupera PV, espaços e metade dos dados de vida de todo mundo.</li>
+<li><strong>Classe e PV</strong>: escolha a classe da lista e o dado de vida se ajusta. Com <strong>❤ PV pela classe</strong> ligado, cada vez que
+  você sobe de nível aparece um quadro para rolar o dado (ou pegar a média) e ganhar os PV. Detalhes no
+  <a href="manual.html#classe-dado-de-vida-e-pv-por-nível">manual</a>.</li>
+<li><strong>Multiclasse</strong>: <strong>＋ Multiclasse</strong> (abaixo do nome) abre a lista de classes; o nível total, os PV, os dados de vida e
+  a sugestão de espaços de magia seguem as regras. Veja o <a href="manual.html#multiclasse">manual</a>.</li>
+<li><strong>XP e moedas</strong>: em <em>Experiência e moedas</em>. Quando o XP passar do próximo nível, aparece um aviso.</li>
+<li><strong>Aspecto mágico e anel</strong>: se o mestre tiver definido, aparecem embaixo dos PV.</li>
+<li><strong>⧉ Em janela</strong> (ao lado de "Achar no mapa") abre a ficha numa janela por cima do mapa, que dá para
+  arrastar pelo título e redimensionar pelo canto. Dois cliques no seu token fazem o mesmo.</li>
+</ul>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="jogador-equipamento-e-mochila"><span class="chap-n" aria-hidden="true">Capítulo IV</span>Equipamento e mochila</h2>
+<p class="dropcap"><img src="img/equipamento.png" alt="Boneco de equipamento com espada, adaga, cota de malha e anel, e a mochila embaixo" width="360" class="wide" loading="lazy"></p>
+<ul>
+<li><strong>+ Item</strong> cria um item. Comece por um <strong>modelo</strong> (as armas e armaduras do Livro do Jogador) ou preencha
+  à mão: tipo, raridade, peso, dano, CA… A imagem é um desenho do tipo do item; troque pela arte que quiser
+  em <strong>Imagem…</strong> ou colando com <strong>Ctrl+V</strong>.</li>
+<li><strong>Toque num item</strong> para equipar, guardar, sintonizar, editar, separar um de uma pilha ou <strong>passar para</strong>
+  outro personagem. No computador, também dá para <strong>arrastar</strong> entre a mochila e os espaços do boneco.</li>
+<li><strong>Duas mãos</strong>: a arma ocupa as duas mãos (a esquerda fica bloqueada). Arma <strong>versátil</strong>, como a espada longa,
+  pode ser usada com uma ou duas mãos.</li>
+<li><strong>Sintonia</strong>: no máximo 3 itens sintonizados. Item que exige sintonia só dá o bônus mágico sintonizado.</li>
+<li><strong>CA automática</strong>: com armadura, escudo ou um item que dá CA equipado, a CA da ficha se calcula sozinha
+  (fica dourada). Se a sua classe calcula diferente (bárbaro, monge…), desmarque "automática" e digite.</li>
+<li><strong>Ataques</strong>: as armas equipadas aparecem em <em>Ataques</em> com o bônus e o dano já calculados.</li>
+<li><strong>Carga</strong>: o peso de tudo, contra a sua capacidade (7,5 × Força, em kg).</li>
+<li><strong>O grupo</strong>: os retratos no topo da ficha abrem o equipamento dos colegas (só o que está equipado).</li>
+</ul>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="jogador-dados"><span class="chap-n" aria-hidden="true">Capítulo V</span>Dados</h2>
+<ul>
+<li>Botões rápidos: d4, d6, d8, d10, d12, d20, d100.</li>
+<li>Ou digite: <code>1d20+5</code>, <code>2d6+3</code>, <code>1d8+1d6+2</code>, <code>4d6kh3</code> (4d6 ficando com os 3 maiores).</li>
+<li>Com nome: <code>/r 1d8+3 machado</code>.</li>
+<li><strong>Rolagem secreta</strong>: só você e o mestre veem.</li>
+<li>20 natural fica verde; 1 natural, vermelho.</li>
+<li>Toda rolagem (sua, dos outros e do mestre) aparece num <strong>cartão ao lado do mapa</strong> por alguns segundos.
+  Para desligar: <em>Dados → Rolagens na tela</em>.</li>
+</ul>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="jogador-iniciativa"><span class="chap-n" aria-hidden="true">Capítulo VI</span>Iniciativa</h2>
+<p class="dropcap">Quando o mestre pedir, clique em <strong>🎲 Rolar minha iniciativa</strong>. Na sua vez aparece
+<strong>"É a sua vez!"</strong>, e você pode clicar em <strong>Terminei meu turno ➜</strong>.</p>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="jogador-segredos"><span class="chap-n" aria-hidden="true">Capítulo VII</span>Segredos</h2>
+<p class="dropcap">Coisas que <strong>só você</strong> recebeu do mestre: memórias, pistas, cartas. Os outros jogadores não veem.
+Quando chega um novo, aparece um aviso na tela.</p>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="jogador-diário-do-grupo"><span class="chap-n" aria-hidden="true">Capítulo VIII</span>Diário do grupo</h2>
+<p class="dropcap">Anotem o que aconteceu, nomes de NPCs, pistas, dívidas… Todo mundo lê. Você só edita e apaga o que você escreveu.</p>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="jogador-compêndio"><span class="chap-n" aria-hidden="true">Capítulo IX</span>Compêndio</h2>
+<p class="dropcap">Material de consulta que o mestre liberou (tabelas de XP, preços, regras da casa). Use a busca e
+toque nas imagens para ampliar.</p>
+  </main>
+</div>
+<footer class="colophon"><div class="wrap">
+  <div><a class="brand" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 29 9.5v13L16 30 3 22.5v-13z" fill="#c9a13b"/><path d="M16 7 25 22H7z" fill="#131f3e"/></svg>Tábula</a>
+    <p>Mesa virtual feita para uma campanha de D&amp;D 5e, de código aberto. Os textos deste site também estão na pasta
+    <code>docs</code> do <a href="https://github.com/LP-IQ/tabula">repositório</a>.</p></div>
+  <div><p>Monstros, magias e itens vêm do System Reference Document 5.1 da Wizards of the Coast, licença
+    <a href="https://creativecommons.org/licenses/by/4.0/legalcode">CC-BY-4.0</a>; a tradução é da Tábula. A vista 3D usa o
+    <a href="https://threejs.org">three.js</a> (MIT). A Tábula não é afiliada à Wizards of the Coast.</p></div>
+</div></footer>
+<script>
+(() => {
+  // marca no sumário o capítulo que está na tela e abre as seções dele
+  const links = new Map([...document.querySelectorAll('.toc-list > li')].map((li) => [li.dataset.id, li]));
+  const heads = [...document.querySelectorAll('.page h2[id]')];
+  let current = null;
+  const spy = () => {
+    let best = heads[0];
+    for (const h of heads) if (h.getBoundingClientRect().top < 140) best = h;
+    const li = best && links.get(best.id);
+    if (li && li !== current) {
+      current?.classList.remove('on');
+      li.classList.add('on');
+      current = li;
+      const toc = document.querySelector('.toc-scroll');
+      if (toc && matchMedia('(min-width: 961px)').matches) {
+        const r = li.getBoundingClientRect(), t = toc.getBoundingClientRect();
+        if (r.top < t.top || r.bottom > t.bottom) toc.scrollTop += r.top - t.top - 80;
+      }
+    }
+  };
+  addEventListener('scroll', spy, { passive: true });
+  spy();
+  // procurar: deixa no sumário só os capítulos com a palavra (no título ou no texto)
+  const q = document.getElementById('toc-q');
+  if (q) {
+    const text = new Map(heads.map((h) => {
+      let s = h.textContent, el = h.nextElementSibling;
+      while (el && el.tagName !== 'H2' && !el.matches('svg.fleuron')) { s += ' ' + el.textContent; el = el.nextElementSibling; }
+      return [h.id, s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()];
+    }));
+    const empty = document.getElementById('toc-empty');
+    q.addEventListener('input', () => {
+      const w = q.value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+      let shown = 0;
+      for (const [id, li] of links) {
+        const ok = !w || text.get(id)?.includes(w);
+        li.hidden = !ok;
+        shown += ok;
+      }
+      for (const p of document.querySelectorAll('.toc-part')) p.hidden = !!w;
+      empty.hidden = shown > 0;
+    });
+  }
+  // no celular, escolher um capítulo fecha o sumário
+  const box = document.querySelector('.toc');
+  if (box && matchMedia('(max-width: 960px)').matches) box.open = false;   // no celular começa fechado
+  box?.addEventListener('click', (e) => { if (e.target.closest('a') && box.open !== undefined && matchMedia('(max-width: 960px)').matches) box.open = false; });
+})();
+</script>
+</body>
+</html>

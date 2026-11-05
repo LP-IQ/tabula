@@ -2,7 +2,7 @@
 
 > Os **jogadores não instalam nada**: abrem o link no navegador, em qualquer sistema.
 > Este guia é para quem **hospeda** a mesa num computador com Linux ou macOS.
-> No Windows, veja [instalacao.md](instalacao.md).
+> No Windows, veja a [instalação no Windows](instalacao.md).
 
 A mesa é a mesma do Windows; só os atalhos mudam: no lugar dos `.bat` há os `.sh`, que rodam no terminal.
 
@@ -17,11 +17,11 @@ A mesa é a mesma do Windows; só os atalhos mudam: no lugar dos `.bat` há os `
 ## 1. Instalar (uma vez só)
 
 1. Instale o **Node.js 18 ou mais novo**:
-   - **Ubuntu, Debian, Mint, Pop!_OS**: o `apt install nodejs` costuma trazer uma versão velha.
-     Use o instalador do site: <https://nodejs.org/pt/download>, opção *Linux*, com *nvm*.
-   - **Fedora**: `sudo dnf install nodejs`
-   - **Arch, Manjaro**: `sudo pacman -S nodejs npm`
-   - **Mac**: o instalador do site <https://nodejs.org>, ou `brew install node`
+    - **Ubuntu, Debian, Mint, Pop!_OS**: o `apt install nodejs` costuma trazer uma versão velha.
+      Use o instalador do site: <https://nodejs.org/pt/download>, opção *Linux*, com *nvm*.
+    - **Fedora**: `sudo dnf install nodejs`
+    - **Arch, Manjaro**: `sudo pacman -S nodejs npm`
+    - **Mac**: o instalador do site <https://nodejs.org>, ou `brew install node`
 2. Baixe a Tábula (<https://github.com/LP-IQ/tabula/archive/refs/heads/main.zip>) e descompacte.
    Organize as pastas assim:
 

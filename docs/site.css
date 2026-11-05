@@ -1,0 +1,158 @@
+/* Tábula — página do projeto e manual.
+   Ideia: um livro iluminado. Capa de lápis-lazúli com folha de ouro; as páginas são velino escrito a tinta;
+   o vermelho (rubrica) só marca o começo dos capítulos e o que é do mestre. */
+/* fontes na própria página (licença SIL OFL, em fonts/) */
+@font-face { font-family: 'Grenze Gotisch'; src: url('fonts/grenze-gotisch-latin-400-normal.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Grenze Gotisch'; src: url('fonts/grenze-gotisch-latin-600-normal.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Alegreya'; src: url('fonts/alegreya-latin-400-normal.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Alegreya'; src: url('fonts/alegreya-latin-400-italic.woff2') format('woff2'); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Alegreya'; src: url('fonts/alegreya-latin-500-normal.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Alegreya'; src: url('fonts/alegreya-latin-700-normal.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Alegreya SC'; src: url('fonts/alegreya-sc-latin-500-normal.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+:root {
+  --lapis: #1d2f5c;
+  --lapis-deep: #131f3e;
+  --lapis-line: #34508f;
+  --vellum: #f0e3c4;
+  --vellum-shade: #e2cfa2;
+  --ink: #2b2016;
+  --ink-soft: #5b4a36;
+  --gold: #c9a13b;
+  --gold-hi: #ecd07a;
+  --rubric: #a8321f;
+  --display: 'Grenze Gotisch', 'UnifrakturCook', Georgia, serif;
+  --text: 'Alegreya', 'Iowan Old Style', Georgia, serif;
+  --sc: 'Alegreya SC', 'Alegreya', Georgia, serif;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  color: var(--vellum);
+  background: var(--lapis-deep);
+  font: 400 1.15rem/1.62 var(--text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+img { max-width: 100%; height: auto; }
+a { color: var(--gold-hi); text-underline-offset: .18em; text-decoration-thickness: 1px; }
+a:hover { color: #fff1c4; }
+:focus-visible { outline: 2px solid var(--gold-hi); outline-offset: 3px; border-radius: 2px; }
+.wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+.skip { position: absolute; left: -999px; top: 8px; background: var(--gold); color: var(--ink); padding: 6px 12px; z-index: 50; }
+.skip:focus { left: 8px; }
+
+/* ---------- capa (fundo de lápis com estrelas de ouro bem discretas) */
+.cover {
+  background:
+    radial-gradient(1px 1px at 12% 18%, #ecd07a88 50%, transparent 51%),
+    radial-gradient(1px 1px at 72% 9%, #ecd07a66 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 88% 42%, #ecd07a55 50%, transparent 51%),
+    radial-gradient(1px 1px at 33% 64%, #ecd07a55 50%, transparent 51%),
+    radial-gradient(1px 1px at 55% 30%, #ecd07a44 50%, transparent 51%),
+    radial-gradient(900px 520px at 80% 0%, #2a447f 0%, transparent 70%),
+    var(--lapis);
+}
+
+/* ---------- barra do topo */
+.bar { position: sticky; top: 0; z-index: 20; background: #131f3ef2; backdrop-filter: blur(6px); border-bottom: 1px solid #c9a13b40; }
+.bar .wrap { display: flex; align-items: center; gap: 28px; min-height: 60px; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--gold-hi); text-decoration: none; font: 400 1.75rem/1 var(--display); }
+.brand svg { width: 28px; height: 28px; }
+.bar nav { margin-left: auto; display: flex; gap: 24px; flex-wrap: wrap; }
+.bar nav a { color: #d9cba8; text-decoration: none; font-size: 1.02rem; padding: 4px 0; border-bottom: 1px solid transparent; }
+.bar nav a:hover { color: #fff; }
+.bar nav a[aria-current=page] { color: var(--gold-hi); border-bottom-color: var(--gold); }
+@media (max-width: 720px) {
+  .bar .wrap { gap: 12px; }
+  .bar nav { gap: 14px; }
+  .bar nav a { font-size: .95rem; }
+  .bar nav .wide { display: none; }
+}
+
+/* ---------- botões: folha de ouro e contorno */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px 12px; border-radius: 3px;
+  font: 700 1.05rem/1 var(--text); text-decoration: none; cursor: pointer; border: 1px solid transparent;
+}
+.btn.gold {
+  color: #2a1d08; border-color: #8a6a1c;
+  background: linear-gradient(180deg, #f3dc8c 0%, #d4ac45 45%, #b78a2a 100%);
+  box-shadow: inset 0 1px 0 #fff6cc, 0 2px 0 #6e5114;
+}
+.btn.gold:hover { color: #1a1205; background: linear-gradient(180deg, #f8e6a4 0%, #dcb650 45%, #c0932f 100%); }
+.btn.line { color: var(--gold-hi); border-color: #c9a13b99; background: transparent; }
+.btn.line:hover { background: #c9a13b1a; color: #fff1c4; }
+.page .btn.line { color: var(--rubric); border-color: #a8321f88; }
+.page .btn.line:hover { background: #a8321f12; color: #7d2213; }
+
+/* ---------- moldura dourada (as pranchas: imagens e a demonstração) */
+.gilt {
+  position: relative; padding: 10px; border-radius: 4px;
+  background: linear-gradient(135deg, #f1d684, #a57c22 30%, #ecd07a 52%, #8f6a1a 75%, #e2c36a);
+  box-shadow: 0 18px 50px #0007, 0 0 0 1px #5b430f;
+}
+.gilt > .inner { position: relative; border-radius: 2px; overflow: hidden; box-shadow: 0 0 0 2px #3b2a0b, inset 0 0 0 1px #000; background: #0e1630; }
+.gilt::before, .gilt::after {
+  content: ''; position: absolute; width: 34px; height: 34px; z-index: 2; pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'%3E%3Cpath d='M2 2h12c-2 3-7 4-9 3 1 2 0 7-3 9z' fill='%23f6e3a1' stroke='%235b430f'/%3E%3Ccircle cx='9' cy='9' r='2.6' fill='%23a8321f' stroke='%235b430f'/%3E%3C/svg%3E") no-repeat;
+}
+.gilt::before { top: -6px; left: -6px; }
+.gilt::after { bottom: -6px; right: -6px; transform: rotate(180deg); }
+.plate { margin: 0; }
+.plate figcaption { margin-top: 12px; font-style: italic; color: var(--ink-soft); font-size: 1rem; text-align: center; }
+.cover .plate figcaption { color: #c9bfa6; }
+
+/* ---------- página de velino */
+.page {
+  position: relative; color: var(--ink);
+  background:
+    radial-gradient(1200px 400px at 50% 0%, #00000014, transparent 70%),
+    radial-gradient(800px 500px at 0% 100%, #a87f3a22, transparent 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .25 0 0 0 0 .12 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E"),
+    var(--vellum);
+}
+/* borda irregular de pergaminho no alto da página */
+.page.deckle::before {
+  content: ''; position: absolute; left: 0; right: 0; top: -17px; height: 18px;
+  background: var(--vellum);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 18' preserveAspectRatio='none'%3E%3Cpath d='M0 18V9l14 3 18-6 22 5 16-7 25 8 19-4 21 6 17-8 24 7 18-3 22 5 15-6 26 6 19-5 20 4 17-7 23 8 16-4 21 5 27-6 V18z' fill='%23000'/%3E%3C/svg%3E") 0 0 / 400px 18px repeat-x;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 18' preserveAspectRatio='none'%3E%3Cpath d='M0 18V9l14 3 18-6 22 5 16-7 25 8 19-4 21 6 17-8 24 7 18-3 22 5 15-6 26 6 19-5 20 4 17-7 23 8 16-4 21 5 27-6 V18z' fill='%23000'/%3E%3C/svg%3E") 0 0 / 400px 18px repeat-x;
+}
+.page a { color: #7d2213; }
+.page a:hover { color: var(--rubric); }
+.page code { font: .92em/1 ui-monospace, 'Cascadia Mono', Consolas, monospace; background: #d9c493; padding: .1em .35em; border-radius: 3px; color: #3a2a17; }
+.page pre { background: #2b2016; color: #f0e3c4; padding: 14px 16px; border-radius: 4px; overflow-x: auto; font-size: .9rem; line-height: 1.5; }
+.page pre code { background: none; color: inherit; padding: 0; }
+
+/* ---------- títulos */
+h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.05; letter-spacing: .005em; }
+.page h2 { color: var(--ink); }
+.page h3 { font: 700 1.25rem/1.25 var(--text); color: var(--ink); margin: 1.8em 0 .4em; }
+
+/* ornamento entre capítulos: um losango de tinta com traços */
+.fleuron { display: block; width: 180px; height: 18px; margin: 56px auto; color: var(--ink-soft); }
+
+/* ---------- capitular: a primeira letra do capítulo, em rubrica */
+.dropcap::first-letter {
+  float: left; font: 400 4.1em/.82 var(--display); color: var(--rubric); padding: .06em .1em 0 0;
+  text-shadow: 1px 1px 0 #c9a13b88;
+}
+
+/* ---------- tabelas como livro-caixa */
+.page table { width: 100%; border-collapse: collapse; margin: 1.2em 0 1.6em; font-size: 1rem; }
+.page th { text-align: left; font-family: var(--sc); font-weight: 500; letter-spacing: .02em; color: var(--rubric); border-bottom: 2px solid #2b201655; padding: 6px 10px 6px 0; }
+.page td { border-bottom: 1px solid #2b201626; padding: 8px 10px 8px 0; vertical-align: top; }
+.page .table-scroll { overflow-x: auto; }
+
+/* ---------- citações de margem */
+.page blockquote { margin: 1.2em 0; padding: 10px 18px; border-left: 3px solid var(--gold); background: #e6d3a655; color: var(--ink-soft); }
+.page blockquote p { margin: .3em 0; }
+
+/* ---------- rodapé (colofão) */
+.colophon { background: var(--lapis-deep); color: #c9bfa6; border-top: 1px solid #c9a13b40; font-size: 1rem; }
+.colophon .wrap { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; padding: 44px 0 56px; }
+.colophon p { margin: 0 0 10px; max-width: 36rem; }
+.colophon .brand { font-size: 1.5rem; margin-bottom: 10px; }
+@media (max-width: 760px) { .colophon .wrap { grid-template-columns: 1fr; gap: 18px; } }

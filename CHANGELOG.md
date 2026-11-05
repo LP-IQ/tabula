@@ -1,5 +1,15 @@
 # Histórico de versões
 
+## v5.6.2 — 04/11/2026
+- **Site redesenhado como um livro de mesa**: capa azul-lápis com letras douradas, páginas de velino, molduras
+  douradas nas imagens e fontes próprias (Grenze Gotisch e Alegreya, que vêm junto: o site não depende de nada de fora).
+- **O manual agora faz parte do site**: Manual, Guias (mestre e jogador), Instalar (Windows, Linux e Mac) e Novidades
+  viraram páginas com sumário lateral, capítulo atual marcado e busca. No celular, o sumário vira uma caixa que abre
+  e fecha.
+- A capa ganhou o sumário do manual, as últimas versões e o passo a passo para começar; a demonstração do mapa
+  mostra as paredes por baixo da névoa.
+- `tools/gerar-site.py` gera as páginas a partir dos `.md` de `docs/`.
+
 ## v5.6.1 — 04/11/2026
 - **Página do projeto renovada**: demonstração da Vista 3D que dá para girar (e tocar no chão para a miniatura
   andar), números da mesa, seção da Biblioteca de magias e itens, versões antigas recolhidas e imagem de

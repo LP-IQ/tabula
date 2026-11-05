@@ -3,7 +3,8 @@
 **Mesa virtual de RPG feita para a nossa campanha.** O mestre roda a mesa no próprio computador,
 como no Foundry VTT, e os jogadores entram pelo navegador, no PC ou no celular, sem instalar nada.
 
-Página do projeto: **<https://lp-iq.github.io/tabula/>**
+Página do projeto: **<https://lp-iq.github.io/tabula/>**, com o [manual](https://lp-iq.github.io/tabula/manual.html)
+e os guias para ler no navegador.
 
 ![Mapa com régua medindo a distância, visto pelo mestre](docs/img/regua.png)
 

@@ -1,8 +1,8 @@
 # Manual das ferramentas
 
-Como usar cada parte da Tábula, do mapa à mochila. Para instalar e abrir a mesa, veja
-[instalacao.md](instalacao.md) (Windows) ou [instalacao-linux.md](instalacao-linux.md) (Linux e Mac).
-O que mudou em cada versão está em [novidades.md](novidades.md).
+Como usar cada parte da Tábula, do mapa à mochila. Para instalar e abrir a mesa, veja a
+[instalação no Windows](instalacao.md) ou a [instalação no Linux e no Mac](instalacao-linux.md).
+O que mudou em cada versão está nas [novidades](novidades.md).
 
 👑 marca o que só o **mestre** faz. O resto vale para todos (o telão só assiste).
 
@@ -130,9 +130,9 @@ como um quadrado**.
 1. Clique em **🌫** na barra. Aparece a barra da névoa no topo do mapa.
 2. Marque **Ligada**: o mapa inteiro fica coberto para os jogadores.
 3. Escolha como revelar e **arraste no mapa**:
-   - **▭ Revelar**: um retângulo (uma sala, um corredor);
-   - **◯ Revelar**: um círculo (o alcance de uma tocha, o que se vê de um ponto);
-   - **▭ Esconder**: cobre de novo um retângulo (o grupo saiu da sala e você quer escondê-la).
+    - **▭ Revelar**: um retângulo (uma sala, um corredor);
+    - **◯ Revelar**: um círculo (o alcance de uma tocha, o que se vê de um ponto);
+    - **▭ Esconder**: cobre de novo um retângulo (o grupo saiu da sala e você quer escondê-la).
 4. **↶** desfaz o último passo. **Cobrir tudo** recomeça do zero; **Revelar tudo** tira a névoa toda.
 
 - Para você a névoa é **translúcida** (você continua vendo o mapa); para os jogadores ela é **escura**.

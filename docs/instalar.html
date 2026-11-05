@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Instalar e abrir a mesa — Tábula</title>
+<meta name="description" content="Como instalar a Tábula no Windows, no Linux e no Mac, abrir a mesa e jogar online.">
+<meta property="og:title" content="Instalar e abrir a mesa — Tábula">
+<meta property="og:description" content="Como instalar a Tábula no Windows, no Linux e no Mac, abrir a mesa e jogar online.">
+<meta property="og:image" content="https://lp-iq.github.io/tabula/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2 29 9.5v13L16 30 3 22.5v-13z' fill='%23c9a13b'/%3E%3Cpath d='M16 7 25 22H7z' fill='%23131f3e'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="livro.css">
+</head>
+<body>
+<a class="skip" href="#texto">Pular para o texto</a>
+<header class="bar"><div class="wrap"><a class="brand" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 29 9.5v13L16 30 3 22.5v-13z" fill="#c9a13b"/><path d="M16 7 25 22H7z" fill="#131f3e"/></svg>Tábula</a><nav aria-label="Páginas"><a href="index.html">Início</a><a href="manual.html">Manual</a><a href="guias.html" class=wide>Guias</a><a href="instalar.html" aria-current=page>Instalar</a><a href="novidades.html">Novidades</a><a class="wide" href="https://github.com/LP-IQ/tabula">GitHub</a></nav></div></header>
+<div class="cover book-head"><div class="wrap">
+  <h1>Instalar e abrir a mesa</h1>
+  <div class="lede"><p>Só o mestre instala; os jogadores entram pelo navegador. Escolha o seu sistema: <a href="#windows">Windows</a> ou <a href="#linux">Linux e Mac</a>.</p></div>
+</div></div>
+<div class="book wrap">
+  <details class="toc" open>
+    <summary>Sumário</summary>
+    <div class="toc-scroll"><p class="toc-part"><a href="#windows">Instalação e uso no Windows</a></p>
+<ol class="toc-list"><li data-id="win-1-instalar-uma-vez-só"><a href="#win-1-instalar-uma-vez-só"><span class="toc-n">I</span><span class="toc-t">1. Instalar (uma vez só)</span></a></li><li data-id="win-2-abrir-a-mesa"><a href="#win-2-abrir-a-mesa"><span class="toc-n">II</span><span class="toc-t">2. Abrir a mesa</span></a></li><li data-id="win-3-jogar-online"><a href="#win-3-jogar-online"><span class="toc-n">III</span><span class="toc-t">3. Jogar online</span></a></li><li data-id="win-4-jogar-presencialmente"><a href="#win-4-jogar-presencialmente"><span class="toc-n">IV</span><span class="toc-t">4. Jogar presencialmente</span></a></li><li data-id="win-5-fechar-a-mesa"><a href="#win-5-fechar-a-mesa"><span class="toc-n">V</span><span class="toc-t">5. Fechar a mesa</span></a></li><li data-id="win-onde-fica-a-campanha"><a href="#win-onde-fica-a-campanha"><span class="toc-n">VI</span><span class="toc-t">Onde fica a campanha</span></a></li><li data-id="win-atualizar-para-uma-versão-nova"><a href="#win-atualizar-para-uma-versão-nova"><span class="toc-n">VII</span><span class="toc-t">Atualizar para uma versão nova</span></a></li><li data-id="win-problemas-comuns"><a href="#win-problemas-comuns"><span class="toc-n">VIII</span><span class="toc-t">Problemas comuns</span></a></li></ol>
+<p class="toc-part"><a href="#linux">Instalação e uso no Linux e no Mac</a></p>
+<ol class="toc-list"><li data-id="lin-1-instalar-uma-vez-só"><a href="#lin-1-instalar-uma-vez-só"><span class="toc-n">I</span><span class="toc-t">1. Instalar (uma vez só)</span></a></li><li data-id="lin-2-abrir-a-mesa"><a href="#lin-2-abrir-a-mesa"><span class="toc-n">II</span><span class="toc-t">2. Abrir a mesa</span></a></li><li data-id="lin-3-jogar-online"><a href="#lin-3-jogar-online"><span class="toc-n">III</span><span class="toc-t">3. Jogar online</span></a></li><li data-id="lin-4-jogar-presencialmente"><a href="#lin-4-jogar-presencialmente"><span class="toc-n">IV</span><span class="toc-t">4. Jogar presencialmente</span></a></li><li data-id="lin-5-atualizar"><a href="#lin-5-atualizar"><span class="toc-n">V</span><span class="toc-t">5. Atualizar</span></a></li><li data-id="lin-problemas-comuns"><a href="#lin-problemas-comuns"><span class="toc-n">VI</span><span class="toc-t">Problemas comuns</span></a></li></ol></div>
+  </details>
+  <main class="page deckle" id="texto">
+    <h1 class="part" id="windows">Instalação e uso no Windows</h1><div class="part-lede"><blockquote>
+<p>Usa <strong>Linux ou Mac</strong>? Veja a <a href="instalar.html#linux">instalação no Linux e no Mac</a>.</p>
+<p>Os <strong>jogadores não instalam nada</strong>: abrem o link no navegador (Chrome, Edge, Firefox ou celular).
+Este guia é para quem <strong>hospeda</strong> a mesa, ou seja, o mestre.</p>
+</blockquote></div><h2 id="win-1-instalar-uma-vez-só"><span class="chap-n" aria-hidden="true">Capítulo I</span>1. Instalar (uma vez só)</h2>
+<ol>
+<li>Instale o <strong>Node.js</strong>, versão <strong>LTS</strong>, em <a href="https://nodejs.org">https://nodejs.org</a>, com as opções padrão.</li>
+<li>Organize as pastas assim (o nome da pasta de fora pode ser qualquer um):</li>
+</ol>
+<p><code>tabula\
+   ├── campanha\      ← criada sozinha na primeira vez; é onde a campanha mora
+   ├── Tabula_v2\     ← a versão que você usa
+   └── Tabula_v1\     ← versões antigas, se quiser guardar</code></p>
+<ol start="3">
+<li>Dentro da pasta da versão, dê dois cliques em <strong><code>instalar.bat</code></strong> e espere aparecer "Pronto!".</li>
+</ol>
+<blockquote>
+<p>Se o Windows mostrar "O Windows protegeu o computador", clique em <strong>Mais informações → Executar assim mesmo</strong>.</p>
+</blockquote>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="win-2-abrir-a-mesa"><span class="chap-n" aria-hidden="true">Capítulo II</span>2. Abrir a mesa</h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Atalho</th>
+<th>Quando usar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>iniciar.bat</code></td>
+<td>Todos na mesma casa / mesmo Wi-Fi, ou só você testando</td>
+</tr>
+<tr>
+<td><code>online.bat</code></td>
+<td>Amigos jogando de outras casas</td>
+</tr>
+</tbody>
+</table></div>
+<p>A janela preta precisa ficar <strong>aberta</strong> durante o jogo. Minimizar pode; fechar encerra a mesa.</p>
+<p>Na primeira vez, a mesa pede para você criar a <strong>conta do mestre</strong> (nome e senha). <strong>Anote a senha.</strong></p>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="win-3-jogar-online"><span class="chap-n" aria-hidden="true">Capítulo III</span>3. Jogar online</h2>
+<ol>
+<li>Abra o <strong><code>online.bat</code></strong>. Na primeira vez, ele tenta instalar o <code>cloudflared</code> sozinho; se conseguir, feche a janela e abra de novo.</li>
+<li>Ele abre <strong>duas janelas</strong>: a da mesa e a do túnel.</li>
+<li>Na janela do <strong>túnel</strong>, procure uma caixinha assim:</li>
+</ol>
+<p><code>|  Your quick Tunnel has been created! Visit it at ...   |
+   |  https://palavras-aleatorias.trycloudflare.com          |</code></p>
+<ol start="4">
+<li>Mande <strong>esse link</strong> para os jogadores (selecione com o mouse e aperte Enter para copiar).</li>
+</ol>
+<blockquote>
+<p>⚠ <strong>O link muda toda vez</strong> que você abre o <code>online.bat</code>. Mande o novo a cada sessão.</p>
+<p>Antes de mandar, teste o link no celular <strong>com o Wi-Fi desligado</strong> (usando os dados móveis).</p>
+</blockquote>
+<p>Se o <code>cloudflared</code> não instalar sozinho, baixe <code>cloudflared-windows-amd64.exe</code> em
+<a href="https://github.com/cloudflare/cloudflared/releases/latest">https://github.com/cloudflare/cloudflared/releases/latest</a>, renomeie para <code>cloudflared.exe</code> e
+coloque na pasta da versão.</p>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="win-4-jogar-presencialmente"><span class="chap-n" aria-hidden="true">Capítulo IV</span>4. Jogar presencialmente</h2>
+<ul>
+<li>Abra o <strong><code>iniciar.bat</code></strong>. A janela mostra o endereço <strong>"Na mesma rede/Wi-Fi"</strong> (ex.: <code>http://192.168.15.55:3000</code>).</li>
+<li>Todos no mesmo Wi-Fi abrem esse endereço no celular.</li>
+<li>Na primeira vez, o Windows pergunta sobre o firewall: permita em <strong>redes privadas</strong>.</li>
+<li>Para uma <strong>TV</strong> mostrando só o mapa: crie um usuário do tipo <strong>Telão (só assiste)</strong> e entre com ele no navegador da TV.</li>
+</ul>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="win-5-fechar-a-mesa"><span class="chap-n" aria-hidden="true">Capítulo V</span>5. Fechar a mesa</h2>
+<p class="dropcap">Qualquer um destes salva a campanha e cria um ponto de backup:</p>
+<ul>
+<li>No navegador: <strong>Mestre → Sessão e backups → ⏻ Salvar e encerrar a sessão</strong> (avisa os jogadores na tela deles).</li>
+<li>Na janela preta: <strong>Ctrl + C</strong>, ou fechar no <strong>X</strong>.</li>
+</ul>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="win-onde-fica-a-campanha"><span class="chap-n" aria-hidden="true">Capítulo VI</span>Onde fica a campanha</h2>
+<pre><code>campanha\
+├── campaign.json          ← a campanha inteira (salva a cada alteração)
+├── campaign.backup.json   ← cópia de como estava quando a mesa abriu
+├── backups\               ← pontos de backup datados (abertura, a cada 30 min, encerramento…)
+└── uploads\               ← mapas e imagens enviadas
+</code></pre>
+<ul>
+<li>Para fazer uma cópia de segurança, copie a pasta <code>campanha</code> inteira (Google Drive, pendrive…).</li>
+<li>Para levar para outro computador, leve a pasta <code>campanha</code> junto e coloque ao lado da pasta da versão.</li>
+</ul>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="win-atualizar-para-uma-versão-nova"><span class="chap-n" aria-hidden="true">Capítulo VII</span>Atualizar para uma versão nova</h2>
+<p class="dropcap"><strong>A partir da v5</strong>, é um clique:</p>
+<ol>
+<li>Feche a mesa.</li>
+<li>Dê dois cliques em <strong><code>atualizar.bat</code></strong>, dentro da pasta da Tábula.</li>
+</ol>
+<p>Ele baixa a versão mais nova do GitHub, guarda uma cópia da versão atual em <code>Tabula_anterior</code> (ao lado),
+copia os arquivos novos por cima e roda o <code>npm install</code>. A campanha não é tocada, porque fica na pasta
+<code>campanha</code>. Quando sai uma versão nova, o mestre vê um aviso no topo da mesa.</p>
+<p>Com isso, não precisa mais de uma pasta por versão: dá para renomear a pasta para só <code>Tabula</code>.
+Se a atualização der problema, a versão anterior está em <code>Tabula_anterior</code> e abre a mesma campanha.</p>
+<p><strong>Vindo da v4.1 ou anterior</strong> (ainda sem o <code>atualizar.bat</code>): extraia a v5 <strong>ao lado</strong> das outras pastas,
+na mesma pasta onde está a <code>campanha</code>, rode <code>instalar.bat</code> e depois <code>iniciar.bat</code>. Daí em diante, use o <code>atualizar.bat</code>.</p>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="win-problemas-comuns"><span class="chap-n" aria-hidden="true">Capítulo VIII</span>Problemas comuns</h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>O que aparece</th>
+<th>O que fazer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>EADDRINUSE</code> ou "Já tem uma mesa aberta"</td>
+<td>Outra mesa está aberta. Feche a outra janela preta. Se não achar, abra o Prompt de Comando e rode <code>taskkill /IM node.exe /F</code></td>
+</tr>
+<tr>
+<td>"O Node.js não está instalado" logo depois de instalar</td>
+<td>Feche e abra o <code>.bat</code> de novo. Se continuar, reinicie o computador</td>
+</tr>
+<tr>
+<td>Esqueci a senha do mestre</td>
+<td>Feche a mesa e dê dois cliques em <strong><code>redefinir-senha.bat</code></strong>: escolha o usuário e digite a senha nova</td>
+</tr>
+<tr>
+<td>Esqueci a senha de um jogador</td>
+<td>Mestre → Jogadores e personagens → 🔑 ao lado do nome</td>
+</tr>
+<tr>
+<td>Token "não aparece" ou fica minúsculo</td>
+<td>A grade não bate com o mapa. Mestre → <strong>Cena ativa (grade)</strong> → informe <strong>Quadrados na largura</strong></td>
+</tr>
+<tr>
+<td>Jogadores não conseguem entrar pelo link</td>
+<td>Confira se as duas janelas (mesa e túnel) estão abertas e se mandou o link desta sessão</td>
+</tr>
+<tr>
+<td>Celulares no Wi-Fi não entram</td>
+<td>Permita o Node.js no firewall do Windows (redes privadas)</td>
+</tr>
+<tr>
+<td><code>atualizar.bat</code> diz que não conseguiu baixar</td>
+<td>Confira a internet. Dá para baixar à mão em <a href="https://github.com/LP-IQ/tabula/archive/refs/heads/main.zip">https://github.com/LP-IQ/tabula/archive/refs/heads/main.zip</a> e copiar por cima, menos a pasta <code>data</code></td>
+</tr>
+</tbody>
+</table></div><h1 class="part" id="linux">Instalação e uso no Linux e no Mac</h1><div class="part-lede"><blockquote>
+<p>Os <strong>jogadores não instalam nada</strong>: abrem o link no navegador, em qualquer sistema.
+Este guia é para quem <strong>hospeda</strong> a mesa num computador com Linux ou macOS.
+No Windows, veja a <a href="instalar.html#windows">instalação no Windows</a>.</p>
+</blockquote>
+<p>A mesa é a mesma do Windows; só os atalhos mudam: no lugar dos <code>.bat</code> há os <code>.sh</code>, que rodam no terminal.</p>
+<table>
+<thead>
+<tr>
+<th>Windows</th>
+<th>Linux e Mac</th>
+<th>Para quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>instalar.bat</code></td>
+<td><code>./instalar.sh</code></td>
+<td>instalar (uma vez só)</td>
+</tr>
+<tr>
+<td><code>iniciar.bat</code></td>
+<td><code>./iniciar.sh</code></td>
+<td>abrir a mesa para jogar em casa</td>
+</tr>
+<tr>
+<td><code>online.bat</code></td>
+<td><code>./online.sh</code></td>
+<td>abrir a mesa e o link para jogar pela internet</td>
+</tr>
+<tr>
+<td><code>atualizar.bat</code></td>
+<td><code>./atualizar.sh</code></td>
+<td>baixar a versão nova do GitHub</td>
+</tr>
+<tr>
+<td><code>redefinir-senha.bat</code></td>
+<td><code>./redefinir-senha.sh</code></td>
+<td>trocar a senha de alguém (com a mesa fechada)</td>
+</tr>
+</tbody>
+</table></div><h2 id="lin-1-instalar-uma-vez-só"><span class="chap-n" aria-hidden="true">Capítulo I</span>1. Instalar (uma vez só)</h2>
+<ol>
+<li>Instale o <strong>Node.js 18 ou mais novo</strong>:<ul>
+<li><strong>Ubuntu, Debian, Mint, Pop!_OS</strong>: o <code>apt install nodejs</code> costuma trazer uma versão velha.
+  Use o instalador do site: <a href="https://nodejs.org/pt/download">https://nodejs.org/pt/download</a>, opção <em>Linux</em>, com <em>nvm</em>.</li>
+<li><strong>Fedora</strong>: <code>sudo dnf install nodejs</code></li>
+<li><strong>Arch, Manjaro</strong>: <code>sudo pacman -S nodejs npm</code></li>
+<li><strong>Mac</strong>: o instalador do site <a href="https://nodejs.org">https://nodejs.org</a>, ou <code>brew install node</code></li>
+</ul>
+</li>
+<li>Baixe a Tábula (<a href="https://github.com/LP-IQ/tabula/archive/refs/heads/main.zip">https://github.com/LP-IQ/tabula/archive/refs/heads/main.zip</a>) e descompacte.
+   Organize as pastas assim:</li>
+</ol>
+<p><code>tabula/
+   ├── campanha/   ← criada sozinha na primeira vez; é onde a campanha mora
+   └── Tabula/     ← os arquivos da Tábula</code></p>
+<ol start="3">
+<li>Abra um terminal <strong>dentro da pasta da Tábula</strong> (no gerenciador de arquivos, botão direito →
+   <em>Abrir no terminal</em>) e rode:</li>
+</ol>
+<p><code>./instalar.sh</code></p>
+<p>Se aparecer <em>Permissão negada</em>, rode antes <code>chmod +x *.sh</code> (alguns descompactadores tiram a permissão
+   de execução). Também dá para rodar sem ela: <code>bash instalar.sh</code>.</p>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="lin-2-abrir-a-mesa"><span class="chap-n" aria-hidden="true">Capítulo II</span>2. Abrir a mesa</h2>
+<pre><code>./iniciar.sh
+</code></pre>
+<p>O navegador abre sozinho em <code>http://localhost:3000</code>. O terminal precisa ficar <strong>aberto</strong> durante o jogo;
+<strong>Ctrl + C</strong> fecha a mesa e salva a campanha.</p>
+<p>Na primeira vez, a mesa pede para você criar a <strong>conta do mestre</strong> (nome e senha). <strong>Anote a senha.</strong></p>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="lin-3-jogar-online"><span class="chap-n" aria-hidden="true">Capítulo III</span>3. Jogar online</h2>
+<pre><code>./online.sh
+</code></pre>
+<p>Na primeira vez, ele baixa o <code>cloudflared</code> (o programa que cria o link) para dentro da pasta da Tábula.
+Depois abre a mesa e mostra, num quadro, o endereço terminando em <strong><code>.trycloudflare.com</code></strong>: mande esse
+endereço para os jogadores. Você mesmo pode usar <code>http://localhost:3000</code>.</p>
+<p>Tudo roda num terminal só. <strong>Ctrl + C</strong> fecha o link e a mesa, salvando a campanha.
+O que a mesa escreve fica no arquivo <code>tabula.log</code>, e o do link em <code>tunel.log</code>, se precisar investigar algo.</p>
+<blockquote>
+<p>O endereço muda a cada vez que você abre o <code>online.sh</code>. Mande o novo antes de cada sessão.</p>
+</blockquote>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="lin-4-jogar-presencialmente"><span class="chap-n" aria-hidden="true">Capítulo IV</span>4. Jogar presencialmente</h2>
+<p class="dropcap">Rode <code>./iniciar.sh</code>. O terminal mostra o endereço <strong>"Na mesma rede/Wi-Fi"</strong> (algo como
+<code>http://192.168.0.12:3000</code>): os celulares na mesma rede entram por ele. Se não conseguirem,
+o firewall pode estar bloqueando a porta 3000 (no Ubuntu: <code>sudo ufw allow 3000/tcp</code>).</p>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="lin-5-atualizar"><span class="chap-n" aria-hidden="true">Capítulo V</span>5. Atualizar</h2>
+<p class="dropcap">Com a mesa fechada:</p>
+<pre><code>./atualizar.sh
+</code></pre>
+<p>Ele só atualiza se a versão do GitHub for mais nova. Antes, guarda uma cópia da versão atual em
+<code>Tabula_anterior</code> (ao lado); depois copia os arquivos novos e roda o <code>npm install</code>. A campanha não é tocada.</p>
+<svg class="fleuron" viewBox="0 0 180 18" aria-hidden="true"><path d="M0 9h70M110 9h70" stroke="currentColor"/><path d="M90 1l8 8-8 8-8-8z" fill="none" stroke="currentColor"/><circle cx="90" cy="9" r="2" fill="#a8321f"/><circle cx="76" cy="9" r="1.6" fill="currentColor"/><circle cx="104" cy="9" r="1.6" fill="currentColor"/></svg><h2 id="lin-problemas-comuns"><span class="chap-n" aria-hidden="true">Capítulo VI</span>Problemas comuns</h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>O que aparece</th>
+<th>O que fazer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Permissão negada</code> ao rodar um <code>.sh</code></td>
+<td><code>chmod +x *.sh</code> na pasta da Tábula, ou rode com <code>bash nome.sh</code></td>
+</tr>
+<tr>
+<td>"O Node.js deste computador é antigo"</td>
+<td>Instale o Node.js pelo site (nvm), não pelo <code>apt</code></td>
+</tr>
+<tr>
+<td>"Já existe uma mesa aberta"</td>
+<td>Feche o outro terminal da mesa. Se não achar: <code>pkill -f "node server.js"</code></td>
+</tr>
+<tr>
+<td>Esqueci a senha do mestre</td>
+<td>Feche a mesa e rode <code>./redefinir-senha.sh</code></td>
+</tr>
+<tr>
+<td>O link do <code>online.sh</code> não aparece</td>
+<td>Confira a internet; o motivo fica no fim do <code>tunel.log</code></td>
+</tr>
+<tr>
+<td>O navegador não abriu sozinho</td>
+<td>Abra você mesmo <code>http://localhost:3000</code></td>
+</tr>
+</tbody>
+</table></div>
+  </main>
+</div>
+<footer class="colophon"><div class="wrap">
+  <div><a class="brand" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 29 9.5v13L16 30 3 22.5v-13z" fill="#c9a13b"/><path d="M16 7 25 22H7z" fill="#131f3e"/></svg>Tábula</a>
+    <p>Mesa virtual feita para uma campanha de D&amp;D 5e, de código aberto. Os textos deste site também estão na pasta
+    <code>docs</code> do <a href="https://github.com/LP-IQ/tabula">repositório</a>.</p></div>
+  <div><p>Monstros, magias e itens vêm do System Reference Document 5.1 da Wizards of the Coast, licença
+    <a href="https://creativecommons.org/licenses/by/4.0/legalcode">CC-BY-4.0</a>; a tradução é da Tábula. A vista 3D usa o
+    <a href="https://threejs.org">three.js</a> (MIT). A Tábula não é afiliada à Wizards of the Coast.</p></div>
+</div></footer>
+<script>
+(() => {
+  // marca no sumário o capítulo que está na tela e abre as seções dele
+  const links = new Map([...document.querySelectorAll('.toc-list > li')].map((li) => [li.dataset.id, li]));
+  const heads = [...document.querySelectorAll('.page h2[id]')];
+  let current = null;
+  const spy = () => {
+    let best = heads[0];
+    for (const h of heads) if (h.getBoundingClientRect().top < 140) best = h;
+    const li = best && links.get(best.id);
+    if (li && li !== current) {
+      current?.classList.remove('on');
+      li.classList.add('on');
+      current = li;
+      const toc = document.querySelector('.toc-scroll');
+      if (toc && matchMedia('(min-width: 961px)').matches) {
+        const r = li.getBoundingClientRect(), t = toc.getBoundingClientRect();
+        if (r.top < t.top || r.bottom > t.bottom) toc.scrollTop += r.top - t.top - 80;
+      }
+    }
+  };
+  addEventListener('scroll', spy, { passive: true });
+  spy();
+  // procurar: deixa no sumário só os capítulos com a palavra (no título ou no texto)
+  const q = document.getElementById('toc-q');
+  if (q) {
+    const text = new Map(heads.map((h) => {
+      let s = h.textContent, el = h.nextElementSibling;
+      while (el && el.tagName !== 'H2' && !el.matches('svg.fleuron')) { s += ' ' + el.textContent; el = el.nextElementSibling; }
+      return [h.id, s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()];
+    }));
+    const empty = document.getElementById('toc-empty');
+    q.addEventListener('input', () => {
+      const w = q.value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+      let shown = 0;
+      for (const [id, li] of links) {
+        const ok = !w || text.get(id)?.includes(w);
+        li.hidden = !ok;
+        shown += ok;
+      }
+      for (const p of document.querySelectorAll('.toc-part')) p.hidden = !!w;
+      empty.hidden = shown > 0;
+    });
+  }
+  // no celular, escolher um capítulo fecha o sumário
+  const box = document.querySelector('.toc');
+  if (box && matchMedia('(max-width: 960px)').matches) box.open = false;   // no celular começa fechado
+  box?.addEventListener('click', (e) => { if (e.target.closest('a') && box.open !== undefined && matchMedia('(max-width: 960px)').matches) box.open = false; });
+})();
+</script>
+</body>
+</html>
