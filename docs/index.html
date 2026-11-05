@@ -4,10 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tábula — mesa virtual de D&amp;D</title>
-<meta name="description" content="Mesa virtual feita para uma campanha de D&D 5e: mapa com névoa, tokens, fichas, dados e bestiário. Roda no computador do mestre; os jogadores entram pelo navegador.">
+<meta name="description" content="Mesa virtual feita para uma campanha de D&D 5e: mapa com névoa e vista 3D, fichas, dados, magias, itens e bestiário em português. Roda no computador do mestre; os jogadores entram pelo navegador.">
 <meta property="og:title" content="Tábula — mesa virtual de D&amp;D">
-<meta property="og:description" content="Mapa, tokens, fichas e dados para jogar D&D 5e online ou na mesma sala.">
-<meta property="og:image" content="https://lp-iq.github.io/tabula/img/regua.png">
+<meta property="og:description" content="Mapa com névoa e miniaturas em 3D, fichas, dados, magias e itens em português para jogar D&D 5e online ou na mesma sala.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lp-iq.github.io/tabula/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://lp-iq.github.io/tabula/img/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2 29 9.5v13L16 30 3 22.5v-13z' fill='%23d4a94e'/%3E%3Cpath d='M16 7 25 22H7z' fill='%232b1e17'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -205,7 +210,55 @@ footer p { max-width: 40rem; margin: 0 0 8px; }
   .top nav .gh, .top nav .guide, .top nav .whats { display: none; }
   .board-frame { padding: 8px; }
 }
+
+/* ---------- números */
+.facts { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; margin: -40px auto 72px; border-block: 1px solid #ffffff12; }
+.facts div { padding: 18px 18px 16px; border-left: 1px solid #ffffff12; }
+.facts div:first-child { border-left: 0; padding-left: 0; }
+.facts b { display: block; font: 400 2.2rem/1 var(--display); color: var(--gold); }
+.facts span { color: var(--bone-dim); font-size: .98rem; }
+
+/* ---------- vista 3D */
+.three { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 56px; align-items: center; }
+.stage { position: relative; aspect-ratio: 4 / 3; border-radius: 10px; overflow: hidden; border: 1px solid #ffffff14;
+  background: #120d0a url('img/vista-3d.png') center / cover no-repeat; touch-action: none; }
+.stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; outline: none; }
+.stage canvas:active { cursor: grabbing; }
+.stage .stage-tip { position: absolute; left: 12px; bottom: 12px; margin: 0; max-width: calc(100% - 24px); pointer-events: none; font-size: .9rem; color: var(--bone);
+  background: #120d0acc; padding: 5px 12px; border-radius: 999px; transition: opacity .6s; }
+.stage.static .stage-tip { display: none; }
+.three ul { list-style: none; padding: 0; margin: 18px 0 0; }
+.three li { padding: 9px 0; border-top: 1px solid #ffffff12; color: var(--bone-dim); line-height: 1.45; }
+.three li b { color: var(--bone); }
+.three p { color: var(--bone-dim); max-width: var(--measure); }
+.kicker { font-size: .85rem; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); margin: 0 0 10px; }
+
+/* ---------- biblioteca */
+.lib-shots { display: grid; grid-template-columns: 1.15fr 1fr; gap: 18px; align-items: start; }
+.lib-shots img { border-radius: 6px; border: 1px solid #ffffff14; }
+.lib-shots img:last-child { margin-top: 56px; }
+.older { margin-top: 8px; }
+.older summary { cursor: pointer; color: var(--gold); font-size: 1rem; list-style: none; padding: 6px 0 18px 240px; }
+.older summary::-webkit-details-marker { display: none; }
+.older summary::before { content: '＋ '; }
+.older[open] summary::before { content: '− '; }
+@media (max-width: 980px) {
+  .three { grid-template-columns: 1fr; gap: 32px; }
+  .facts { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: -24px; }
+  .facts div:nth-child(4) { border-left: 0; padding-left: 0; }
+  .facts div:nth-child(n+4) { border-top: 1px solid #ffffff12; }
+}
+@media (max-width: 700px) { .older summary { padding-left: 26px; } }
+@media (max-width: 560px) {
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .facts div { border-left: 0 !important; padding-left: 0 !important; border-top: 1px solid #ffffff12; }
+  .facts div:nth-child(odd) { padding-right: 12px; }
+  .facts b { font-size: 1.8rem; }
+  .lib-shots { grid-template-columns: 1fr; }
+  .lib-shots img:last-child { margin-top: 0; }
+}
 </style>
+<script type="importmap">{ "imports": { "three": "./vendor/three/three.module.min.js", "three/addons/": "./vendor/three/addons/" } }</script>
 </head>
 <body>
 <header class="wrap top">
@@ -215,6 +268,7 @@ footer p { max-width: 40rem; margin: 0 0 8px; }
   </a>
   <nav aria-label="Principal">
     <a class="whats" href="#recursos">O que tem</a>
+    <a class="whats" href="#tres-d">3D</a>
     <a href="#novidades">Novidades</a>
     <a href="#instalar">Instalar</a>
     <a class="guide" href="https://github.com/LP-IQ/tabula/blob/main/docs/ferramentas.md">Manual</a>
@@ -226,12 +280,12 @@ footer p { max-width: 40rem; margin: 0 0 8px; }
   <div class="wrap hero">
     <div>
       <h1>A mesa da campanha, aberta no navegador.</h1>
-      <p class="lead">Mapa com névoa, tokens, fichas e dados para jogar D&amp;D&nbsp;5e online ou na mesma sala. A Tábula roda no computador do mestre e os jogadores entram por um link, do PC ou do celular.</p>
+      <p class="lead">Mapa com névoa e miniaturas em 3D, fichas que fazem as contas, dados, magias e itens em português para jogar D&amp;D&nbsp;5e online ou na mesma sala. A Tábula roda no computador do mestre e os jogadores entram por um link, do PC ou do celular.</p>
       <div class="ctas">
         <a class="btn gold" href="https://github.com/LP-IQ/tabula/archive/refs/heads/main.zip">Baixar a Tábula</a>
         <a class="btn line" href="#instalar">Como instalar</a>
       </div>
-      <p class="small">Grátis e de código aberto. Roda no Windows, no Linux e no Mac, com o Node.js.</p>
+      <p class="small">Grátis e de código aberto. Roda no Windows, no Linux e no Mac, com o Node.js, e funciona sem internet na mesma rede.</p>
     </div>
 
     <div>
@@ -255,7 +309,34 @@ footer p { max-width: 40rem; margin: 0 0 8px; }
     </div>
   </div>
 
-  <section class="band" id="recursos">
+  <div class="wrap facts" aria-label="Em números">
+    <div><b>319</b><span>magias traduzidas, filtradas pela classe</span></div>
+    <div><b>237</b><span>itens do Livro do Jogador, prontos para a mochila</span></div>
+    <div><b>334</b><span>monstros do SRD no bestiário</span></div>
+    <div><b>3D</b><span>miniaturas em cima do mapa</span></div>
+    <div><b>0</b><span>contas, assinaturas ou anúncios</span></div>
+  </div>
+
+  <section class="band" id="tres-d">
+    <div class="wrap three">
+      <div class="stage" id="stage" aria-label="Demonstração 3D: um tabuleiro com a miniatura do Tharkino e dois goblins. Arraste para girar, toque no chão para ele andar.">
+        <p class="stage-tip" id="stage-tip">Arraste para girar · toque num quadrado e o Tharkino anda até lá</p>
+      </div>
+      <div>
+        <p class="kicker">Novo na versão 5.6</p>
+        <h2>O mapa vira tabuleiro</h2>
+        <p>Um botão e a cena aparece em três dimensões: o mapa é o chão, cada token é uma miniatura com luz e sombra, e a câmera gira, aproxima e olha de cima. A névoa de guerra continua cobrindo o que ninguém viu.</p>
+        <ul>
+          <li><b>Modelos 3D (.glb)</b> para personagens, NPCs e monstros, com animação de andar.</li>
+          <li><b>Sem modelo?</b> O token vira uma miniatura de papelão em pé, com a imagem dele.</li>
+          <li><b>Cada um escolhe</b>: a TV da sala em 3D, o mestre no 2D, o celular como preferir.</li>
+          <li><b>Na hora do combate</b>: anel dourado no turno, miniatura que tomba com 0 PV.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="recursos">
     <div class="wrap">
       <h2>O que tem na mesa</h2>
       <p class="intro">Feita para uma campanha de verdade e crescendo a cada sessão. O mestre vê tudo; cada jogador mexe só no próprio personagem.</p>
@@ -276,7 +357,8 @@ footer p { max-width: 40rem; margin: 0 0 8px; }
           <ul>
             <li><b>Equipamento no corpo</b> <span>armas nas mãos, armadura, anéis e mochila; CA e ataques se calculam sozinhos.</span></li>
             <li><b>Rolagens com um toque</b> <span>em atributos, perícias e ataques, com vantagem e desvantagem.</span></li>
-            <li><b>Espaços de magia e dados de vida</b> <span>gastos e recuperados nos descansos.</span></li>
+            <li><b>Classe, multiclasse e PV por nível</b> <span>com o dado de vida certo, rolado ou pela média.</span></li>
+            <li><b>Magias da ficha</b> <span>por círculo, com espaços sugeridos pela tabela e as preparadas marcadas.</span></li>
             <li><b>Condições, inspiração e testes contra a morte</b> <span>marcados na própria ficha.</span></li>
             <li><b>Numa janela por cima do mapa</b> <span>com dois cliques no token, para não perder o combate de vista.</span></li>
           </ul>
@@ -291,6 +373,20 @@ footer p { max-width: 40rem; margin: 0 0 8px; }
             <li><b>Backups automáticos</b> <span>e um botão para salvar e encerrar a sessão.</span></li>
           </ul>
         </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="biblioteca">
+    <div class="wrap duo">
+      <div class="lib-shots">
+        <img src="img/biblioteca-magias.png" alt="Aba de magias do compêndio, filtrada pelo que o personagem conjura" loading="lazy">
+        <img src="img/ficha-magias.png" alt="Magias na ficha, separadas por círculo, com a marca de preparada" loading="lazy">
+      </div>
+      <div>
+        <h2>Magias e itens em português</h2>
+        <p>O compêndio traz as 319 magias e o equipamento do SRD, com os nomes do Livro do Jogador e as medidas em metros e quilos. A lista de magias já vem filtrada pelo que o personagem consegue conjurar, multiclasse incluída, e cada magia vai para a ficha com um toque.</p>
+        <p>Espadas, armaduras e pacotes de aventureiro entram na mochila prontos para o ataque e a CA. Os itens mágicos ficam só com o mestre, para entregar na hora certa. A lore do seu mundo fica nas páginas do mestre, ao lado.</p>
       </div>
     </div>
   </section>
@@ -345,6 +441,10 @@ footer p { max-width: 40rem; margin: 0 0 8px; }
             <p>Escolher a classe já define o dado de vida. A cada nível novo, a ficha oferece rolar o dado ou pegar a média, soma a Constituição e atualiza os PV sozinha; a rolagem sai no chat para todos. O mestre decide a regra da mesa.</p>
           </div>
         </li>
+        </ol>
+      <details class="older">
+        <summary>Versões anteriores</summary>
+        <ol class="releases">
         <li class="rel">
           <div class="rel-tag"><b>v5.2</b><span>1 de novembro de 2026</span></div>
           <div class="rel-body">
@@ -366,7 +466,8 @@ footer p { max-width: 40rem; margin: 0 0 8px; }
             <p>Névoa de guerra, régua ao vivo e áreas de magia; condições nos tokens; espaços de magia, dados de vida, XP e moedas; calendário do mundo com descansos; e a fila de memórias para devolver o passado dos personagens aos poucos.</p>
           </div>
         </li>
-      </ol>
+        </ol>
+      </details>
       <div class="after-steps">
         <a class="btn line" href="https://github.com/LP-IQ/tabula/blob/main/docs/novidades.md">Todas as novidades</a>
         <a class="btn line" href="https://github.com/LP-IQ/tabula/blob/main/docs/ferramentas.md">Manual das ferramentas</a>
@@ -402,7 +503,7 @@ footer p { max-width: 40rem; margin: 0 0 8px; }
       <p><a href="https://github.com/LP-IQ/tabula/blob/main/docs/ferramentas.md">Manual das ferramentas</a> e <a href="https://github.com/LP-IQ/tabula/blob/main/docs/novidades.md">novidades</a>. Guias: <a href="https://github.com/LP-IQ/tabula/blob/main/docs/guia-do-mestre.md">do mestre</a>, <a href="https://github.com/LP-IQ/tabula/blob/main/docs/guia-do-jogador.md">do jogador</a> e <a href="https://github.com/LP-IQ/tabula/blob/main/docs/desenvolvimento.md">para quem quer mexer no código</a>. O que mudou em cada versão está no <a href="https://github.com/LP-IQ/tabula/blob/main/CHANGELOG.md">histórico</a>.</p>
     </div>
     <div>
-      <p>Os monstros vêm do System Reference Document 5.1 da Wizards of the Coast, licença <a href="https://creativecommons.org/licenses/by/4.0/legalcode">CC-BY-4.0</a>. A Tábula não é afiliada à Wizards of the Coast.</p>
+      <p>Monstros, magias e itens vêm do System Reference Document 5.1 da Wizards of the Coast, licença <a href="https://creativecommons.org/licenses/by/4.0/legalcode">CC-BY-4.0</a>; a tradução é da Tábula. A vista 3D usa o <a href="https://threejs.org">three.js</a> (MIT). A Tábula não é afiliada à Wizards of the Coast.</p>
     </div>
   </div>
 </footer>
@@ -520,6 +621,193 @@ footer p { max-width: 40rem; margin: 0 0 8px; }
   size();
   reveal();
 })();
+</script>
+
+<script type="module">
+// Demonstração da Vista 3D: o mesmo tabuleiro da abertura, com a miniatura de exemplo da Tábula.
+// Só carrega quando a seção aparece na tela; sem WebGL, fica a foto.
+const stage = document.getElementById('stage');
+const tip = document.getElementById('stage-tip');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { io.disconnect(); boot().catch(() => stage.classList.add('static')); } }, { rootMargin: '200px' });
+io.observe(stage);
+
+async function boot() {
+  const THREE = await import('three');
+  const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
+  const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
+  const COLS = 12, ROWS = 8;
+  const walls = [[5, 0, 1, 4], [5, 5, 5, 1], [0, 5, 2, 1]];
+  const blocked = (x, y) => x < 0 || y < 0 || x >= COLS || y >= ROWS || walls.some(([wx, wy, ww, wh]) => x >= wx && x < wx + ww && y >= wy && y < wy + wh);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  stage.prepend(renderer.domElement);
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color('#120d0a');
+  const camera = new THREE.PerspectiveCamera(38, 4 / 3, 0.1, 200);
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.target.set(COLS / 2, 0, ROWS / 2);
+  camera.position.set(COLS / 2 + 1.5, 8.4, ROWS / 2 + 9.4);
+  controls.enableDamping = true;
+  controls.enableZoom = false;   // a rodinha continua rolando a página
+  controls.enablePan = false;
+  controls.maxPolarAngle = 1.32;
+  controls.minPolarAngle = 0.35;
+  controls.autoRotate = !reduce;
+  controls.autoRotateSpeed = 0.6;
+  controls.addEventListener('start', () => { controls.autoRotate = false; tip.style.opacity = 0; });
+
+  scene.add(new THREE.HemisphereLight(0xfff4e0, 0x3a2a20, 2.1));
+  const sun = new THREE.DirectionalLight(0xfff0d8, 2.4);
+  sun.position.set(COLS / 2 - 4, 14, ROWS / 2 + 6);
+  sun.target.position.set(COLS / 2, 0, ROWS / 2);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(1024, 1024);
+  Object.assign(sun.shadow.camera, { left: -12, right: 12, top: 12, bottom: -12, near: 1, far: 40 });
+  sun.shadow.camera.updateProjectionMatrix();
+  sun.shadow.bias = -0.0006;
+  sun.shadow.normalBias = 0.02;
+  scene.add(sun, sun.target);
+
+  // chão: pergaminho com grade, tapete e paredes pintadas (como um mapa de verdade)
+  const S = 64, cv = document.createElement('canvas');
+  cv.width = COLS * S; cv.height = ROWS * S;
+  const g = cv.getContext('2d');
+  g.fillStyle = '#d9c49b'; g.fillRect(0, 0, cv.width, cv.height);
+  for (let i = 0; i < 900; i++) { g.fillStyle = `rgba(90,60,30,${Math.random() * 0.06})`; g.fillRect(Math.random() * cv.width, Math.random() * cv.height, 3, 3); }
+  g.fillStyle = '#a8352e'; g.beginPath(); g.ellipse(8.75 * S, 1.75 * S, 1.3 * S, 1.15 * S, 0, 0, Math.PI * 2); g.fill();
+  g.strokeStyle = '#d4a94e'; g.lineWidth = 4; g.stroke();
+  g.fillStyle = '#3a2a1f';
+  for (const [x, y, w, h] of walls) g.fillRect(x * S, y * S, w * S, h * S);
+  g.strokeStyle = 'rgba(42,28,19,.35)'; g.lineWidth = 2;
+  g.beginPath();
+  for (let x = 0; x <= COLS; x++) { g.moveTo(x * S, 0); g.lineTo(x * S, cv.height); }
+  for (let y = 0; y <= ROWS; y++) { g.moveTo(0, y * S); g.lineTo(cv.width, y * S); }
+  g.stroke();
+  const tex = new THREE.CanvasTexture(cv);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(COLS, ROWS), new THREE.MeshBasicMaterial({ map: tex, toneMapped: false }));
+  ground.rotation.x = -Math.PI / 2; ground.position.set(COLS / 2, 0, ROWS / 2);
+  const shadow = new THREE.Mesh(new THREE.PlaneGeometry(COLS, ROWS), new THREE.ShadowMaterial({ opacity: 0.35 }));
+  shadow.rotation.x = -Math.PI / 2; shadow.position.set(COLS / 2, 0.004, ROWS / 2); shadow.receiveShadow = true;
+  const board = new THREE.Mesh(new THREE.BoxGeometry(COLS + 0.5, 0.25, ROWS + 0.5), new THREE.MeshStandardMaterial({ color: '#36261d', roughness: 0.9 }));
+  board.position.set(COLS / 2, -0.135, ROWS / 2);   // topo um pouco abaixo do mapa (sem "briga" de profundidade)
+  scene.add(ground, shadow, board);
+
+  const base = (color) => {
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(0.44, 0.47, 0.08, 40), new THREE.MeshStandardMaterial({ color, roughness: 0.5, metalness: 0.15 }));
+    m.position.y = 0.04; m.castShadow = true; return m;
+  };
+  // goblins: miniaturas de papelão
+  const goblins = [];
+  for (const [x, y, label] of [[9, 2, 'G1'], [10, 6, 'G2']]) {
+    const c = document.createElement('canvas'); c.width = 128; c.height = 180;
+    const k = c.getContext('2d');
+    k.fillStyle = '#a8352e'; k.beginPath(); k.roundRect(0, 0, 128, 180, 16); k.fill();
+    k.fillStyle = '#1d1410'; k.beginPath(); k.roundRect(7, 7, 114, 166, 11); k.fill();
+    k.fillStyle = '#efe3cc'; k.font = '700 50px Alegreya Sans, sans-serif'; k.textAlign = 'center'; k.textBaseline = 'middle'; k.fillText(label, 64, 92);
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+    const card = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.98), new THREE.MeshBasicMaterial({ map: t, side: THREE.DoubleSide, toneMapped: false }));
+    card.position.y = 0.58; card.castShadow = true;
+    const grp = new THREE.Group(); grp.add(base('#a8352e'), card);
+    grp.position.set(x + 0.5, 0, y + 0.5);
+    scene.add(grp); goblins.push(card);
+  }
+  // Tharkino: a miniatura de exemplo (.glb) com animações
+  const hero = new THREE.Group(); hero.add(base('#d4a94e'));
+  hero.position.set(1.5, 0, 2.5);
+  scene.add(hero);
+  const gltf = await new GLTFLoader().loadAsync('modelos/miniatura-exemplo.glb');
+  const fig = gltf.scene;
+  fig.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+  const box = new THREE.Box3().setFromObject(fig);
+  const k = 1.3 / (box.max.y - box.min.y);
+  fig.scale.setScalar(k); fig.position.y = 0.08 - box.min.y * k;
+  hero.add(fig);
+  const mixer = new THREE.AnimationMixer(fig);
+  const idle = mixer.clipAction(gltf.animations.find((a) => a.name === 'idle'));
+  const walk = mixer.clipAction(gltf.animations.find((a) => a.name === 'walk'));
+  idle.play();
+  let walking = false;
+
+  // tocar num quadrado: o Tharkino anda até lá (desviando das paredes, quadrado por quadrado)
+  let path = [];
+  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+  let down = null;
+  renderer.domElement.addEventListener('pointerdown', (e) => { down = { x: e.clientX, y: e.clientY }; });
+  renderer.domElement.addEventListener('pointerup', (e) => {
+    if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 6) return;
+    const r = renderer.domElement.getBoundingClientRect();
+    ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    ray.setFromCamera(ndc, camera);
+    const p = new THREE.Vector3();
+    if (!ray.ray.intersectPlane(plane, p)) return;
+    const gx = Math.floor(p.x), gy = Math.floor(p.z);
+    if (blocked(gx, gy)) return;
+    path = route(Math.floor(hero.position.x), Math.floor(hero.position.z), gx, gy);
+    tip.style.opacity = 0;
+  });
+  function route(sx, sy, tx, ty) {           // busca em largura na grade
+    const prev = new Map([[sx + ',' + sy, null]]), q = [[sx, sy]];
+    while (q.length) {
+      const [x, y] = q.shift();
+      if (x === tx && y === ty) break;
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]]) {
+        const nx = x + dx, ny = y + dy, key = nx + ',' + ny;
+        if (prev.has(key) || blocked(nx, ny) || (dx && dy && (blocked(x + dx, y) || blocked(x, y + dy)))) continue;
+        prev.set(key, [x, y]); q.push([nx, ny]);
+      }
+    }
+    const out = []; let cur = [tx, ty];
+    if (!prev.has(tx + ',' + ty)) return [];
+    while (cur && !(cur[0] === sx && cur[1] === sy)) { out.unshift(cur); cur = prev.get(cur[0] + ',' + cur[1]); }
+    return out;
+  }
+
+  const resize = () => {
+    const r = stage.getBoundingClientRect();
+    renderer.setSize(r.width, r.height, false);
+    camera.aspect = r.width / r.height; camera.updateProjectionMatrix();
+  };
+  new ResizeObserver(resize).observe(stage);
+  resize();
+  let visible = true;
+  new IntersectionObserver((es) => { visible = es.some((e) => e.isIntersecting); }).observe(stage);
+  const clock = new THREE.Clock();
+  const tmp = new THREE.Vector3();
+  renderer.setAnimationLoop(() => {
+    const dt = Math.min(0.05, clock.getDelta());
+    if (!visible) return;
+    if (path.length) {
+      const [x, y] = path[0];
+      tmp.set(x + 0.5 - hero.position.x, 0, y + 0.5 - hero.position.z);
+      const d = tmp.length();
+      if (d < 0.04) { hero.position.set(x + 0.5, 0, y + 0.5); path.shift(); }
+      else {
+        hero.position.addScaledVector(tmp.normalize(), Math.min(d, dt * 3.2));
+        const want = Math.atan2(tmp.x, tmp.z);
+        let a = want - hero.rotation.y; a = Math.atan2(Math.sin(a), Math.cos(a));
+        hero.rotation.y += a * Math.min(1, dt * 12);
+      }
+    }
+    const moving = path.length > 0;
+    if (moving !== walking) {
+      walking = moving;
+      const [from, to] = moving ? [idle, walk] : [walk, idle];
+      to.reset().play(); from.crossFadeTo(to, 0.2, false);
+    }
+    for (const c of goblins) c.parent.rotation.y = Math.atan2(camera.position.x - c.parent.position.x, camera.position.z - c.parent.position.z);
+    mixer.update(dt);
+    controls.update();
+    renderer.render(scene, camera);
+  });
+  stage.style.backgroundImage = 'none';
+}
 </script>
 </body>
 </html>

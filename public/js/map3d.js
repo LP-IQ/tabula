@@ -184,10 +184,10 @@ export function start(host, api) {
   // mesa: tabuleiro escuro sob o mapa
   const table = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshStandardMaterial({ color: '#17141d', roughness: 1 }));
   table.rotation.x = -Math.PI / 2;
-  table.position.y = -0.2;
+  table.position.y = -0.25;
   table.receiveShadow = true;
   const board = new THREE.Mesh(new THREE.BoxGeometry(1, 0.2, 1), new THREE.MeshStandardMaterial({ color: '#2a2230', roughness: 0.9 }));
-  board.position.y = -0.1;
+  board.position.y = -0.112;
   board.castShadow = false;
   board.receiveShadow = true;
   const groundMat = new THREE.MeshBasicMaterial({ color: '#ffffff', toneMapped: false });
@@ -298,10 +298,10 @@ export function start(host, api) {
       m.position.z = H / 2;
     }
     board.scale.set(W + 0.5, 1, H + 0.5);
-    board.position.set(W / 2, -0.1, H / 2);
+    board.position.set(W / 2, -0.112, H / 2);   // o topo fica logo abaixo do mapa
     const big = Math.max(W, H);
     table.scale.set(big * 6, big * 6, 1);
-    table.position.set(W / 2, -0.2, H / 2);
+    table.position.set(W / 2, -0.25, H / 2);
     sun.position.set(W / 2 - big * 0.35, big * 0.9, H / 2 + big * 0.55);
     sun.target.position.set(W / 2, 0, H / 2);
     const sc2 = sun.shadow.camera;

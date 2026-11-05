@@ -1,5 +1,11 @@
 # Histórico de versões
 
+## v5.6.1 — 04/11/2026
+- **Página do projeto renovada**: demonstração da Vista 3D que dá para girar (e tocar no chão para a miniatura
+  andar), números da mesa, seção da Biblioteca de magias e itens, versões antigas recolhidas e imagem de
+  compartilhamento nova (aparece quando o link é colado no WhatsApp/Discord).
+- Vista 3D: a borda do tabuleiro não pisca mais sob o mapa em algumas placas de vídeo.
+
 ## v5.6 — 04/11/2026
 **Novidades**
 - **Vista 3D do mapa** (botão **3D**, cada um liga para si): o mapa vira o chão de um tabuleiro e os tokens viram
