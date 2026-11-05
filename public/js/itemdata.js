@@ -49,7 +49,7 @@ export const RARITIES = [
 export const RARITY_LABEL = Object.fromEntries(RARITIES.map(([k, l]) => [k, l]));
 export const RARITY_COLOR = Object.fromEntries(RARITIES.map(([k, , c]) => [k, c]));
 
-export const DAMAGE_TYPES = ['cortante', 'perfurante', 'concussão', 'ácido', 'elétrico', 'fogo', 'frio', 'força',
+export const DAMAGE_TYPES = ['cortante', 'perfurante', 'concussão', 'ácido', 'elétrico', 'fogo', 'frio', 'energia',
   'necrótico', 'psíquico', 'radiante', 'trovejante', 'veneno'];
 export const ARMOR_TYPES = [['leve', 'Leve (+ DES)'], ['media', 'Média (+ DES, máx. 2)'], ['pesada', 'Pesada (sem DES)']];
 export const MAX_ATTUNED = 3;

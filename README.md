@@ -24,7 +24,7 @@ Página do projeto: **<https://lp-iq.github.io/tabula/>**
 | ✉ **Segredos** | Textos e imagens que o mestre libera só para um jogador (ou alguns, ou todos), e uma **fila de memórias** para liberar uma por vez |
 | 🕰 **Calendário** | Data e hora do mundo no topo (Harptos por padrão, editável), descanso curto e longo para o grupo |
 | 📖 **Diário** | Todo o grupo escreve; cada um edita o que é seu |
-| 📚 **Compêndio** | Páginas de consulta do mestre (tabelas de XP, preços, locais), só dele ou visíveis a todos |
+| 📚 **Compêndio** | Páginas de consulta do mestre (tabelas de XP, preços, locais, lore), só dele ou visíveis a todos, e a **Biblioteca**: as 319 magias e os itens do SRD em português, filtrados pelo que o personagem conjura, que vão para a ficha e a mochila com um toque (itens mágicos só o mestre vê) |
 | 🐉 **Bestiário** | Fichas de NPCs e monstros com ataques roláveis, 334 monstros do SRD prontos, **ajuste de ND**, medidor de dificuldade do encontro e imagens em lote |
 | 💾 **Backups** | Salva a cada alteração, guarda pontos de backup e restaura com um clique |
 | ⬆ **Atualizar** | `atualizar.bat` (ou `./atualizar.sh`) baixa a versão nova do GitHub sem mexer na campanha; o mestre é avisado quando sai uma |
@@ -71,8 +71,9 @@ então atualizar (ou ter várias versões lado a lado) nunca mexe nela. Veja
 
 ## Licenças
 
-Código sob licença MIT. A biblioteca de monstros (`public/data/srd-monstros.json`) inclui material do
+Código sob licença MIT. A biblioteca de monstros, magias e itens (`public/data/srd-*.json`) inclui material do
 *System Reference Document 5.1* ("SRD 5.1") da Wizards of the Coast LLC, disponível em
 <https://dnd.wizards.com/resources/systems-reference-document>, licenciado sob
 [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/legalcode).
 Dados estruturados do projeto [5e-bits/5e-database](https://github.com/5e-bits/5e-database) (MIT).
+A tradução das magias e do equipamento para o português é da Tábula e segue a mesma licença CC-BY-4.0.

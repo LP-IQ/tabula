@@ -8,6 +8,33 @@ A campanha não é tocada. Quando sai uma versão nova, o mestre vê um aviso no
 
 ---
 
+## v5.5 — Biblioteca: magias e itens (01/11/2026)
+
+<img src="img/biblioteca-magias.png" alt="Aba Magias do compêndio mostrando as magias que o personagem conjura" width="340" align="right">
+
+**O compêndio virou biblioteca.** Além das páginas do mestre, o **📚 Compêndio** ganhou duas abas com o conteúdo aberto
+do D&D 5e (o SRD), em português:
+
+- **✨ Magias** — as 319 magias do SRD, com os nomes do Livro do Jogador. Com o personagem escolhido, a lista mostra
+  **só o que ele pode conjurar**, pelas classes e níveis da ficha — multiclasse incluída. Toque na magia para ver o
+  cartão e **＋ Adicionar à ficha**: ela aparece em *Magias*, separada por círculo, com a marca de **preparada**.
+- **🎒 Itens** — armas, armaduras, equipamento, ferramentas, pacotes e montarias, com preço e peso. **＋ Pôr na
+  mochila** cria o item pronto: a espada já ataca com o dano certo, a armadura já entra na CA.
+- **✨ Itens mágicos** — só o mestre vê. Escolha o item, a base (para *Arma +1*, *Língua flamejante*…) e **🎁 Dar a…**.
+
+A lore do seu mundo continua na aba **📄 Páginas**, que é do mestre.
+
+**Experimente:**
+1. Abra **📚 Compêndio → ✨ Magias**: a lista já vem filtrada pelas classes da sua ficha.
+2. Toque numa magia e clique **＋ Adicionar à ficha**; depois veja em **Ficha → Magias**.
+3. Em **🎒 Itens → Pacotes**, ponha um *Pacote de explorador* na mochila.
+
+<br clear="right">
+
+Veja no manual: [Biblioteca: magias e itens](ferramentas.md#biblioteca-magias-e-itens) · [Magias da ficha](ferramentas.md#magias-da-ficha)
+
+---
+
 ## v5.4 — Multiclasse (01/11/2026)
 
 <img src="img/multiclasse.png" alt="Lista de classes: Paladino 2 e Mago 1" width="340" align="right">

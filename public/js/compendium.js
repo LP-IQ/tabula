@@ -2,6 +2,7 @@
 // Só o mestre escreve. Cada página é "só mestre" (anotações da aventura) ou "todos".
 import { app, emit } from './core.js';
 import { $, h, chooseAndUpload, openImage, setKids, isEditingIn } from './util.js';
+import { spellBrowser, itemBrowser, LIB_SOURCE } from './library.js';
 
 const pane = $('#pane-compendium');
 let built = false;
@@ -10,6 +11,9 @@ let listEl, chipsEl, searchEl, form, catList;
 let lastKey = '';
 let filterCat = '';
 const openIds = new Set();
+// abas: páginas do mestre · magias do SRD · itens do SRD
+let tab = (() => { try { return localStorage.getItem('tabula.comp.tab') || 'pages'; } catch { return 'pages'; } })();
+let wraps = null;
 
 function buildForm() {
   const title = h('input', { placeholder: 'Título — ex.: Tabela de XP, Preços em Neverwinter', 'aria-label': 'Título', maxlength: '120' });
@@ -126,6 +130,20 @@ function renderList(state) {
     shown.map(pageView));
 }
 
+function showTab(k) {
+  tab = ['pages', 'spells', 'items'].includes(k) ? k : 'pages';
+  try { localStorage.setItem('tabula.comp.tab', tab); } catch { /* sem armazenamento */ }
+  for (const [key, el] of Object.entries(wraps)) el.hidden = key !== tab;
+  for (const b of pane.querySelectorAll('.comp-tabs .seg-btn')) {
+    b.classList.toggle('on', b.dataset.tab === tab);
+    b.setAttribute('aria-selected', String(b.dataset.tab === tab));
+  }
+  for (const el of pane.querySelectorAll('[data-only]')) el.hidden = el.dataset.only === 'pages' ? tab !== 'pages' : tab === 'pages';
+  // os navegadores da Biblioteca só carregam os dados quando a aba é aberta pela primeira vez
+  if (tab === 'spells' && !wraps.spells.firstChild) wraps.spells.append(spellBrowser());
+  if (tab === 'items' && !wraps.items.firstChild) wraps.items.append(itemBrowser());
+}
+
 export function renderCompendium(state) {
   if (!built || builtAsGM !== app.isGM) {
     built = true;
@@ -136,14 +154,22 @@ export function renderCompendium(state) {
     listEl = h('div', { class: 'stack' });
     catList = h('datalist', { id: 'comp-cats' });
     if (app.isGM) buildForm();
+    wraps = {
+      pages: h('div', { class: 'stack' }, app.isGM ? form.el : null, catList, searchEl, chipsEl, listEl),
+      spells: h('div', { class: 'stack' }),
+      items: h('div', { class: 'stack' }),
+    };
+    const seg = h('div', { class: 'seg wide comp-tabs', role: 'tablist' },
+      [['pages', '📄 Páginas'], ['spells', '✨ Magias'], ['items', '🎒 Itens']].map(([k, label]) => h('button', {
+        class: 'seg-btn', role: 'tab', dataset: { tab: k }, onclick: () => showTab(k),
+      }, label)));
     setKids(pane,
       h('div', { class: 'pane-title' }, h('h2', {}, 'Compêndio'),
-        app.isGM ? h('span', { class: 'muted small' }, '🔒 só você · 👁 todos') : null),
-      app.isGM ? form.el : null,
-      catList,
-      searchEl,
-      chipsEl,
-      listEl);
+        app.isGM ? h('span', { class: 'muted small', dataset: { only: 'pages' } }, '🔒 só você · 👁 todos') : null),
+      seg,
+      wraps.pages, wraps.spells, wraps.items,
+      h('p', { class: 'muted small lib-source', dataset: { only: 'lib' } }, LIB_SOURCE));
+    showTab(tab);
   }
   const key = JSON.stringify(state.compendium);
   if (key === lastKey || isEditingIn(listEl)) return;

@@ -101,6 +101,8 @@ function characterDefaults() {
     hpAuto: false, hpRolls: [], hpBonus: 0,
     // v5.4: multiclasse — [{ id, name, level, die }]; a primeira é a do 1º nível
     classes: [], hdUsedBy: {},
+    // v5.5: magias escolhidas na Biblioteca do compêndio
+    spellbook: [],
   };
 }
 

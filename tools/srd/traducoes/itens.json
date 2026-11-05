@@ -1,0 +1,1129 @@
+{
+"_": "Nomes (Livro do Jogador e Livro do Mestre em português) e descrições curtas, traduzidas do SRD 5.1. Equipamento: índice do SRD → [nome] ou [nome, descrição]. Itens mágicos: índice → nome.",
+"equipamento": {
+"club": [
+"Porrete"
+],
+"dagger": [
+"Adaga"
+],
+"greatclub": [
+"Clava grande"
+],
+"handaxe": [
+"Machadinha"
+],
+"javelin": [
+"Azagaia"
+],
+"light-hammer": [
+"Martelo leve"
+],
+"mace": [
+"Maça"
+],
+"quarterstaff": [
+"Bordão"
+],
+"sickle": [
+"Foice curta"
+],
+"spear": [
+"Lança"
+],
+"crossbow-light": [
+"Besta leve"
+],
+"dart": [
+"Dardo"
+],
+"shortbow": [
+"Arco curto"
+],
+"sling": [
+"Funda"
+],
+"battleaxe": [
+"Machado de batalha"
+],
+"flail": [
+"Mangual"
+],
+"glaive": [
+"Glaive"
+],
+"greataxe": [
+"Machado grande"
+],
+"greatsword": [
+"Espada grande"
+],
+"halberd": [
+"Alabarda"
+],
+"lance": [
+"Lança de montaria",
+"Você tem desvantagem quando usa a lança de montaria para atacar um alvo a até 1,5 metro de você. Ela também exige as duas mãos quando você não está montado."
+],
+"longsword": [
+"Espada longa"
+],
+"maul": [
+"Malho"
+],
+"morningstar": [
+"Maça estrela"
+],
+"pike": [
+"Pique"
+],
+"rapier": [
+"Rapieira"
+],
+"scimitar": [
+"Cimitarra"
+],
+"shortsword": [
+"Espada curta"
+],
+"trident": [
+"Tridente"
+],
+"war-pick": [
+"Picareta de guerra"
+],
+"warhammer": [
+"Martelo de guerra"
+],
+"whip": [
+"Chicote"
+],
+"blowgun": [
+"Zarabatana"
+],
+"crossbow-hand": [
+"Besta de mão"
+],
+"crossbow-heavy": [
+"Besta pesada"
+],
+"longbow": [
+"Arco longo"
+],
+"net": [
+"Rede",
+"Uma criatura Grande ou menor atingida pela rede fica impedida até ser libertada. A rede não afeta criaturas sem forma nem criaturas Enormes ou maiores. Uma criatura pode usar sua ação para fazer um teste de Força CD 10 e libertar a si mesma ou outra criatura ao seu alcance. Causar 5 de dano cortante à rede (CA 10) também liberta a criatura sem feri-la e destrói a rede. Quando você usa uma ação, ação bônus ou reação para atacar com a rede, só pode fazer um ataque, não importa quantos ataques normalmente faria."
+],
+"padded-armor": [
+"Acolchoada"
+],
+"leather-armor": [
+"Couro"
+],
+"studded-leather-armor": [
+"Couro batido"
+],
+"hide-armor": [
+"Gibão de peles"
+],
+"chain-shirt": [
+"Camisão de malha"
+],
+"scale-mail": [
+"Brunea"
+],
+"breastplate": [
+"Peitoral"
+],
+"half-plate-armor": [
+"Meia-armadura"
+],
+"ring-mail": [
+"Cota de anéis"
+],
+"chain-mail": [
+"Cota de malha"
+],
+"splint-armor": [
+"Cota de talas"
+],
+"plate-armor": [
+"Placas"
+],
+"shield": [
+"Escudo"
+],
+"abacus": [
+"Ábaco"
+],
+"acid-vial": [
+"Ácido (vidro)",
+"Com uma ação, você pode jogar o conteúdo deste vidro numa criatura a até 1,5 metro ou arremessá-lo a até 6 metros, quebrando-o no impacto. Nos dois casos, faça um ataque à distância contra uma criatura ou objeto, tratando o ácido como arma improvisada. Se acertar, o alvo sofre 2d6 de dano de ácido."
+],
+"alchemists-fire-flask": [
+"Fogo alquímico (frasco)",
+"Este líquido pegajoso pega fogo em contato com o ar. Com uma ação, você pode arremessar o frasco a até 6 metros, quebrando-o no impacto. Faça um ataque à distância contra uma criatura ou objeto, tratando o fogo alquímico como arma improvisada. Se acertar, o alvo sofre 1d4 de dano de fogo no início de cada turno dele. A criatura pode acabar com o dano usando sua ação para fazer um teste de Destreza CD 10 e apagar as chamas."
+],
+"alms-box": [
+"Caixa de esmolas"
+],
+"arrow": [
+"Flechas"
+],
+"block-of-incense": [
+"Bloco de incenso"
+],
+"blowgun-needle": [
+"Agulhas de zarabatana"
+],
+"censer": [
+"Incensário"
+],
+"crossbow-bolt": [
+"Virotes"
+],
+"sling-bullet": [
+"Balas de funda"
+],
+"amulet": [
+"Símbolo sagrado (amuleto)"
+],
+"antitoxin-vial": [
+"Antídoto (vidro)",
+"Quem beber o líquido deste vidro tem vantagem em testes de resistência contra veneno por 1 hora. Não beneficia mortos-vivos nem constructos."
+],
+"crystal": [
+"Foco arcano (cristal)"
+],
+"orb": [
+"Foco arcano (orbe)"
+],
+"rod": [
+"Foco arcano (bastão)"
+],
+"staff": [
+"Foco arcano (cajado)"
+],
+"wand": [
+"Foco arcano (varinha)"
+],
+"backpack": [
+"Mochila"
+],
+"ball-bearings-bag-of-1000": [
+"Esferas de metal (sacola com 1.000)",
+"Com uma ação, você pode espalhar as esferas para cobrir uma área plana e quadrada de 3 metros de lado. Uma criatura que atravesse a área deve ser bem-sucedida num teste de resistência de Destreza CD 10 ou cai no chão. Quem atravessa a área com metade do deslocamento não precisa fazer o teste."
+],
+"barrel": [
+"Barril"
+],
+"basket": [
+"Cesto"
+],
+"bedroll": [
+"Saco de dormir"
+],
+"bell": [
+"Sino"
+],
+"blanket": [
+"Cobertor de inverno"
+],
+"block-and-tackle": [
+"Roldana e polia",
+"Um conjunto de polias com um cabo e um gancho; permite erguer até quatro vezes o peso que você normalmente levantaria."
+],
+"book": [
+"Livro",
+"Um livro pode conter poesia, relatos históricos, informações sobre um campo de conhecimento, diagramas de engenhocas gnômicas ou praticamente qualquer coisa que se possa escrever ou desenhar. Um livro de magias é um grimório."
+],
+"bottle-glass": [
+"Garrafa de vidro"
+],
+"bucket": [
+"Balde"
+],
+"caltrops": [
+"Estrepes (bolsa com 20)",
+"Com uma ação, você pode espalhar uma bolsa de estrepes numa área quadrada de 1,5 metro de lado. Qualquer criatura que entre na área deve ser bem-sucedida num teste de resistência de Destreza CD 15 ou para de se mover neste turno e sofre 1 de dano perfurante. Esse dano reduz o deslocamento de caminhada da criatura em 3 metros até ela recuperar pelo menos 1 ponto de vida. Quem atravessa a área com metade do deslocamento não precisa fazer o teste."
+],
+"candle": [
+"Vela",
+"Por 1 hora, a vela emite luz plena num raio de 1,5 metro e penumbra por mais 1,5 metro."
+],
+"case-crossbow-bolt": [
+"Porta-virotes",
+"Estojo de madeira que guarda até vinte virotes."
+],
+"case-map-or-scroll": [
+"Porta-mapas ou pergaminhos",
+"Estojo cilíndrico de couro que guarda até dez folhas de papel ou cinco de pergaminho enroladas."
+],
+"chain-10-feet": [
+"Corrente (3 metros)",
+"A corrente tem 10 pontos de vida e pode ser arrebentada com um teste de Força CD 20."
+],
+"chalk-1-piece": [
+"Giz (1 peça)"
+],
+"chest": [
+"Baú"
+],
+"clothes-common": [
+"Roupas comuns"
+],
+"clothes-costume": [
+"Roupas de entretenimento (fantasia)"
+],
+"clothes-fine": [
+"Roupas finas"
+],
+"clothes-travelers": [
+"Roupas de viajante"
+],
+"component-pouch": [
+"Bolsa de componentes",
+"Pequena bolsa de couro à prova d'água, presa ao cinto, com compartimentos para todos os componentes materiais e outros itens especiais de que você precisa para conjurar magias, exceto os componentes que têm custo específico (indicado na descrição da magia)."
+],
+"crowbar": [
+"Pé de cabra",
+"Usar um pé de cabra dá vantagem em testes de Força em que a alavanca possa ser aplicada."
+],
+"sprig-of-mistletoe": [
+"Foco druídico (ramo de visco)"
+],
+"totem": [
+"Foco druídico (totem)"
+],
+"wooden-staff": [
+"Foco druídico (cajado de madeira)"
+],
+"yew-wand": [
+"Foco druídico (varinha de teixo)"
+],
+"emblem": [
+"Símbolo sagrado (emblema)"
+],
+"fishing-tackle": [
+"Equipamento de pescaria",
+"Inclui uma vara de madeira, linha de seda, boias de cortiça, anzóis de aço, chumbadas, iscas e uma rede estreita."
+],
+"flask-or-tankard": [
+"Caneca"
+],
+"grappling-hook": [
+"Arpéu"
+],
+"hammer": [
+"Martelo"
+],
+"hammer-sledge": [
+"Marreta"
+],
+"holy-water-flask": [
+"Água benta (frasco)",
+"Com uma ação, você pode jogar o conteúdo deste frasco numa criatura a até 1,5 metro ou arremessá-lo a até 6 metros, quebrando-o no impacto. Nos dois casos, faça um ataque à distância contra uma criatura, tratando a água benta como arma improvisada. Se o alvo for um corruptor ou morto-vivo, sofre 2d6 de dano radiante. Um clérigo ou paladino pode criar água benta com um ritual especial de 1 hora, que consome 25 po de prata em pó e exige gastar um espaço de magia de 1º nível."
+],
+"hourglass": [
+"Ampulheta"
+],
+"hunting-trap": [
+"Armadilha de caça",
+"Quando você usa sua ação para armá-la, a armadilha forma um anel de aço serrilhado que se fecha quando uma criatura pisa na placa do centro. Ela fica presa por uma corrente pesada a um objeto imóvel. Quem pisar na placa deve ser bem-sucedido num teste de resistência de Destreza CD 13 ou sofre 1d4 de dano perfurante e para de se mover; até se soltar, o movimento fica limitado ao comprimento da corrente (geralmente 90 centímetros). Uma criatura pode usar sua ação para fazer um teste de Força CD 13 e libertar a si mesma ou outra criatura ao seu alcance; cada falha causa 1 de dano perfurante à criatura presa."
+],
+"ink-1-ounce-bottle": [
+"Tinta (vidro de 30 ml)"
+],
+"ink-pen": [
+"Caneta tinteiro"
+],
+"jug-or-pitcher": [
+"Jarra"
+],
+"climbers-kit": [
+"Kit de escalada",
+"Inclui pítons especiais, pontas para botas, luvas e um arnês. Com uma ação, você pode usar o kit para se ancorar; então não pode cair mais de 7,5 metros do ponto onde se ancorou, nem subir mais de 7,5 metros a partir dele sem desfazer a âncora."
+],
+"disguise-kit": [
+"Kit de disfarce",
+"Bolsa com cosméticos, tinta de cabelo e pequenos adereços para criar disfarces. A proficiência permite somar seu bônus de proficiência a testes de habilidade para criar um disfarce visual."
+],
+"forgery-kit": [
+"Kit de falsificação",
+"Caixa com papéis, pergaminhos, canetas, tintas, selos, cera, folhas de ouro e prata e o necessário para falsificar documentos. A proficiência permite somar seu bônus de proficiência a testes de habilidade para falsificar um documento."
+],
+"herbalism-kit": [
+"Kit de herbalismo",
+"Tesouras, almofariz e pilão, bolsas e frascos para preparar remédios e poções. A proficiência permite somar seu bônus de proficiência a testes para identificar ou aplicar ervas, e é necessária para criar antídotos e poções de cura."
+],
+"healers-kit": [
+"Kit de primeiros-socorros",
+"Bolsa de couro com bandagens, pomadas e talas. Tem dez usos. Com uma ação, você pode gastar um uso para estabilizar uma criatura com 0 pontos de vida, sem precisar de um teste de Sabedoria (Medicina)."
+],
+"mess-kit": [
+"Kit de refeição",
+"Caixa de lata com um copo e talheres simples. Fecha como um estojo; um lado serve de frigideira e o outro de prato ou tigela rasa."
+],
+"poisoners-kit": [
+"Kit de venenos",
+"Frascos, substâncias e o equipamento necessário para criar venenos. A proficiência permite somar seu bônus de proficiência a testes para criar ou usar venenos."
+],
+"ladder-10-foot": [
+"Escada (3 metros)"
+],
+"lamp": [
+"Lâmpada",
+"Emite luz plena num raio de 4,5 metros e penumbra por mais 9 metros. Acesa, queima por 6 horas com um frasco de óleo."
+],
+"lantern-bullseye": [
+"Lanterna furta-fogo",
+"Emite luz plena num cone de 18 metros e penumbra por mais 18 metros. Acesa, queima por 6 horas com um frasco de óleo."
+],
+"lantern-hooded": [
+"Lanterna coberta",
+"Emite luz plena num raio de 9 metros e penumbra por mais 9 metros. Acesa, queima por 6 horas com um frasco de óleo. Com uma ação, você pode baixar a cobertura, reduzindo a luz a penumbra num raio de 1,5 metro."
+],
+"little-bag-of-sand": [
+"Saquinho de areia"
+],
+"lock": [
+"Fechadura",
+"Vem com uma chave. Sem ela, uma criatura proficiente com ferramentas de ladrão pode abrir a fechadura com um teste de Destreza CD 15. O mestre pode oferecer fechaduras melhores por preços maiores."
+],
+"magnifying-glass": [
+"Lente de aumento",
+"Permite examinar de perto objetos pequenos e dá vantagem em testes de habilidade para avaliar ou inspecionar um item pequeno ou muito detalhado. Também serve para acender fogo: precisa de luz forte como a do sol, material inflamável e cerca de 5 minutos."
+],
+"manacles": [
+"Algemas",
+"Prendem uma criatura Pequena ou Média. Escapar exige um teste de Destreza CD 20; quebrá-las, um teste de Força CD 20. Vêm com uma chave; sem ela, uma criatura proficiente com ferramentas de ladrão pode abrir a fechadura com um teste de Destreza CD 15. As algemas têm 15 pontos de vida."
+],
+"mirror-steel": [
+"Espelho de aço"
+],
+"oil-flask": [
+"Óleo (frasco)",
+"Com uma ação, você pode jogar o óleo numa criatura a até 1,5 metro ou arremessar o frasco a até 6 metros, quebrando-o no impacto. Faça um ataque à distância, tratando o óleo como arma improvisada. Se acertar, o alvo fica coberto de óleo; se sofrer dano de fogo antes de o óleo secar (1 minuto), sofre 5 de dano de fogo adicional. Você também pode derramar o óleo no chão para cobrir um quadrado de 1,5 metro; aceso, ele queima por 2 rodadas e causa 5 de dano de fogo a quem entrar na área ou terminar o turno nela (uma vez por turno)."
+],
+"paper-one-sheet": [
+"Papel (uma folha)"
+],
+"parchment-one-sheet": [
+"Pergaminho (uma folha)"
+],
+"perfume-vial": [
+"Perfume (vidro)"
+],
+"pick-miners": [
+"Picareta de minerador"
+],
+"piton": [
+"Píton"
+],
+"poison-basic-vial": [
+"Veneno básico (vidro)",
+"Cobre uma arma cortante ou perfurante ou até três munições. Aplicar leva uma ação. Uma criatura atingida pela arma ou munição envenenada deve fazer um teste de resistência de Constituição CD 10 ou sofre 1d4 de dano de veneno. Depois de aplicado, o veneno dura 1 minuto antes de secar."
+],
+"pole-10-foot": [
+"Vara (3 metros)"
+],
+"pot-iron": [
+"Panela de ferro"
+],
+"pouch": [
+"Algibeira",
+"Bolsa de pano ou couro que guarda até 20 balas de funda ou 50 agulhas de zarabatana, entre outras coisas."
+],
+"quiver": [
+"Aljava",
+"Guarda até 20 flechas."
+],
+"ram-portable": [
+"Aríete portátil",
+"Serve para arrombar portas: você ganha +4 de bônus no teste de Força. Outra pessoa pode ajudar, dando vantagem no teste."
+],
+"rations-1-day": [
+"Rações de viagem (1 dia)",
+"Comida seca para viagens longas: carne-seca, frutas secas, biscoito duro e castanhas."
+],
+"reliquary": [
+"Símbolo sagrado (relicário)"
+],
+"robes": [
+"Robes"
+],
+"rope-hempen-50-feet": [
+"Corda de cânhamo (15 metros)",
+"A corda tem 2 pontos de vida e pode ser arrebentada com um teste de Força CD 17."
+],
+"rope-silk-50-feet": [
+"Corda de seda (15 metros)",
+"A corda tem 2 pontos de vida e pode ser arrebentada com um teste de Força CD 17."
+],
+"sack": [
+"Saco"
+],
+"scale-merchants": [
+"Balança de mercador",
+"Uma pequena balança com pratos e pesos de até 1 quilo, para medir o peso exato de objetos pequenos, como metais preciosos ou mercadorias."
+],
+"sealing-wax": [
+"Parafina"
+],
+"shovel": [
+"Pá"
+],
+"signal-whistle": [
+"Apito de advertência"
+],
+"signet-ring": [
+"Sinete"
+],
+"small-knife": [
+"Faca pequena"
+],
+"soap": [
+"Sabão"
+],
+"spellbook": [
+"Grimório",
+"Essencial para magos: um tomo encadernado em couro com 100 páginas de velino em branco, próprias para registrar magias."
+],
+"spike-iron": [
+"Pregos de ferro"
+],
+"spyglass": [
+"Luneta",
+"Objetos vistos pela luneta parecem duas vezes maiores."
+],
+"string-10-feet": [
+"Linha (3 metros)"
+],
+"tent-two-person": [
+"Tenda para duas pessoas",
+"Abrigo simples e portátil de lona, para duas pessoas."
+],
+"tinderbox": [
+"Caixa de fogo",
+"Guarda pederneira, fuzil e isca para acender fogo. Acender uma tocha (ou outra coisa com combustível exposto) leva uma ação; qualquer outro fogo leva 1 minuto."
+],
+"torch": [
+"Tocha",
+"Queima por 1 hora, emitindo luz plena num raio de 6 metros e penumbra por mais 6 metros. Um ataque corpo a corpo com uma tocha acesa que acerte causa 1 de dano de fogo."
+],
+"vestments": [
+"Vestes"
+],
+"vial": [
+"Vidro"
+],
+"waterskin": [
+"Cantil"
+],
+"whetstone": [
+"Pedra de amolar"
+],
+"burglars-pack": [
+"Pacote de assaltante"
+],
+"diplomats-pack": [
+"Pacote de diplomata"
+],
+"dungeoneers-pack": [
+"Pacote de aventureiro"
+],
+"entertainers-pack": [
+"Pacote de artista"
+],
+"explorers-pack": [
+"Pacote de explorador"
+],
+"priests-pack": [
+"Pacote de sacerdote"
+],
+"scholars-pack": [
+"Pacote de estudioso"
+],
+"alchemists-supplies": [
+"Suprimentos de alquimista"
+],
+"brewers-supplies": [
+"Suprimentos de cervejeiro"
+],
+"calligraphers-supplies": [
+"Suprimentos de caligrafia"
+],
+"carpenters-tools": [
+"Ferramentas de carpinteiro"
+],
+"cartographers-tools": [
+"Ferramentas de cartógrafo"
+],
+"cobblers-tools": [
+"Ferramentas de sapateiro"
+],
+"cooks-utensils": [
+"Utensílios de cozinheiro"
+],
+"glassblowers-tools": [
+"Ferramentas de vidreiro"
+],
+"jewelers-tools": [
+"Ferramentas de joalheiro"
+],
+"leatherworkers-tools": [
+"Ferramentas de coureiro"
+],
+"masons-tools": [
+"Ferramentas de pedreiro"
+],
+"painters-supplies": [
+"Ferramentas de pintor"
+],
+"potters-tools": [
+"Ferramentas de oleiro"
+],
+"smiths-tools": [
+"Ferramentas de ferreiro"
+],
+"tinkers-tools": [
+"Ferramentas de funileiro"
+],
+"weavers-tools": [
+"Ferramentas de tecelão"
+],
+"woodcarvers-tools": [
+"Ferramentas de entalhador"
+],
+"dice-set": [
+"Conjunto de dados"
+],
+"playing-card-set": [
+"Baralho de cartas"
+],
+"bagpipes": [
+"Gaita de foles"
+],
+"drum": [
+"Tambor"
+],
+"dulcimer": [
+"Saltério"
+],
+"flute": [
+"Flauta"
+],
+"lute": [
+"Alaúde"
+],
+"lyre": [
+"Lira"
+],
+"horn": [
+"Trombeta"
+],
+"pan-flute": [
+"Flauta de pã"
+],
+"shawm": [
+"Charamela"
+],
+"viol": [
+"Viola de arco"
+],
+"navigators-tools": [
+"Ferramentas de navegação",
+"Instrumentos de navegação marítima. A proficiência permite traçar o curso de um navio e seguir cartas náuticas, e somar seu bônus de proficiência a testes para não se perder no mar."
+],
+"thieves-tools": [
+"Ferramentas de ladrão",
+"Uma lima pequena, um jogo de gazuas, um espelhinho num cabo de metal, uma tesoura de lâminas finas e um alicate. A proficiência permite somar seu bônus de proficiência a testes para desarmar armadilhas ou abrir fechaduras."
+],
+"camel": [
+"Camelo"
+],
+"donkey": [
+"Burro"
+],
+"mule": [
+"Mula"
+],
+"elephant": [
+"Elefante"
+],
+"horse-draft": [
+"Cavalo pesado"
+],
+"horse-riding": [
+"Cavalo de montaria"
+],
+"mastiff": [
+"Mastim"
+],
+"pony": [
+"Pônei"
+],
+"warhorse": [
+"Cavalo de guerra"
+],
+"barding-padded": [
+"Armadura de montaria (acolchoada)"
+],
+"barding-leather": [
+"Armadura de montaria (couro)"
+],
+"barding-studded-leather": [
+"Armadura de montaria (couro batido)"
+],
+"barding-hide": [
+"Armadura de montaria (gibão de peles)"
+],
+"barding-chain-shirt": [
+"Armadura de montaria (camisão de malha)"
+],
+"barding-scale-mail": [
+"Armadura de montaria (brunea)"
+],
+"barding-breastplate": [
+"Armadura de montaria (peitoral)"
+],
+"barding-half-plate": [
+"Armadura de montaria (meia-armadura)"
+],
+"barding-ring-mail": [
+"Armadura de montaria (cota de anéis)"
+],
+"barding-chain-mail": [
+"Armadura de montaria (cota de malha)"
+],
+"barding-splint": [
+"Armadura de montaria (cota de talas)"
+],
+"barding-plate": [
+"Armadura de montaria (placas)"
+],
+"bit-and-bridle": [
+"Freio e rédea"
+],
+"carriage": [
+"Carruagem"
+],
+"cart": [
+"Carroça"
+],
+"chariot": [
+"Biga"
+],
+"animal-feed-1-day": [
+"Ração animal (1 dia)"
+],
+"saddle-exotic": [
+"Sela exótica",
+"Necessária para montar qualquer montaria aquática ou voadora."
+],
+"saddle-military": [
+"Sela militar",
+"Prende o cavaleiro e ajuda a se manter na sela em combate: dá vantagem em testes para continuar montado."
+],
+"saddle-pack": [
+"Sela compacta"
+],
+"saddle-riding": [
+"Sela de viagem"
+],
+"saddlebags": [
+"Alforje"
+],
+"sled": [
+"Trenó"
+],
+"stabling-1-day": [
+"Estábulo (1 dia)"
+],
+"wagon": [
+"Carroção"
+],
+"galley": [
+"Galera"
+],
+"keelboat": [
+"Barco de quilha"
+],
+"longship": [
+"Dracar"
+],
+"rowboat": [
+"Barco a remo"
+],
+"sailing-ship": [
+"Veleiro"
+],
+"warship": [
+"Navio de guerra"
+]
+},
+"magicos": {
+"adamantine-armor": "Armadura de adamante",
+"ammunition": "Munição +1, +2 ou +3",
+"ammunition-1": "Munição +1",
+"ammunition-2": "Munição +2",
+"ammunition-3": "Munição +3",
+"amulet-of-health": "Amuleto de saúde",
+"amulet-of-proof-against-detection-and-location": "Amuleto de proteção contra detecção e localização",
+"amulet-of-the-planes": "Amuleto dos planos",
+"animated-shield": "Escudo animado",
+"apparatus-of-the-crab": "Dispositivo do caranguejo",
+"armor": "Armadura +1, +2 ou +3",
+"armor-1": "Armadura +1",
+"armor-2": "Armadura +2",
+"armor-3": "Armadura +3",
+"armor-of-invulnerability": "Armadura de invulnerabilidade",
+"armor-of-resistance": "Armadura de resistência",
+"armor-of-vulnerability": "Armadura de vulnerabilidade",
+"arrow-catching-shield": "Escudo apanhador de flechas",
+"arrow-of-slaying": "Flecha assassina",
+"bag-of-beans": "Saco de feijões",
+"bag-of-devouring": "Bolsa devoradora",
+"bag-of-holding": "Mochila de carga",
+"bag-of-tricks": "Bolsa de truques",
+"bag-of-tricks-gray": "Bolsa de truques (cinza)",
+"bag-of-tricks-rust": "Bolsa de truques (ferrugem)",
+"bag-of-tricks-tan": "Bolsa de truques (bronze)",
+"bead-of-force": "Contas de força",
+"belt-of-dwarvenkind": "Cinto dos anões",
+"belt-of-giant-strength": "Cinturão de força do gigante",
+"belt-of-giant-strength-hill": "Cinturão de força do gigante da colina",
+"belt-of-giant-strength-stone": "Cinturão de força do gigante de pedra",
+"belt-of-giant-strength-frost": "Cinturão de força do gigante do frio",
+"belt-of-giant-strength-fire": "Cinturão de força do gigante do fogo",
+"belt-of-giant-strength-cloud": "Cinturão de força do gigante das nuvens",
+"belt-of-giant-strength-storm": "Cinturão de força do gigante da tempestade",
+"berserker-axe": "Machado furioso",
+"boots-of-elvenkind": "Botas élficas",
+"boots-of-levitation": "Botas de levitação",
+"boots-of-speed": "Botas de velocidade",
+"boots-of-striding-and-springing": "Botas de caminhar e saltar",
+"boots-of-the-winterlands": "Botas do inverno",
+"bowl-of-commanding-water-elementals": "Bacia de comandar elementais da água",
+"bracers-of-archery": "Braçadeiras de arquearia",
+"bracers-of-defense": "Braceletes de defesa",
+"brazier-of-commanding-fire-elementals": "Braseiro de comandar elementais do fogo",
+"brooch-of-shielding": "Broche do escudo",
+"broom-of-flying": "Vassoura voadora",
+"candle-of-invocation": "Vela da invocação",
+"cape-of-the-mountebank": "Capa do saltimbanco",
+"carpet-of-flying": "Tapete voador",
+"carpet-of-flying-3x5": "Tapete voador (0,9 × 1,5 m)",
+"carpet-of-flying-4x6": "Tapete voador (1,2 × 1,8 m)",
+"carpet-of-flying-5x7": "Tapete voador (1,5 × 2,1 m)",
+"carpet-of-flying-6x9": "Tapete voador (1,8 × 2,7 m)",
+"censer-of-controlling-air-elementals": "Incensório de comandar elementais do ar",
+"chime-of-opening": "Carrilhão de abertura",
+"circlet-of-blasting": "Diadema da destruição",
+"cloak-of-arachnida": "Manto da aranha",
+"cloak-of-displacement": "Manto de deslocamento",
+"cloak-of-elvenkind": "Manto élfico",
+"cloak-of-protection": "Manto de proteção",
+"cloak-of-the-bat": "Manto do morcego",
+"cloak-of-the-manta-ray": "Manto da arraia",
+"crystal-ball": "Bola de cristal",
+"crystal-ball-of-mind-reading": "Bola de cristal de ler mentes",
+"crystal-ball-of-telepathy": "Bola de cristal da telepatia",
+"crystal-ball-of-true-seeing": "Bola de cristal da visão da verdade",
+"cube-of-force": "Cubo de força",
+"cubic-gate": "Cubo do portal",
+"dagger-of-venom": "Adaga de envenenamento",
+"dancing-sword": "Espada dançarina",
+"decanter-of-endless-water": "Decantador de água infinita",
+"deck-of-illusions": "Baralho das ilusões",
+"deck-of-many-things": "Baralho das surpresas",
+"defender": "Defensora",
+"demon-armor": "Armadura demoníaca",
+"dimensional-shackles": "Algemas dimensionais",
+"dragon-scale-mail": "Brunea de escamas de dragão",
+"dragon-scale-mail-black": "Brunea de escamas de dragão negro",
+"dragon-scale-mail-blue": "Brunea de escamas de dragão azul",
+"dragon-scale-mail-brass": "Brunea de escamas de dragão de latão",
+"dragon-scale-mail-bronze": "Brunea de escamas de dragão de bronze",
+"dragon-scale-mail-copper": "Brunea de escamas de dragão de cobre",
+"dragon-scale-mail-gold": "Brunea de escamas de dragão de ouro",
+"dragon-scale-mail-green": "Brunea de escamas de dragão verde",
+"dragon-scale-mail-red": "Brunea de escamas de dragão vermelho",
+"dragon-scale-mail-silver": "Brunea de escamas de dragão de prata",
+"dragon-scale-mail-white": "Brunea de escamas de dragão branco",
+"dragon-slayer": "Matadora de dragões",
+"dust-of-disappearance": "Pó do desaparecimento",
+"dust-of-dryness": "Pó da seca",
+"dust-of-sneezing-and-choking": "Pó de espirrar e tossir",
+"dwarven-plate": "Armadura anã",
+"dwarven-thrower": "Arremessador anão",
+"efficient-quiver": "Aljava eficiente",
+"efreeti-bottle": "Garrafa do efreeti",
+"elemental-gem": "Gema elemental",
+"elemental-gem-air": "Gema elemental (ar)",
+"elemental-gem-earth": "Gema elemental (terra)",
+"elemental-gem-fire": "Gema elemental (fogo)",
+"elemental-gem-water": "Gema elemental (água)",
+"elven-chain": "Malha élfica",
+"eversmoking-bottle": "Garrafa da fumaça eterna",
+"eyes-of-charming": "Olhos do encantamento",
+"eyes-of-minute-seeing": "Olhos de visão minuciosa",
+"eyes-of-the-eagle": "Olhos de águia",
+"feather-token": "Pena mágica",
+"feather-token-anchor": "Pena mágica (âncora)",
+"feather-token-bird": "Pena mágica (pássaro)",
+"feather-token-fan": "Pena mágica (leque)",
+"feather-token-swan-boat": "Pena mágica (barco cisne)",
+"feather-token-tree": "Pena mágica (árvore)",
+"feather-token-whip": "Pena mágica (chicote)",
+"figurine-of-wondrous-power": "Estátua de poderes incríveis",
+"figurine-of-wondrous-power-bronze-griffon": "Estátua de poderes incríveis (grifo de bronze)",
+"figurine-of-wondrous-power-ebony-fly": "Estátua de poderes incríveis (mosca de ébano)",
+"figurine-of-wondrous-power-golden-lions": "Estátua de poderes incríveis (leões dourados)",
+"figurine-of-wondrous-power-ivory-goats": "Estátua de poderes incríveis (bodes de marfim)",
+"figurine-of-wondrous-power-marble-elephant": "Estátua de poderes incríveis (elefante de mármore)",
+"figurine-of-wondrous-power-obsidian-steed": "Estátua de poderes incríveis (corcel de obsidiana)",
+"figurine-of-wondrous-power-onyx-dog": "Estátua de poderes incríveis (cão de ônix)",
+"figurine-of-wondrous-power-serpentine-owl": "Estátua de poderes incríveis (coruja de serpentina)",
+"figurine-of-wondrous-power-silver-raven": "Estátua de poderes incríveis (corvo de prata)",
+"flame-tongue": "Língua flamejante",
+"folding-boat": "Barco dobrável",
+"frost-brand": "Marca congelante",
+"gauntlets-of-ogre-power": "Manoplas de força do ogro",
+"gem-of-brightness": "Gema da luminosidade",
+"gem-of-seeing": "Gema de visão",
+"giant-slayer": "Matador de gigantes",
+"glamoured-studded-leather-armor": "Couro batido encantador",
+"gloves-of-missile-snaring": "Luvas de apanhar projéteis",
+"gloves-of-swimming-and-climbing": "Luvas de nadar e escalar",
+"goggles-of-night": "Óculos noturnos",
+"hammer-of-thunderbolts": "Martelo dos trovões",
+"handy-haversack": "Sacola prestativa",
+"hat-of-disguise": "Chapéu de disfarce",
+"headband-of-intellect": "Tiara do intelecto",
+"helm-of-brilliance": "Elmo brilhante",
+"helm-of-comprehending-languages": "Elmo de compreensão de idiomas",
+"helm-of-telepathy": "Elmo de telepatia",
+"helm-of-teleportation": "Elmo de teletransporte",
+"holy-avenger": "Vingadora sagrada",
+"horn-of-blasting": "Trombeta da destruição",
+"horn-of-valhalla": "Trombeta do Valhalla",
+"horn-of-valhalla-silver": "Trombeta do Valhalla (prata)",
+"horn-of-valhalla-brass": "Trombeta do Valhalla (latão)",
+"horn-of-valhalla-bronze": "Trombeta do Valhalla (bronze)",
+"horn-of-valhalla-iron": "Trombeta do Valhalla (ferro)",
+"horseshoes-of-a-zephyr": "Ferraduras de zéfiro",
+"horseshoes-of-speed": "Ferraduras da velocidade",
+"immovable-rod": "Bastão imóvel",
+"instant-fortress": "Fortaleza instantânea",
+"ioun-stone": "Pedra iônica",
+"ioun-stone-of-absorption": "Pedra iônica (absorção)",
+"ioun-stone-of-agility": "Pedra iônica (agilidade)",
+"ioun-stone-of-awareness": "Pedra iônica (prontidão)",
+"ioun-stone-of-fortitude": "Pedra iônica (fortitude)",
+"ioun-stone-of-greater-absorption": "Pedra iônica (absorção maior)",
+"ioun-stone-of-insight": "Pedra iônica (intuição)",
+"ioun-stone-of-intellect": "Pedra iônica (intelecto)",
+"ioun-stone-of-leadership": "Pedra iônica (liderança)",
+"ioun-stone-of-mastery": "Pedra iônica (maestria)",
+"ioun-stone-of-protection": "Pedra iônica (proteção)",
+"ioun-stone-of-regeneration": "Pedra iônica (regeneração)",
+"ioun-stone-of-reserve": "Pedra iônica (armazenamento)",
+"ioun-stone-of-strength": "Pedra iônica (força)",
+"ioun-stone-of-sustenance": "Pedra iônica (sustento)",
+"iron-bands-of-binding": "Faixas de ferro da prisão",
+"iron-flask": "Frasco de ferro",
+"javelin-of-lightning": "Azagaia de relâmpago",
+"lantern-of-revealing": "Lanterna de revelação",
+"luck-blade": "Lâmina da sorte",
+"mace-of-disruption": "Maça do rompimento",
+"mace-of-smiting": "Maça de destruição",
+"mace-of-terror": "Maça do terror",
+"mantle-of-spell-resistance": "Manto de resistência à magia",
+"manual-of-bodily-health": "Manual da saúde corporal",
+"manual-of-gainful-exercise": "Manual do bom exercício",
+"manual-of-golems": "Manual dos golens",
+"manual-of-golems-clay": "Manual dos golens (argila)",
+"manual-of-golems-flesh": "Manual dos golens (carne)",
+"manual-of-golems-iron": "Manual dos golens (ferro)",
+"manual-of-golems-stone": "Manual dos golens (pedra)",
+"manual-of-quickness-of-action": "Manual da rapidez de movimentos",
+"marvelous-pigments": "Pigmentos maravilhosos",
+"medallion-of-thoughts": "Medalhão de pensamentos",
+"mirror-of-life-trapping": "Espelho do aprisionamento",
+"mithral-armor": "Armadura de mitral",
+"necklace-of-adaptation": "Colar de adaptação",
+"necklace-of-fireballs": "Colar de bolas de fogo",
+"necklace-of-prayer-beads": "Corrente de contas de oração",
+"nine-lives-stealer": "Ladra das nove vidas",
+"oathbow": "Arco do juramento",
+"oil-of-etherealness": "Óleo de forma etérea",
+"oil-of-sharpness": "Óleo de precisão",
+"oil-of-slipperiness": "Óleo escorregadio",
+"pearl-of-power": "Pérola do poder",
+"periapt-of-health": "Periapto de saúde",
+"periapt-of-proof-against-poison": "Periapto de proteção contra veneno",
+"periapt-of-wound-closure": "Periapto da cicatrização",
+"philter-of-love": "Filtro do amor",
+"pipes-of-haunting": "Flauta assombrada",
+"pipes-of-the-sewers": "Flauta dos esgotos",
+"plate-armor-of-etherealness": "Armadura de placas da forma etérea",
+"portable-hole": "Buraco portátil",
+"potion-of-animal-friendship": "Poção de amizade animal",
+"potion-of-clairvoyance": "Poção de clarividência",
+"potion-of-climbing": "Poção de escalar",
+"potion-of-diminution": "Poção de encolher",
+"potion-of-flying": "Poção de voo",
+"potion-of-gaseous-form": "Poção de forma gasosa",
+"potion-of-giant-strength": "Poção de força do gigante",
+"potion-of-giant-strength-hill": "Poção de força do gigante da colina",
+"potion-of-giant-strength-frost": "Poção de força do gigante do gelo",
+"potion-of-giant-strength-stone": "Poção de força do gigante de pedra",
+"potion-of-giant-strength-fire": "Poção de força do gigante do fogo",
+"potion-of-giant-strength-cloud": "Poção de força do gigante das nuvens",
+"potion-of-giant-strength-storm": "Poção de força do gigante da tempestade",
+"potion-of-growth": "Poção de aumentar",
+"potion-of-healing": "Poção de cura",
+"potion-of-healing-common": "Poção de cura",
+"potion-of-healing-greater": "Poção de cura maior",
+"potion-of-healing-superior": "Poção de cura superior",
+"potion-of-healing-supreme": "Poção de cura suprema",
+"potion-of-heroism": "Poção de heroísmo",
+"potion-of-invisibility": "Poção de invisibilidade",
+"potion-of-mind-reading": "Poção de ler mentes",
+"potion-of-poison": "Poção de envenenamento",
+"potion-of-resistance": "Poção de resistência",
+"potion-of-resistance-acid": "Poção de resistência (ácido)",
+"potion-of-resistance-cold": "Poção de resistência (frio)",
+"potion-of-resistance-fire": "Poção de resistência (fogo)",
+"potion-of-resistance-force": "Poção de resistência (energia)",
+"potion-of-resistance-lightning": "Poção de resistência (elétrico)",
+"potion-of-resistance-necrotic": "Poção de resistência (necrótico)",
+"potion-of-resistance-poison": "Poção de resistência (veneno)",
+"potion-of-resistance-psychic": "Poção de resistência (psíquico)",
+"potion-of-resistance-radiant": "Poção de resistência (radiante)",
+"potion-of-resistance-thunder": "Poção de resistência (trovejante)",
+"potion-of-speed": "Poção de velocidade",
+"potion-of-water-breathing": "Poção de respirar na água",
+"restorative-ointment": "Unguento restaurador",
+"ring-of-animal-influence": "Anel de cativar animais",
+"ring-of-djinni-summoning": "Anel de invocação de djinni",
+"ring-of-elemental-command": "Anel de comandar elementais",
+"ring-of-elemental-command-air": "Anel de comandar elementais do ar",
+"ring-of-elemental-command-earth": "Anel de comandar elementais da terra",
+"ring-of-elemental-command-fire": "Anel de comandar elementais do fogo",
+"ring-of-elemental-command-water": "Anel de comandar elementais da água",
+"ring-of-evasion": "Anel de evasão",
+"ring-of-feather-falling": "Anel de queda suave",
+"ring-of-free-action": "Anel de ação livre",
+"ring-of-invisibility": "Anel de invisibilidade",
+"ring-of-jumping": "Anel de saltar",
+"ring-of-mind-shielding": "Anel de escudo mental",
+"ring-of-protection": "Anel de proteção",
+"ring-of-regeneration": "Anel de regeneração",
+"ring-of-resistance": "Anel de resistência",
+"ring-of-resistance-acid": "Anel de resistência (ácido)",
+"ring-of-resistance-cold": "Anel de resistência (frio)",
+"ring-of-resistance-fire": "Anel de resistência (fogo)",
+"ring-of-resistance-force": "Anel de resistência (energia)",
+"ring-of-resistance-lightning": "Anel de resistência (elétrico)",
+"ring-of-resistance-necrotic": "Anel de resistência (necrótico)",
+"ring-of-resistance-poison": "Anel de resistência (veneno)",
+"ring-of-resistance-psychic": "Anel de resistência (psíquico)",
+"ring-of-resistance-radiant": "Anel de resistência (radiante)",
+"ring-of-resistance-thunder": "Anel de resistência (trovejante)",
+"ring-of-shooting-stars": "Anel de estrelas cadentes",
+"ring-of-spell-storing": "Anel de armazenar magia",
+"ring-of-spell-turning": "Anel de refletir magias",
+"ring-of-swimming": "Anel de natação",
+"ring-of-telekinesis": "Anel de telecinésia",
+"ring-of-the-ram": "Anel do aríete",
+"ring-of-three-wishes": "Anel dos três desejos",
+"ring-of-warmth": "Anel de calor",
+"ring-of-water-walking": "Anel de andar na água",
+"ring-of-x-ray-vision": "Anel de visão de raio-X",
+"robe-of-eyes": "Robe dos olhos",
+"robe-of-scintillating-colors": "Robe das cores cintilantes",
+"robe-of-stars": "Robe das estrelas",
+"robe-of-the-archmagi": "Robe do arquimago",
+"robe-of-useful-items": "Robe dos itens úteis",
+"rod-of-absorption": "Bastão de absorção",
+"rod-of-alertness": "Bastão de prontidão",
+"rod-of-lordly-might": "Bastão do grande poder",
+"rod-of-rulership": "Bastão da obediência",
+"rod-of-security": "Bastão de segurança",
+"rope-of-climbing": "Corda de escalada",
+"rope-of-entanglement": "Corda de estrangulamento",
+"scarab-of-protection": "Escaravelho da proteção",
+"scimitar-of-speed": "Cimitarra da velocidade",
+"shield-of-missile-attraction": "Escudo de atração de projéteis",
+"slippers-of-spider-climbing": "Sandálias de patas de aranha",
+"sovereign-glue": "Cola soberana",
+"spell-scroll": "Pergaminho de magia",
+"spell-scroll-cantrip": "Pergaminho de magia (truque)",
+"spell-scroll-1st": "Pergaminho de magia (1º nível)",
+"spell-scroll-2nd": "Pergaminho de magia (2º nível)",
+"spell-scroll-3rd": "Pergaminho de magia (3º nível)",
+"spell-scroll-4th": "Pergaminho de magia (4º nível)",
+"spell-scroll-5th": "Pergaminho de magia (5º nível)",
+"spell-scroll-6th": "Pergaminho de magia (6º nível)",
+"spell-scroll-7th": "Pergaminho de magia (7º nível)",
+"spell-scroll-8th": "Pergaminho de magia (8º nível)",
+"spell-scroll-9th": "Pergaminho de magia (9º nível)",
+"spellguard-shield": "Escudo de proteção contra magia",
+"sphere-of-annihilation": "Esfera da aniquilação",
+"staff-of-charming": "Cajado de enfeitiçar",
+"staff-of-fire": "Cajado do fogo",
+"staff-of-frost": "Cajado do frio",
+"staff-of-healing": "Cajado de cura",
+"staff-of-power": "Cajado do poder",
+"staff-of-striking": "Cajado de ataque",
+"staff-of-swarming-insects": "Cajado de enxame de insetos",
+"staff-of-the-magi": "Cajado do arcano",
+"staff-of-the-python": "Cajado da píton",
+"staff-of-the-woodlands": "Cajado das florestas",
+"staff-of-thunder-and-lightning": "Cajado de trovão e relâmpago",
+"staff-of-withering": "Cajado do definhamento",
+"stone-of-controlling-earth-elementals": "Pedra de comandar elementais da terra",
+"stone-of-good-luck-luckstone": "Pedra da boa sorte",
+"sun-blade": "Lâmina do sol",
+"sword-of-life-stealing": "Espada do furto de vidas",
+"sword-of-sharpness": "Espada decepadora",
+"sword-of-wounding": "Espada do sangramento",
+"talisman-of-pure-good": "Talismã da bondade pura",
+"talisman-of-the-sphere": "Talismã da esfera",
+"talisman-of-ultimate-evil": "Talismã do mal absoluto",
+"tome-of-clear-thought": "Tomo dos grandes pensamentos",
+"tome-of-leadership-and-influence": "Tomo de liderança e influência",
+"tome-of-understanding": "Tomo da compreensão",
+"trident-of-fish-command": "Tridente de comandar peixes",
+"universal-solvent": "Solvente universal",
+"vicious-weapon": "Arma viciosa",
+"vorpal-sword": "Espada vorpal",
+"wand-of-binding": "Varinha de obrigação",
+"wand-of-enemy-detection": "Varinha de detecção de inimigos",
+"wand-of-fear": "Varinha de medo",
+"wand-of-fireballs": "Varinha de bolas de fogo",
+"wand-of-lightning-bolts": "Varinha de relâmpagos",
+"wand-of-magic-detection": "Varinha de detectar magia",
+"wand-of-magic-missiles": "Varinha de mísseis mágicos",
+"wand-of-paralysis": "Varinha de paralisia",
+"wand-of-polymorph": "Varinha de metamorfose",
+"wand-of-secrets": "Varinha de segredos",
+"wand-of-the-war-mage": "Varinha do arcano de guerra",
+"wand-of-the-war-mage-1": "Varinha do arcano de guerra +1",
+"wand-of-the-war-mage-2": "Varinha do arcano de guerra +2",
+"wand-of-the-war-mage-3": "Varinha do arcano de guerra +3",
+"wand-of-web": "Varinha de teia",
+"wand-of-wonder": "Varinha das maravilhas",
+"weapon": "Arma +1, +2 ou +3",
+"weapon-1": "Arma +1",
+"weapon-2": "Arma +2",
+"weapon-3": "Arma +3",
+"well-of-many-worlds": "Poço dos muitos mundos",
+"wind-fan": "Leque do vento",
+"winged-boots": "Botas aladas",
+"wings-of-flying": "Asas voadoras",
+"orb-of-dragonkind": "Orbe dos dragões"
+}
+}

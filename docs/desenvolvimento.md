@@ -29,15 +29,21 @@ public/js/
   initiative.js      rastreador de iniciativa
   handouts.js        segredos e fila de memórias
   journal.js         diário do grupo
-  compendium.js      compêndio
+  compendium.js      compêndio (abas: páginas do mestre, magias, itens)
+  library.js         Biblioteca: navegador de magias e itens do SRD, cartão da magia, "pôr na ficha/mochila"
   gm.js              painel do mestre (cenas, tokens, usuários, backups)
   bestiary.js        bestiário: bloco de estatísticas, editor, biblioteca SRD, ajuste de ND, colocar no mapa
-  rules.js           regras do Livro do Mestre: tabela por ND, XP, dificuldade de encontro, ajuste de ND
+  rules.js           regras: tabela por ND, XP, dificuldade de encontro, ajuste de ND, classes, multiclasse,
+                     espaços de magia e listas/círculos de magia por classe (spellLists, spellAccess)
 docs/index.html      página do projeto (GitHub Pages, servida da pasta docs/)
 public/data/srd-monstros.json   334 monstros do SRD 5.1 já convertidos (gerado por tools/srd/converter.py)
+public/data/srd-magias.json     319 magias do SRD 5.1 em português (gerado por tools/srd/converter_magias.py)
+public/data/srd-itens.json      equipamento e itens mágicos do SRD 5.1 (gerado por tools/srd/converter_itens.py)
 test/api.test.js     teste automático do servidor (npm test)
 tools/redefinir-senha.js   redefine a senha de um usuário (mesa fechada)
 tools/srd/converter.py     converte os monstros do 5e-database para o formato da Tábula (com traduções)
+tools/srd/converter_magias.py, converter_itens.py   magias e itens do 5e-database + traduções
+tools/srd/traducoes/       textos traduzidos: magias-0…7.json (nome, material, descrição, níveis superiores) e itens.json
 *.bat                atalhos para Windows (instalar, iniciar, online, atualizar, redefinir-senha)
 *.sh                 os mesmos atalhos para Linux e Mac (bash; testados também com o dash)
 ```
@@ -70,9 +76,21 @@ tools/srd/converter.py     converte os monstros do 5e-database para o formato da
 - `rescale()` em `rules.js`: CA, ataque e CD por diferença na tabela do Livro do Mestre; PV e dano
   pela razão entre os valores típicos de cada ND (medianas dos 334 monstros do SRD, suavizadas:
   PV ≈ 15·ND + 15 até o ND 20; dano/rodada ≈ 4,5·ND + 5,5).
-- Para atualizar a biblioteca: `python3 tools/srd/converter.py 5e-SRD-Monsters.json docs/index.html      página do projeto (GitHub Pages, servida da pasta docs/)
-public/data/srd-monstros.json`
+- Para atualizar a biblioteca: `python3 tools/srd/converter.py 5e-SRD-Monsters.json public/data/srd-monstros.json`
   (o arquivo de entrada vem de `src/2014/en/` do repositório 5e-bits/5e-database).
+
+## Biblioteca (magias e itens)
+
+- Os dados ficam em `public/data/srd-magias.json` e `srd-itens.json`; o navegador baixa na primeira vez que a aba é
+  aberta (`library.js`). Nada disso vai para a campanha: o que entra é o que o jogador põe na ficha.
+- Magias da ficha em `character.spellbook[]` (`{ id, name, level, prep }`, validado em `CHAR_FIELDS`).
+  `spellLists(c)` em `rules.js` diz que listas a ficha usa e até que círculo (cada classe pelo próprio nível;
+  cavaleiro/trapaceiro arcano pela lista do mago; Arcana Mística do bruxo).
+- Itens da Biblioteca entram por `item:addMany` (um item, um pacote inteiro ou um item mágico dado pelo mestre);
+  o campo `srd` guarda a origem e itens iguais que não vão no corpo empilham.
+- Para gerar de novo: `python3 tools/srd/converter_magias.py 5e-SRD-Spells.json public/data/srd-magias.json` e
+  `python3 tools/srd/converter_itens.py 5e-SRD-Equipment.json 5e-SRD-Magic-Items.json public/data/srd-itens.json`.
+  Para corrigir uma tradução, edite `tools/srd/traducoes/` e rode o conversor.
 
 ## Variáveis de ambiente
 

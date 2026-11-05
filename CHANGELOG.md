@@ -1,5 +1,25 @@
 # Histórico de versões
 
+## v5.5 — 01/11/2026
+**Novidades**
+- **Biblioteca no compêndio** (abas **✨ Magias** e **🎒 Itens**), com o conteúdo do SRD 5.1 (CC-BY-4.0) em português:
+  - **319 magias** traduzidas, com os nomes do Livro do Jogador e as medidas em metros/quilos. Cartão no formato do
+    livro (tempo, alcance, componentes, duração, efeito, níveis superiores). Filtro **"Só as que pode conjurar"** pelas
+    classes e níveis da ficha (multiclasse incluída, cada classe com o próprio nível; cavaleiro/trapaceiro arcano pela
+    lista do mago; Arcana Mística do bruxo). Busca em português ou inglês, filtros de círculo, classe, escola, ritual
+    e concentração.
+  - **237 itens** do Livro do Jogador (armas, armaduras, equipamento, ferramentas, pacotes, montarias e veículos) com
+    preço, peso, dano, propriedades e CA. **＋ Pôr na mochila** já preenche o item (ataque e CA automáticos); pacotes
+    entram item por item; itens iguais empilham; montarias não contam no peso.
+  - **Itens mágicos** (só o mestre vê): 341 itens com nome em português, raridade e sintonização; **🎁 Dar a…** com
+    escolha da arma/armadura base, bônus mágico e CA já calculados. Descrição ainda no original em inglês.
+- **Magias da ficha**: lista por círculo, com "preparada", cartão da magia ao tocar o nome e **＋ Procurar magias**.
+  O campo de texto antigo virou **Anotações de magias** (nada se perde).
+
+**Correções**
+- O tipo de dano "força" das sugestões do editor de item virou **energia**, como no Livro do Jogador.
+- No celular, conteúdo largo (tabelas) não empurra mais a tela para os lados.
+
 ## v5.4 — 01/11/2026
 **Novidades**
 - **Multiclasse**: lista de classes por personagem (nome, nível, dado de vida). Nível total e "Classe A 3 / Classe B 2"

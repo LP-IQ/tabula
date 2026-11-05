@@ -9,6 +9,7 @@ import { renderHandouts, markAllSeen, unseenCount } from './handouts.js';
 import { renderGM } from './gm.js';
 import { renderJournal, resetJournal } from './journal.js';
 import { renderCompendium } from './compendium.js';
+import { refreshLibrary } from './library.js';
 import { renderBestiary, openStatBlock, pasteToBestiary } from './bestiary.js';
 import { onMeasure } from './tools.js';
 import { renderClock, renderUpdate } from './calendar.js';
@@ -140,6 +141,7 @@ function renderAll() {
     renderGM(s);
     renderJournal(s);
     renderCompendium(s);
+    refreshLibrary();
     renderBestiary(s);
     updateChatLabels();
     if (activeTab() === 'journal') markJournalSeen();

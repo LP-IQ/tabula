@@ -17,6 +17,7 @@ O que mudou em cada versão está em [novidades.md](novidades.md).
 [Iniciativa](#iniciativa) ·
 [Segredos e fila de memórias](#segredos-e-fila-de-memórias) ·
 [Diário e compêndio](#diário-e-compêndio) ·
+[Biblioteca: magias e itens](#biblioteca-magias-e-itens) ·
 [Calendário e descansos](#calendário-e-descansos-) ·
 [Bestiário](#bestiário-) ·
 [Painel do mestre](#painel-do-mestre-) ·
@@ -169,6 +170,21 @@ O que a ficha faz por você na multiclasse:
   10 ou mais é sucesso, menos de 10 é falha, **1 natural conta duas falhas** e **20 natural volta com 1 PV**.
   Três sucessos: estável. Três falhas: morte. **Zerar** limpa as marcas.
 
+### Magias da ficha
+<img src="img/ficha-magias.png" alt="Magias da ficha separadas por círculo, com a marca de preparada" width="320" align="right">
+
+Dentro de **Magias**, abaixo dos espaços, fica a lista de magias do personagem, separada em **Truques**, **1º círculo**,
+**2º círculo**… **＋ Procurar magias** abre a [Biblioteca](#biblioteca-magias-e-itens) já filtrada pelas suas
+classes. Em cada magia:
+- **toque no nome** para ver o cartão completo (tempo, alcance, componentes, duração, efeito, níveis superiores);
+- **a bolinha** marca a magia como **preparada** (fica dourada; o resumo conta quantas estão preparadas);
+- **✕** tira da ficha.
+
+Magias que não estão na Biblioteca (de outros livros, ou inventadas pelo mestre) vão em **Anotações de magias**, logo
+abaixo — é o mesmo campo de texto das versões antigas, então o que você já tinha escrito continua lá.
+
+<br clear="right">
+
 ### Espaços de magia
 Dentro de **Magias**: **+ Espaços de magia** cria os do 1º círculo; **+ Espaço de 2º círculo** e assim por diante.
 Em cada círculo, **+** e **−** mudam quantos você tem; **toque nas bolinhas** para gastar e recuperar.
@@ -312,9 +328,52 @@ Para memórias, pistas, cartas e mapas do tesouro que só um jogador deve ver.
 
 - **📖 Diário do grupo**: todos escrevem (pistas, nomes, dívidas, piadas internas). Cada um edita e apaga o que é seu;
   👑 o mestre pode apagar qualquer entrada. O número na aba mostra o que os outros escreveram desde a sua última visita.
-- **📚 Compêndio**: 👑 páginas de consulta do mestre, com título, categoria, texto e imagens (dá para pôr o print
-  de uma tabela). **🔒 Só eu (mestre)** para as suas notas; **👁 Todos os jogadores** para liberar. Os jogadores
-  leem e buscam as páginas liberadas.
+- **📚 Compêndio → 📄 Páginas**: 👑 páginas de consulta do mestre, com título, categoria, texto e imagens (dá para
+  pôr o print de uma tabela). **🔒 Só eu (mestre)** para as suas notas; **👁 Todos os jogadores** para liberar. Os
+  jogadores leem e buscam as páginas liberadas. É aqui que entra a lore do seu mundo.
+- **📚 Compêndio → ✨ Magias / 🎒 Itens**: a [Biblioteca](#biblioteca-magias-e-itens).
+
+---
+
+## Biblioteca: magias e itens
+
+No **📚 Compêndio**, as abas **✨ Magias** e **🎒 Itens** trazem o conteúdo do *SRD 5.1* (a parte das regras que a
+Wizards liberou com licença aberta) traduzido para o português, com os nomes do Livro do Jogador. A aba **📄 Páginas**
+continua sendo o lugar das páginas do mestre (lore, regras da casa, NPCs).
+
+### Magias
+- **Para**: escolha o personagem (o jogador já vem com o dele). Com **Só as que pode conjurar** marcado, a lista mostra
+  só as magias das listas das classes da ficha, até o círculo que cada classe já alcança — **na multiclasse, cada
+  classe conta com o próprio nível** (um Clérigo 3 / Mago 1 vê clérigo até o 2º círculo e mago até o 1º). Cavaleiro
+  arcano e trapaceiro arcano usam a lista do mago; o bruxo mostra a Arcana Mística (6º a 9º) a partir do nível 11.
+  A frase em cinza abaixo dos filtros diz exatamente o que está sendo considerado.
+- Busque pelo nome em português **ou em inglês**; filtre por círculo (**Truques**, **1º**…), por classe, por escola,
+  e só rituais ou só concentração. **C** e **R** na linha marcam concentração e ritual.
+- Toque na magia para abrir o cartão e clique **＋ Adicionar à ficha de …**. O **✓** marca as que já estão na ficha.
+  Magias fora das listas da ficha também podem ser adicionadas (um talento, um item, uma decisão do mestre); o cartão
+  avisa que estão fora.
+- 👑 O mestre escolhe qualquer personagem em **Para**, ou **— só consultar —** para ler sem filtro.
+
+As 319 magias do SRD estão lá. Magias de outros livros (Xanathar, Tasha…) não fazem parte do SRD; escreva-as em
+**Anotações de magias** na ficha. O artífice não está no SRD; a lista dele foi montada com as magias do SRD que ele
+aprende no *Caldeirão de Tasha para Tudo*.
+
+### Itens
+- Categorias: **Armas**, **Armaduras**, **Equipamento**, **Ferramentas**, **Pacotes** e **Montarias e veículos**, com
+  preço, peso e, nas armas e armaduras, dano, propriedades e CA.
+- **＋ Pôr na mochila de …** cria o item na ficha já preenchido: a arma entra pronta para o ataque automático, a
+  armadura e o escudo entram na CA automática quando equipados. Escolha a **Qtd.** antes; itens iguais que não vão no
+  corpo (tochas, rações, flechas) juntam na mesma pilha.
+- **Pacotes** (de aventureiro, explorador…) põem o **conteúdo** na mochila, item por item.
+- **Montarias e veículos** viram uma posse que **não conta no peso** carregado.
+- O jogador só põe itens nos próprios personagens; 👑 o mestre põe em qualquer um, e o dono recebe o aviso 🎁.
+
+### Itens mágicos (👑)
+Só o mestre vê o botão **✨ Itens mágicos 🔒**. Filtre pela raridade, escolha o personagem em **Para** e clique
+**🎁 Dar a …**. Itens que servem em qualquer arma ou armadura (*Arma +1*, *Língua flamejante*, *Armadura +2*…) pedem a
+**Base** (cimitarra, cota de malha…) e já entram com o dano, a CA e o bônus mágico certos; a sintonização também vem
+marcada. Os nomes estão em português (os do Livro do Mestre); **a descrição ainda está no original em inglês do SRD** —
+dá para trocar pelo texto do livro editando o item depois de dar.
 
 ---
 

@@ -304,3 +304,44 @@ export function suggestSlots(c) {
     multi: casters.length > 1,
   };
 }
+
+// ------------------------------------------------------------------ listas de magias (Biblioteca)
+// Que listas de magias o personagem usa e até que círculo consegue conjurar em cada uma.
+// Cavaleiro arcano e trapaceiro arcano usam a lista do mago (terço de conjurador).
+export const SPELL_LISTS = [
+  ['bardo', 'Bardo'], ['bruxo', 'Bruxo'], ['clerigo', 'Clérigo'], ['druida', 'Druida'], ['feiticeiro', 'Feiticeiro'],
+  ['mago', 'Mago'], ['paladino', 'Paladino'], ['patrulheiro', 'Patrulheiro'], ['artifice', 'Artífice'],
+];
+export const SPELL_LIST_LABEL = Object.fromEntries(SPELL_LISTS);
+function maxCircle(kind, lv) {
+  if (kind === 'full') return Math.min(9, Math.ceil(lv / 2));
+  if (kind === 'half') return lv >= 2 ? Math.min(5, Math.ceil(lv / 4)) : 0;
+  if (kind === 'artificer') return Math.min(5, Math.ceil(lv / 4));
+  if (kind === 'third') return lv >= 19 ? 4 : lv >= 13 ? 3 : lv >= 7 ? 2 : lv >= 3 ? 1 : 0;
+  if (kind === 'pact') return lv >= 17 ? 9 : lv >= 15 ? 8 : lv >= 13 ? 7 : lv >= 11 ? 6 : PACT(lv)[1];   // 6º–9º: Arcana Mística
+  return 0;
+}
+export function spellLists(c) {
+  const list = (c?.classes && c.classes.length ? c.classes : [{ name: c?.class, level: c?.level }]);
+  const out = new Map();
+  for (const k of list) {
+    const kind = casterKind(k.name);
+    if (!kind) continue;
+    const key = kind === 'third' ? 'mago' : classKey(k.name);
+    const lv = Math.max(1, Math.min(20, Number(k.level) || 1));
+    // feiticeiro de nível 1 já tem truques e magias de 1º; meio-conjurador de nível 1 ainda não tem nada
+    const max = maxCircle(kind, lv);
+    const cantrips = kind !== 'half' && (kind !== 'third' || lv >= 3);
+    const prev = out.get(key);
+    if (!prev || prev.max < max) out.set(key, { key, label: SPELL_LIST_LABEL[key], max, cantrips: cantrips || !!prev?.cantrips, from: k.name, arcanum: kind === 'pact' && lv >= 11 });
+  }
+  return [...out.values()];
+}
+// A magia (do SRD) está ao alcance do personagem? Devolve a lista que dá acesso, ou null.
+export function spellAccess(spell, lists) {
+  for (const l of lists) {
+    if (!spell.cl.includes(l.key)) continue;
+    if (spell.l === 0 ? l.cantrips : spell.l <= l.max) return l;
+  }
+  return null;
+}

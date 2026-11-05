@@ -201,7 +201,7 @@ export function itemEditor(c, it0, preset) {
   });
 
   const save = async () => {
-    const item = { id: it0?.id, img };
+    const item = { id: it0?.id, img, srd: it0?.srd || '' };
     for (const [key, el] of Object.entries(f)) {
       item[key] = el.type === 'checkbox' ? el.checked : el.type === 'number' ? Number(el.value) : el.value;
     }

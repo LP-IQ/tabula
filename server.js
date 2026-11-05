@@ -106,6 +106,10 @@ const CHAR_FIELDS = {
   })),
   features: (v) => str(v),
   spells: (v) => str(v),
+  // magias escolhidas na Biblioteca (ou escritas à mão): id do SRD, nome, círculo e se está preparada
+  spellbook: (v) => (Array.isArray(v) ? v : []).slice(0, 300).map((x) => ({
+    id: str(x?.id, 60), name: str(x?.name, 80).trim() || 'Magia', level: int(x?.level, 0, 9), prep: !!x?.prep,
+  })),
   inventory: (v) => str(v),
   notes: (v) => str(v),
   conditions: (v) => [...new Set((Array.isArray(v) ? v : []).filter((c) => world.CONDITIONS.includes(c)))],
@@ -596,6 +600,30 @@ const handlers = {
     }
     itemsLib.applyAutoAc(c);
     return { id: it.id };
+  },
+  // Vários itens de uma vez (Biblioteca do compêndio: um item, um pacote inteiro, um item mágico dado pelo mestre).
+  // Itens iguais que não vão no corpo (tochas, rações…) juntam na mesma pilha.
+  'item:addMany'(user, p) {
+    const c = myChar(user, p.charId);
+    const list = (Array.isArray(p.items) ? p.items : []).slice(0, 40);
+    if (!list.length) throw new Error('Nenhum item');
+    const names = [];
+    for (const raw of list) {
+      const it = itemsLib.normalizeItem(raw, null, imgUrl);
+      const stack = !itemsLib.KINDS[it.kind].length && it.srd
+        && c.items.find((x) => x.srd === it.srd && x.name === it.name && !x.slot);
+      if (stack) {
+        stack.qty = Math.min(9999, stack.qty + it.qty);
+      } else {
+        if (c.items.length >= itemsLib.MAX_ITEMS) throw new Error('A mochila está cheia (máximo de 200 itens)');
+        it.id = uid();
+        c.items.push(it);
+      }
+      names.push(it.qty > 1 ? `${it.name} (×${it.qty})` : it.name);
+    }
+    notifyItem(user, c, p.label ? str(p.label, 80) : names.join(', ').slice(0, 200));
+    itemsLib.applyAutoAc(c);
+    return { count: list.length };
   },
   'item:delete'(user, p) {
     const c = myChar(user, p.charId);

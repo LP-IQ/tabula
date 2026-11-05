@@ -6,6 +6,7 @@ import { CONDITIONS, CONDITION_ICON, CONDITION_LABEL, XP_LEVELS, CLASSES, classD
 import { equipmentBox, dollView } from './equipment.js';
 import { computeAc, weaponAttacks } from './itemdata.js';
 import { openWindow, getWindow, isMobile, activeWindow } from './windows.js';
+import { openSpellPicker, openSpellById } from './library.js';
 
 export const ATTRS = [
   ['str', 'FOR', 'Força'], ['dex', 'DES', 'Destreza'], ['con', 'CON', 'Constituição'],
@@ -386,7 +387,9 @@ export function createSheet(pane, opts = {}) {
       h('details', { class: 'block' }, h('summary', {}, 'Características e talentos'), field(c, 'features', { multiline: true, rows: 6, label: 'Características' })),
       h('details', { class: 'block' }, h('summary', {}, 'Magias'),
         h('div', { class: 'sx', dataset: { sx: 'slots' } }),
-        field(c, 'spells', { multiline: true, rows: 6, label: 'Magias', placeholder: 'Truques e magias conhecidas/preparadas…' })),
+        h('div', { class: 'sx', dataset: { sx: 'book' } }),
+        h('details', { class: 'sub' }, h('summary', {}, 'Anotações de magias'),
+          field(c, 'spells', { multiline: true, rows: 5, label: 'Anotações de magias', placeholder: 'Magias que não estão na Biblioteca, CD e bônus de ataque, observações…' }))),
       h('details', { class: 'block', open: true }, h('summary', {}, 'Dados de vida e descanso'), h('div', { class: 'sx', dataset: { sx: 'hd' } })),
       h('details', { class: 'block' }, h('summary', {}, 'Experiência e moedas'), h('div', { class: 'sx', dataset: { sx: 'xp' } })),
       h('details', { class: 'block equip-block', open: true }, h('summary', {}, 'Equipamento e mochila'),
@@ -556,6 +559,37 @@ export function createSheet(pane, opts = {}) {
         shown.length ? `+ Espaço de ${nextLevel}º círculo` : '+ Espaços de magia (1º círculo)'));
   }
 
+  // Magias da ficha (escolhidas na Biblioteca do compêndio): por círculo, com "preparada" e o cartão da magia
+  function bookBox(c) {
+    const book = c.spellbook || [];
+    const set = (next) => patch(c, { spellbook: next });
+    const groups = new Map();
+    for (const sp of [...book].sort((a, b) => a.level - b.level || a.name.localeCompare(b.name, 'pt-BR'))) {
+      if (!groups.has(sp.level)) groups.set(sp.level, []);
+      groups.get(sp.level).push(sp);
+    }
+    const prepCount = book.filter((x) => x.prep && x.level > 0).length;
+    return h('div', { class: 'stack spellbook' },
+      h('div', { class: 'row gap wrap' },
+        h('small', { class: 'muted grow' }, book.length
+          ? `${book.length} magia${book.length === 1 ? '' : 's'}${prepCount ? ` · ${prepCount} preparada${prepCount === 1 ? '' : 's'}` : ''}`
+          : 'Nenhuma magia ainda. Procure na Biblioteca (truques e magias das suas classes).'),
+        h('button', { class: 'btn sm', onclick: () => openSpellPicker(c.id) }, '＋ Procurar magias')),
+      [...groups].map(([lvl, list]) => h('div', { class: 'book-group' },
+        h('div', { class: 'book-level' }, lvl === 0 ? 'Truques' : `${lvl}º círculo`),
+        list.map((sp) => h('div', { class: 'book-row' + (sp.prep ? ' prep' : '') },
+          lvl > 0 ? h('button', {
+            class: 'pip' + (sp.prep ? ' on' : ''), title: sp.prep ? 'Preparada (clique para tirar)' : 'Não preparada (clique para preparar)',
+            'aria-label': `${sp.name}: preparada`, 'aria-pressed': String(!!sp.prep),
+            onclick: () => set(app.char(c.id).spellbook.map((x) => (x.id === sp.id && x.name === sp.name ? { ...x, prep: !x.prep } : x))),
+          }) : h('span', { class: 'pip-space' }),
+          h('button', { class: 'link grow', title: 'Abrir o cartão da magia', onclick: () => openSpellById(sp.id, sp.name) }, sp.name),
+          h('button', {
+            class: 'btn ghost sm', title: 'Tirar da ficha', 'aria-label': `Tirar ${sp.name}`,
+            onclick: () => set(app.char(c.id).spellbook.filter((x) => !(x.id === sp.id && x.name === sp.name))),
+          }, '✕'))))));
+  }
+
   function hdBox(c) {
     const con = abilityMod(c.attrs?.con);
     const multi = (c.classes || []).length > 1;
@@ -618,6 +652,7 @@ export function createSheet(pane, opts = {}) {
     redraw('status', JSON.stringify([c.conditions, c.inspiration, c.deathSaves, c.hp <= 0, c.name]), () => statusBox(c));
     redraw('aspect', JSON.stringify([c.aspect, c.ring, c.level, app.isGM]), () => aspectBox(c));
     redraw('slots', JSON.stringify([c.slots, c.classes, c.class, c.level]), () => slotsBox(c));
+    redraw('book', JSON.stringify(c.spellbook || []), () => bookBox(c));
     redraw('hd', JSON.stringify([c.level, c.hdUsed, c.hdUsedBy, c.hitDie, c.classes, c.attrs?.con]), () => hdBox(c));
     redraw('xp', JSON.stringify([c.xp, c.level, c.coins]), () => xpBox(c));
   }

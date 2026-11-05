@@ -47,7 +47,9 @@ function normalizeItem(raw, prev, imgUrl) {
     attuned: !!prev?.attuned && !!r.attune,
     qty: int(r.qty, 1, 9999, 1),
     weight: Math.round(num(r.weight, 0, 9999, 0) * 100) / 100,
-    desc: str(r.desc, 4000),
+    desc: str(r.desc, 8000),
+    // de onde veio (índice do SRD, quando saiu da Biblioteca do compêndio)
+    srd: str(r.srd, 60),
     // arma
     dmg: dice(r.dmg),
     dmg2: dice(r.dmg2),

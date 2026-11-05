@@ -350,6 +350,48 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   check(tk().level === 4 && tk().hpMax === maxG4 && tk().class === 'Guerreiro', 'tirar a classe leva junto os níveis e os PV dela');
   check(!(await call(p, 'character:update', { id: cT.id, patch: { classes: [] } })).ok, 'o personagem precisa de pelo menos uma classe');
 
+  // ---------- v5.5: Biblioteca (magias e itens do SRD no compêndio)
+  const fs = require('fs');
+  const path = require('path');
+  const lib = (f) => JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'public', 'data', f), 'utf8'));
+  const mags = lib('srd-magias.json').magias;
+  const fb = mags.find((x) => x.id === 'fireball');
+  check(mags.length === 319 && mags.every((x) => x.n && x.d.length && x.t && x.a && x.du && x.cl.length),
+    'as 319 magias do SRD estão traduzidas e completas');
+  check(fb.n === 'Bola de Fogo' && fb.l === 3 && fb.e === 'evocação' && fb.a === '45 metros' && fb.cl.join() === 'feiticeiro,mago' && fb.h,
+    'Bola de Fogo: 3º círculo, evocação, 45 metros, feiticeiro e mago, com "em níveis superiores"');
+  const itensSrd = lib('srd-itens.json');
+  check(itensSrd.itens.length === 237 && itensSrd.magicos.length > 300 && itensSrd.itens.every((x) => x.n && x.k),
+    'equipamento (237) e itens mágicos do SRD com nome em português');
+  const tchar = () => gm.last.characters.find((c) => c.id === cT.id);
+  const nItems = tchar().items.length;
+  const torch = { srd: 'torch', name: 'Tocha', kind: 'outro', qty: 1, weight: 0.5 };
+  const am = await call(p, 'item:addMany', { charId: cT.id, items: [torch, { ...torch, qty: 4 }, { srd: 'dagger', name: 'Adaga', kind: 'adaga', dmg: '1d4', dmgType: 'perfurante', finesse: true, light: true }] });
+  await wait(30);
+  const torches = tchar().items.filter((x) => x.srd === 'torch');
+  check(am.ok && torches.length === 1 && torches[0].qty === 5 && tchar().items.length === nItems + 2, 'pôr itens da Biblioteca na mochila: tochas iguais juntam numa pilha (5)');
+  check(!(await call(p, 'item:addMany', { charId: cB.id, items: [torch] })).ok, 'jogador NÃO põe itens na mochila de outro pela Biblioteca');
+  gift = null;
+  await call(gm, 'item:addMany', { charId: cT.id, items: [{ srd: 'flame-tongue', name: 'Língua flamejante (espada longa)', kind: 'espada', rarity: 'raro', attune: true, dmg: '1d8', desc: 'x'.repeat(6000) }], label: 'Língua flamejante' });
+  await wait(50);
+  const ft = tchar().items.find((x) => x.srd === 'flame-tongue');
+  check(gift && gift.name === 'Língua flamejante' && ft && ft.attune && ft.rarity === 'raro' && ft.desc.length === 6000, 'mestre dá item mágico da Biblioteca e o jogador é avisado (descrição longa cabe)');
+  await call(p, 'character:update', { id: cT.id, patch: { spellbook: [{ id: 'fireball', name: 'Bola de Fogo', level: 3 }, { id: 'light', name: 'Luz', level: 0, prep: 1 }, { name: '', level: 42 }] } });
+  await wait(30);
+  const sbk = tchar().spellbook;
+  check(sbk.length === 3 && sbk[0].prep === false && sbk[1].prep === true && sbk[2].name === "Magia" && sbk[2].level === 9, 'magias na ficha: validadas (nome, círculo 0–9, preparada)');
+
+  const rules = await import('../public/js/rules.js');
+  const L = (c) => rules.spellLists(c).map((l) => `${l.key}:${l.max}${l.cantrips ? '+t' : ''}`).join(' ');
+  check(L({ class: 'Mago', level: 5 }) === 'mago:3+t' && L({ class: 'Paladino', level: 1 }) === 'paladino:0' && L({ class: 'Paladino', level: 9 }) === 'paladino:3',
+    'círculo máximo por classe: mago 5 → 3º; paladino 1 → nenhum; paladino 9 → 3º');
+  check(L({ classes: [{ name: 'Guerreiro (Cavaleiro Arcano)', level: 7 }, { name: 'Clérigo', level: 3 }] }) === 'mago:2+t clerigo:2+t'
+    && L({ class: 'Bruxo', level: 11 }) === 'bruxo:6+t' && L({ class: 'Ladino', level: 5 }) === '',
+    'multiclasse: cada classe com o próprio nível (cavaleiro arcano usa a lista do mago; bruxo 11 tem Arcana Mística de 6º)');
+  const lists = rules.spellLists({ classes: [{ name: 'Clérigo', level: 3 }, { name: 'Mago', level: 1 }] });
+  check(rules.spellAccess(mags.find((x) => x.id === 'spiritual-weapon'), lists) && !rules.spellAccess(fb, lists)
+    && rules.spellAccess(mags.find((x) => x.id === 'fire-bolt'), lists)?.key === 'mago', 'acesso: Arma Espiritual (clérigo 2º) sim, Bola de Fogo não; Raio de Fogo pelo mago');
+
   a.close();
   gm.close(); p.close();
   server.close();

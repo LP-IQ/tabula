@@ -1,6 +1,6 @@
 {
   "name": "tabula",
-  "version": "5.4.0",
+  "version": "5.5.0",
   "description": "Tábula — mesa virtual simples para a nossa campanha de RPG",
   "main": "server.js",
   "scripts": {
